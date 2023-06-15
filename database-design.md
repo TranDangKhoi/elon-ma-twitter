@@ -32,6 +32,8 @@
 
 - Người dùng có thể update các thông tin sau vào profile: `bio`, `location`, `website`, `username`, `avatar`, `cover_photo`. Vậy ta cũng lưu các trường này vào schema `users` với kiểu là `string`. `avatar`, `cover_photo` đơn giản chi là string url thôi. Đây là những giá trị optional, tức người dùng không nhập vào thì vẫn dùng bình thường. Nhưng cũng nên lưu set `''` khi người dùng không nhập gì để tiện quản lý.
 
+> Một số người thích lưu ảnh vào trong database dưới dạng base64 thì điều đó là không nên, chúng ta nên xử lý upload ảnh lên một server nào đó rồi lấy về url của ảnh lưu vào database dưới dạng string
+
 - Cuối cùng là trường `created_at`, `updated_at` để biết thời gian tạo và cập nhật user. Vậy ta lưu thêm 2 trường này vào schema User với kiểu `Date`. 2 trường này luôn luôn có giá trị.
 
 ```ts
