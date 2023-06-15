@@ -63,6 +63,42 @@ interface User {
 }
 ```
 
+## Flow xác thực người dùng với Access Token
+
+![https://duthanhduoc.com/images/2023/p3-giai-ngo-authentication-jwt/jwt-flow.jpg](https://duthanhduoc.com/images/2023/p3-giai-ngo-authentication-jwt/jwt-flow.jpg)
+
+1. Client gửi request vào tài nguyên được bảo vệ trên server. Nếu client chưa được xác thực, server trả về lỗi 401 Authorization. Client gửi username và password của họ cho server.
+
+2. Server xác minh thông tin xác thực được cung cấp so với cơ sở dữ liệu user. Nếu thông tin xác thực khớp, server tạo ra một JWT chứa payload là user_id (hoặc trường nào đó định danh người dùng). JWT này được gọi là Access Token.
+
+3. Server gửi access token cho client.
+
+4. Client lưu trữ access token ở bộ nhớ thiết bị (cookie, local storage,...).
+
+5. Đối với các yêu cầu tiếp theo, client gửi kèm access token trong header của request.
+
+6. Server verify access token bằng secret key để kiểm tra access token có hợp lệ không.
+
+7. Nếu hợp lệ, server cấp quyền truy cập vào tài nguyên được yêu cầu. Khi người dùng muốn đăng xuất thì chỉ cần xóa access token ở bộ nhớ thiết bị là được.
+
+8. Khi access token hết hạn thì server sẽ từ chối yêu cầu của client, client lúc này sẽ xóa access token ở bộ nhớ thiết bị và chuyển sang trạng thái bị logout.
+
+## Vấn đề của Access Token
+
+Như flow trên thì chúng ta không lưu access token ở trên server, mà lưu ở trên client. Điều này gọi là stateless, tức là server không lưu trữ trạng thái nào của người dùng nào cả.
+
+Khuyết điểm của nó là chúng ta không thể thu hồi access token được. Các bạn có thể xem một số ví dụ dưới đây.
+
+Ví dụ 1: Ở server, chúng ta muốn chủ động đăng xuất một người dùng thì không được, vì không có cách nào xóa access token ở thiết bị client được.
+
+Ví dụ 2: Client bị hack dẫn đến làm lộ access token, hacker lấy được access token và có thể truy cập vào tài nguyên được bảo vệ. Dù cho server biết điều đấy nhưng không thể từ chối access token bị hack đó được, vì chúng ta chỉ verify access token có đúng hay không chứ không có cơ chế kiểm tra access token có nằm trong danh sách blacklist hay không.
+
+Với ví dụ thứ 2, chúng ta có thể thiết lập thời gian hiệu lực của access token ngắn, ví dụ là 5 phút, thì nếu access token bị lộ thì hacker cũng có ít thời gian để xâm nhập vào tài nguyên của chúng ta hơn => giảm thiểu rủi ro.
+
+Nhưng mà cách này không hay lắm, vì nó sẽ làm cho người dùng bị logout và phải login sau mỗi 5 phút, rất khó chịu về trải nghiệm người dùng.
+
+Lúc này người ta mới nghĩ ra ra một cách để giảm thiểu những vấn đề trên, đó là sử dụng thêm Refresh Token.
+
 ## refresh_tokens
 
 Hệ thống sẽ dùng JWT để xác thực người dùng. Vậy mỗi lần người dùng đăng nhập thành công thì sẽ tạo ra 1 JWT access token và 1 refresh token.
