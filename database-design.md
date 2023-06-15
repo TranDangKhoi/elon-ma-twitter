@@ -65,8 +65,6 @@ interface User {
 
 ## Flow xác thực người dùng với Access Token
 
-![https://duthanhduoc.com/images/2023/p3-giai-ngo-authentication-jwt/jwt-flow.jpg](https://duthanhduoc.com/images/2023/p3-giai-ngo-authentication-jwt/jwt-flow.jpg)
-
 1. Client gửi request vào tài nguyên được bảo vệ trên server. Nếu client chưa được xác thực, server trả về lỗi 401 Authorization. Client gửi username và password của họ cho server.
 
 2. Server xác minh thông tin xác thực được cung cấp so với cơ sở dữ liệu user. Nếu thông tin xác thực khớp, server tạo ra một JWT chứa payload là user_id (hoặc trường nào đó định danh người dùng). JWT này được gọi là Access Token.
