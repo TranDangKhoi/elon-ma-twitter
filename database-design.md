@@ -164,7 +164,7 @@ Vậy nên ta sẽ lưu trường `parent_id` để biết tweet này là con c�
 
 - `medias` là mảng chứa ObjectId của các media. Vì mỗi tweet chỉ có thể có 1 vài media. Nếu upload ảnh thì sẽ không upload được video và ngược lại. Vậy nên `medias` có thể là `Media[]`.
 
-- Bên twitter sẽ có rất là nhiều chỉ số để phân tích lượt tiếp cận của 1 tweet. Trong giới hạn của khóa học thì chúng ta chỉ phân tích lượt view thôi.
+- Bên twitter sẽ có rất là nhiều chỉ số để phân tích lượt tiếp cận của 1 tweet. Trong giới hạn khả năng thì chúng ta chỉ phân tích lượt view thôi.
 
   Lượt view thì chúng ta chia ra làm 2 loại là `guest_views` là số lượng lượt xem của tweet từ người dùng không đăng nhập và `user_views` là dành cho đã đăng nhập. 2 trường này mình sẽ cho kiểu dữ liệu là `number`.
 
@@ -189,7 +189,7 @@ interface Tweet {
 ```ts
 interface Media {
   url: string;
-  type: MediaType; // video, image
+  type: MediaType; // video, image để bên FE biết cách hiển thị sao cho đúng
 }
 enum MediaType {
   Image,
