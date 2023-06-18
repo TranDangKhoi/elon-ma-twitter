@@ -174,7 +174,7 @@ interface Tweet {
   audience: TweetAudience;
   content: string;
   parent_id: null | ObjectId; //  chỉ null khi tweet gốc
-  hashtags: ObjectId[];
+  hashtags: ObjectId[]; // Vì twitter không phân biệt hashtags viết chữ thường với hoa nên hashtags ta sẽ lưu ở dạng ObjectId[] chứ không phải string[]
   mentions: ObjectId[];
   medias: Media[];
   guest_views: number;
@@ -247,7 +247,7 @@ interface Tweet {
   audience: TweetAudience
   content: string
   parent_id: null | ObjectId //  chỉ null khi tweet gốc
-  ❌hashtags:string[] // Không nên nhúng như thế này, vì sẽ gây khó khăn trong việc tìm kiếm những tweet nào có hashtag này, cũng như là gây lặp lại dữ liệu về tên hastag
+  ❌hashtags:string[] // Không nên nhúng như thế này, vì sẽ gây khó khăn trong việc tìm kiếm những tweet nào có hashtag này, cũng như là gây lặp lại dữ liệu về tên hashtag
   mentions: ObjectId[]
   medias: Media[]
   guest_views: number
