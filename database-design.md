@@ -2,6 +2,10 @@
 
 ## Một số ghi chú nhỏ
 
+- Controllers dùng để thực hiện trả về data, status, ... là chủ yếu, còn việc handle logic thì nên để ở service.
+
+- Middleware thì chạy ở trong pipeline, tức là controller sẽ được chạy sau middlewares.
+
 - Tên collection nên được đặt theo dạng số nhiều, kiểu snake_case, ví dụ `users`, `refresh_tokens`
 
 - Tên field nên được đặt theo dạng snake_case, ví dụ `email_verify_token`, `forgot_password_token`
