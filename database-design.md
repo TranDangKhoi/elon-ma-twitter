@@ -2,7 +2,7 @@
 
 ## Một số ghi chú nhỏ
 
-- Controllers dùng để thực hiện trả về data, status, ... là chủ yếu, còn việc handle logic thì nên để ở service.
+- Controllers dùng để thực hiện handle logic rồi sau đó trả về data, status, ... là chủ yếu, nhưng code handle logic nên để ở services cho đỡ loạn.
 
 - Middleware thì chạy ở trong pipeline, tức là controller sẽ được chạy sau middlewares.
 
