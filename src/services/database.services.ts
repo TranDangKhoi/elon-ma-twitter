@@ -12,7 +12,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-class DatabaseService {
+class DatabaseServices {
   private client: MongoClient;
   private db: Db;
   constructor() {
@@ -35,5 +35,5 @@ class DatabaseService {
   }
 }
 
-const databaseService = new DatabaseService();
+const databaseService = new DatabaseServices();
 export default databaseService;
