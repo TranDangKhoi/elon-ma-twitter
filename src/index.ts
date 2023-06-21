@@ -6,6 +6,6 @@ app.use(express.json());
 app.use("/users", usersRouter);
 
 databaseService.connect().catch(console.dir);
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(9090, () => {
+  console.log("Server running on port 9090");
 });

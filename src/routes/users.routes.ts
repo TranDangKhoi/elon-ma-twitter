@@ -1,9 +1,23 @@
 import { Router } from "express";
+import { query } from "express-validator";
 import { loginController, registerController } from "~/controllers/users.controllers";
-import { loginValidator } from "~/middlewares/users.middleware";
+import { loginValidator, registerValidator } from "~/middlewares/users.middleware";
 
 const usersRouter = Router();
 
 usersRouter.post("/login", loginValidator, loginController);
-usersRouter.post("/register", registerController);
+/**
+ * Description: Register a new user
+ * Path: /register
+ * Method: POST
+ * Body: {
+ * name: string
+ * email: string,
+ * password: string
+ * confirm_password: string
+ * dob: ISO 8601
+ * }
+ */
+usersRouter.post("/signup", registerValidator, registerController);
+
 export default usersRouter;

@@ -1,7 +1,15 @@
 import { Request, Response } from "express";
-import User from "~/models/schemas/User.schema";
-import databaseService from "~/services/database.services";
+import { validationResult } from "express-validator";
 import usersServices from "~/services/users.services";
+
+// Validation chain - Sử dụng cho bản 6 cho xuống
+// export const testController = (req: Request, res: Response) => {
+//   const errors = validationResult(req);
+//   if (errors.isEmpty()) {
+//     return res.status(200).send(`Hello, ${req.query.name}`);
+//   }
+//   return res.status(400).send({ errors: errors.array() });
+// };
 
 export const loginController = (req: Request, res: Response) => {
   const { email, password } = req.body;
