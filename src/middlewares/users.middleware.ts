@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
-import { OptionalOptions } from "express-validator/src/chain";
 import { validate } from "~/utils/validation";
-import usersRouters from "../routes/users.routes";
-const currentDate = new Date();
 
 export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;

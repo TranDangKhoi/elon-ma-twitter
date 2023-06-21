@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
 import usersServices from "~/services/users.services";
 
-// Validation chain - Sử dụng cho bản 6 cho xuống
+// Validation chain - Sử dụng cho bản express-validator 6 cho xuống
 // export const testController = (req: Request, res: Response) => {
 //   const errors = validationResult(req);
 //   if (errors.isEmpty()) {
