@@ -24,9 +24,8 @@ export const loginController = (req: Request, res: Response) => {
 };
 
 export const registerController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
-  const { email, password } = req.body;
   try {
-    const result = await usersServices.register({ email, password });
+    const result = await usersServices.register(req.body);
     res.status(201).json({
       message: "Register successfully",
       result,

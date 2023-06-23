@@ -1,15 +1,11 @@
 import { ObjectId } from "mongodb";
+import { UserVerifyStatus } from "~/constants/enums";
 
-enum UserVerifyStatus {
-  Unverified,
-  Verified,
-  Banned,
-}
 type TUser = {
   _id?: ObjectId;
-  name?: string;
+  name: string;
   email: string;
-  date_of_birth?: Date;
+  date_of_birth: Date;
   password: string;
   created_at?: Date;
   updated_at?: Date;
@@ -53,7 +49,7 @@ export default class User {
     this.updated_at = user.updated_at || new Date();
     this.email_verify_token = user.email_verify_token || "";
     this.forgot_password_token = user.forgot_password_token || "";
-    this.verify = user.verify || UserVerifyStatus.Unverified;
+    this.verify = user.verify || UserVerifyStatus.UNVERIFIED;
     this.bio = user.bio || "";
     this.location = user.location || "";
     this.website = user.website || "";
