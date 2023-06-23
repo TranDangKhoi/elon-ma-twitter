@@ -1,5 +1,9 @@
 # Elon Ma Twitter
 
+## How I set up the project
+
+- Follow these steps in this repo: [Navigate to the repo](https://github.com/TranDangKhoi/nodejs-starter-kit-2/blob/main/README.md)
+
 ## Features
 
 - Authentication
