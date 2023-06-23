@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
+import usersServices from "~/services/users.services";
 import { validate } from "~/utils/validation";
 
 export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +14,22 @@ export const loginValidator = (req: Request, res: Response, next: NextFunction) 
 export const registerValidator = validate(
   checkSchema({
     name: { isString: true, notEmpty: true, trim: true, isLength: { options: { min: 1, max: 100 } } },
-    email: { isEmail: true, notEmpty: true, trim: true, isLength: { options: { min: 1, max: 150 } } },
+    email: {
+      isEmail: true,
+      notEmpty: true,
+      trim: true,
+      isLength: { options: { min: 1, max: 150 } },
+      custom: {
+        options: async (values) => {
+          const emailExisted = await usersServices.checkEmailExist(values);
+          if (emailExisted) {
+            throw new Error("Địa chỉ e-mail đã tồn tại, vui lòng sử dụng một e-mail khác");
+          }
+          return emailExisted;
+        },
+        errorMessage: "Địa chỉ e-mail đã tồn tại, vui lòng sử dụng một e-mail khác",
+      },
+    },
     password: {
       isString: true,
       notEmpty: true,

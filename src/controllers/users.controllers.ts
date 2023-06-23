@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { ParamsDictionary } from "express-serve-static-core";
+import { TSignUpReqBody } from "~/models/requests/User.requests";
 import usersServices from "~/services/users.services";
 
 // Validation chain - Sử dụng cho bản express-validator 6 cho xuống
@@ -21,7 +23,7 @@ export const loginController = (req: Request, res: Response) => {
   });
 };
 
-export const registerController = async (req: Request, res: Response) => {
+export const registerController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
   const { email, password } = req.body;
   try {
     const result = await usersServices.register({ email, password });
