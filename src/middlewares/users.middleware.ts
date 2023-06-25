@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
+import { ErrorWithStatus } from "~/models/Errors";
 import usersServices from "~/services/users.services";
 import { validate } from "~/utils/validation";
 
@@ -27,7 +28,6 @@ export const registerValidator = validate(
           }
           return emailExisted;
         },
-        errorMessage: "Địa chỉ e-mail đã tồn tại, vui lòng sử dụng một e-mail khác",
       },
     },
     password: {
