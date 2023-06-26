@@ -5,9 +5,6 @@ type TError = Record<
   string,
   {
     msg: string;
-    location: string;
-    value: any;
-    path: string;
     [key: string]: any;
   }
 >;
@@ -21,7 +18,7 @@ export class ErrorWithStatus {
   }
 }
 
-export class EntityError extends ErrorWithStatus {
+export class UnprocessableEntityError extends ErrorWithStatus {
   errors: TError;
   constructor({ message = UserMessage.VALIDATION_ERROR, errors }: { message?: string; errors: TError }) {
     super({ message, status: HttpStatusCode.UNPROCESSABLE_ENTITY });

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
-import { ErrorWithStatus } from "~/models/Errors";
+import { UserMessage } from "~/constants/messages.enum";
 import usersServices from "~/services/users.services";
 import { validate } from "~/utils/validation";
 
@@ -14,30 +14,41 @@ export const loginValidator = (req: Request, res: Response, next: NextFunction) 
 
 export const registerValidator = validate(
   checkSchema({
-    name: { isString: true, notEmpty: true, trim: true, isLength: { options: { min: 1, max: 100 } } },
-    email: {
-      isEmail: true,
-      notEmpty: true,
+    name: {
+      isString: true,
+      notEmpty: {
+        errorMessage: UserMessage.NAME_IS_REQUIRED,
+      },
       trim: true,
-      isLength: { options: { min: 1, max: 150 } },
+      isLength: { options: { min: 1, max: 100 }, errorMessage: UserMessage.NAME_LENGTH_IS_INVALID },
+    },
+    email: {
+      isEmail: {
+        errorMessage: UserMessage.EMAIL_IS_INVALID,
+      },
+      notEmpty: {
+        errorMessage: UserMessage.EMAIL_IS_REQUIRED,
+      },
+      trim: true,
       custom: {
         options: async (values) => {
           const emailExisted = await usersServices.checkEmailExist(values);
           if (emailExisted) {
-            throw new Error("Địa chỉ e-mail đã tồn tại, vui lòng sử dụng một e-mail khác");
+            throw new Error(UserMessage.EMAIL_ALREADY_EXISTS);
           }
-          return emailExisted;
+          return true;
         },
       },
     },
     password: {
       isString: true,
-      notEmpty: true,
+      notEmpty: {
+        errorMessage: UserMessage.PASSWORD_IS_REQUIRED,
+      },
       trim: true,
-      isLength: { options: { min: 6, max: 50 } },
+      isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.PASSWORD_LENGTH_INVALID },
       isStrongPassword: {
-        errorMessage:
-          "Mật khẩu cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
+        errorMessage: UserMessage.PASSWORD_MUST_BE_STRONG,
         options: {
           minLength: 6,
           minLowercase: 1,
@@ -49,12 +60,11 @@ export const registerValidator = validate(
     },
     confirm_password: {
       isString: true,
-      notEmpty: true,
+      notEmpty: { errorMessage: UserMessage.CONFIRM_PASSWORD_IS_REQUIRED },
       trim: true,
-      isLength: { options: { min: 6, max: 50 } },
+      isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
       isStrongPassword: {
-        errorMessage:
-          "Mật khẩu cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
+        errorMessage: UserMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
         options: {
           minLength: 6,
           minLowercase: 1,
@@ -66,7 +76,7 @@ export const registerValidator = validate(
       custom: {
         options: (value, { req }) => {
           if (value !== req.body.password) {
-            throw new Error("Mật khẩu xác thực không khớp");
+            throw new Error(UserMessage.CONFIRM_PASSWORD_INVALID);
           }
           return true;
         },

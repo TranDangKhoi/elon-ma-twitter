@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { omit } from "lodash";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 
 export const defaultErrorHandler = (
@@ -7,7 +8,5 @@ export const defaultErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  res.status(err.status || HttpStatusCode.INTERNAL_SERVER).json({
-    message: err.message,
-  });
+  res.status(err.status || HttpStatusCode.INTERNAL_SERVER).json(omit(err, ["status"]));
 };
