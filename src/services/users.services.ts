@@ -28,7 +28,17 @@ class UsersServices {
       },
     });
   }
-  async register(payload: TSignUpReqBody) {
+  private async handleAccessAndRefreshToken(user_id: string) {
+    return Promise.all([
+      this.signAccessToken(user_id).catch(this.onReject),
+      this.signRefreshToken(user_id).catch(this.onReject),
+    ]);
+  }
+  async signIn(user_id: string) {
+    const [access_token, refresh_token] = await this.handleAccessAndRefreshToken(user_id as string);
+    return { access_token, refresh_token };
+  }
+  async signUp(payload: TSignUpReqBody) {
     const newUser = await databaseService.users.insertOne(
       new User({
         ...payload,
@@ -37,10 +47,7 @@ class UsersServices {
       }),
     );
     const user_id = newUser.insertedId.toString();
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id).catch(this.onReject),
-      this.signRefreshToken(user_id).catch(this.onReject),
-    ]);
+    const [access_token, refresh_token] = await this.handleAccessAndRefreshToken(user_id);
     if (access_token instanceof Error) {
       console.log(access_token);
     }
@@ -54,6 +61,11 @@ class UsersServices {
   }
   async checkEmailExist(email: string) {
     const user = await databaseService.users.findOne({ email });
+    return Boolean(user);
+  }
+
+  async checkPassword(password: string) {
+    const user = await databaseService.users.findOne({ password: hashPassword(password) });
     return Boolean(user);
   }
 }

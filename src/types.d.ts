@@ -1,3 +1,5 @@
+import User from "./models/schemas/User.schema";
+
 export {};
 declare global {
   namespace NodeJS {
@@ -10,5 +12,11 @@ declare global {
       ACCESS_TOKEN_EXPIRES_IN: string;
       REFRESH_TOKEN_EXPIRES_IN: string;
     }
+  }
+}
+
+declare module "express" {
+  interface Request {
+    user?: User;
   }
 }

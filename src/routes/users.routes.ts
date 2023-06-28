@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { query } from "express-validator";
-import { loginController, registerController } from "~/controllers/users.controllers";
-import { loginValidator, registerValidator } from "~/middlewares/users.middleware";
+import { loginController as signInController, registerController } from "~/controllers/users.controllers";
+import { loginValidator as signInValidator, registerValidator } from "~/middlewares/users.middleware";
 import { wrapRequestHandler } from "~/utils/handlers";
 
 const usersRouter = Router();
 
-usersRouter.post("/login", loginValidator, loginController);
+usersRouter.post("/signin", signInValidator, wrapRequestHandler(signInController));
 /**
  * Description: Register a new user
  * Path: /register
