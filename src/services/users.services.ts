@@ -6,7 +6,9 @@ import { signToken } from "~/utils/jwt";
 import { TokenType } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
+import { config } from "dotenv";
 
+config();
 class UsersServices {
   private onReject(err: any) {
     console.log(err);
