@@ -4,6 +4,8 @@ import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
 import { signToken } from "~/utils/jwt";
 import { TokenType } from "~/constants/enums";
+import RefreshToken from "~/models/schemas/RefreshToken.schema";
+import { ObjectId } from "mongodb";
 
 class UsersServices {
   private onReject(err: any) {
@@ -28,14 +30,17 @@ class UsersServices {
       },
     });
   }
-  private async handleAccessAndRefreshToken(user_id: string) {
+  private async returnAccessAndRefreshToken(user_id: string) {
     return Promise.all([
       this.signAccessToken(user_id).catch(this.onReject),
       this.signRefreshToken(user_id).catch(this.onReject),
     ]);
   }
   async signIn(user_id: string) {
-    const [access_token, refresh_token] = await this.handleAccessAndRefreshToken(user_id as string);
+    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken(user_id as string);
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
+    );
     return { access_token, refresh_token };
   }
   async signUp(payload: TSignUpReqBody) {
@@ -47,13 +52,16 @@ class UsersServices {
       }),
     );
     const user_id = newUser.insertedId.toString();
-    const [access_token, refresh_token] = await this.handleAccessAndRefreshToken(user_id);
+    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken(user_id);
     if (access_token instanceof Error) {
       console.log(access_token);
     }
     if (refresh_token instanceof Error) {
       console.log(refresh_token);
     }
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
+    );
     return {
       access_token,
       refresh_token,
