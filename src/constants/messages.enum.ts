@@ -1,4 +1,4 @@
-export enum UserMessage {
+export enum ValidationMessage {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   ACCESS_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token)",
