@@ -33,7 +33,7 @@ class UsersServices {
     });
   }
   private async returnAccessAndRefreshToken(user_id: string) {
-    return Promise.all([
+    return await Promise.all([
       this.signAccessToken(user_id).catch(this.onReject),
       this.signRefreshToken(user_id).catch(this.onReject),
     ]);
@@ -67,6 +67,12 @@ class UsersServices {
     return {
       access_token,
       refresh_token,
+    };
+  }
+  async signOut(refresh_token: string) {
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token });
+    return {
+      message: "Đăng xuất thành công",
     };
   }
   async checkEmailExist(email: string) {

@@ -1,6 +1,7 @@
+import { Request } from "express";
 import { checkSchema } from "express-validator";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { UserMessage } from "~/constants/messages.enum";
+import { ValidationMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
@@ -13,10 +14,10 @@ export const loginValidator = validate(
     {
       email: {
         isEmail: {
-          errorMessage: UserMessage.EMAIL_IS_INVALID,
+          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
         },
         notEmpty: {
-          errorMessage: UserMessage.EMAIL_IS_REQUIRED,
+          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
         },
         trim: true,
         custom: {
@@ -26,7 +27,7 @@ export const loginValidator = validate(
               password: hashPassword(req.body.password),
             });
             if (user === null) {
-              throw new Error(UserMessage.EMAIL_OR_PASSWORD_IS_INCORRECT);
+              throw new Error(ValidationMessage.EMAIL_OR_PASSWORD_IS_INCORRECT);
             }
             req.user = user;
             return true;
@@ -36,12 +37,12 @@ export const loginValidator = validate(
       password: {
         isString: true,
         notEmpty: {
-          errorMessage: UserMessage.PASSWORD_IS_REQUIRED,
+          errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
         },
         trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.PASSWORD_LENGTH_INVALID },
+        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
         isStrongPassword: {
-          errorMessage: UserMessage.PASSWORD_MUST_BE_STRONG,
+          errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
           options: {
             minLength: 6,
             minLowercase: 1,
@@ -62,24 +63,24 @@ export const registerValidator = validate(
       name: {
         isString: true,
         notEmpty: {
-          errorMessage: UserMessage.NAME_IS_REQUIRED,
+          errorMessage: ValidationMessage.NAME_IS_REQUIRED,
         },
         trim: true,
-        isLength: { options: { min: 1, max: 100 }, errorMessage: UserMessage.NAME_LENGTH_IS_INVALID },
+        isLength: { options: { min: 1, max: 100 }, errorMessage: ValidationMessage.NAME_LENGTH_IS_INVALID },
       },
       email: {
         isEmail: {
-          errorMessage: UserMessage.EMAIL_IS_INVALID,
+          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
         },
         notEmpty: {
-          errorMessage: UserMessage.EMAIL_IS_REQUIRED,
+          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
         },
         trim: true,
         custom: {
           options: async (values) => {
             const emailExisted = await usersServices.checkEmailExist(values);
             if (emailExisted) {
-              throw new Error(UserMessage.EMAIL_ALREADY_EXISTS);
+              throw new Error(ValidationMessage.EMAIL_ALREADY_EXISTS);
             }
             return true;
           },
@@ -88,12 +89,12 @@ export const registerValidator = validate(
       password: {
         isString: true,
         notEmpty: {
-          errorMessage: UserMessage.PASSWORD_IS_REQUIRED,
+          errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
         },
         trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.PASSWORD_LENGTH_INVALID },
+        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
         isStrongPassword: {
-          errorMessage: UserMessage.PASSWORD_MUST_BE_STRONG,
+          errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
           options: {
             minLength: 6,
             minLowercase: 1,
@@ -105,11 +106,11 @@ export const registerValidator = validate(
       },
       confirm_password: {
         isString: true,
-        notEmpty: { errorMessage: UserMessage.CONFIRM_PASSWORD_IS_REQUIRED },
+        notEmpty: { errorMessage: ValidationMessage.CONFIRM_PASSWORD_IS_REQUIRED },
         trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
+        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
         isStrongPassword: {
-          errorMessage: UserMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
+          errorMessage: ValidationMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
           options: {
             minLength: 6,
             minLowercase: 1,
@@ -121,7 +122,7 @@ export const registerValidator = validate(
         custom: {
           options: (value, { req }) => {
             if (value !== req.body.password) {
-              throw new Error(UserMessage.CONFIRM_PASSWORD_INVALID);
+              throw new Error(ValidationMessage.CONFIRM_PASSWORD_INVALID);
             }
             return true;
           },
@@ -136,7 +137,7 @@ export const registerValidator = validate(
   ),
 );
 
-export const signOutValidator = validate(
+export const accessTokenValidator = validate(
   checkSchema(
     {
       authorization: {
@@ -145,15 +146,58 @@ export const signOutValidator = validate(
             const access_token = value.split(" ")[1];
             const auth_type = value.split(" ")[0];
             if (!access_token || auth_type !== "Bearer") {
-              throw new ErrorWithStatus({ message: UserMessage.TOKEN_INVALID, status: HttpStatusCode.UNAUTHORIZED });
+              throw new ErrorWithStatus({
+                message: ValidationMessage.ACCESS_TOKEN_INVALID,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
             }
-            const decoded_token = await verifyToken({ token: access_token });
-            req.decoded_token = decoded_token;
+            try {
+              const decoded_access_token = await verifyToken({ token: access_token });
+              (req as Request).decoded_access_token = decoded_access_token;
+            } catch (err) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.ACCESS_TOKEN_INVALID,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
             return true;
           },
         },
       },
     },
     ["headers"],
+  ),
+);
+
+export const refreshTokenValidator = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        custom: {
+          options: async (value, { req }) => {
+            try {
+              const [decoded_refresh_token, found_refresh_token] = await Promise.all([
+                verifyToken({ token: value }),
+                databaseService.refreshTokens.findOne({ token: value }),
+              ]);
+              if (!found_refresh_token) {
+                throw new ErrorWithStatus({
+                  message: ValidationMessage.REFRESH_TOKEN_INVALID,
+                  status: HttpStatusCode.UNAUTHORIZED,
+                });
+              }
+              (req as Request).decoded_refresh_token = decoded_refresh_token;
+              return true;
+            } catch (err) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.REFRESH_TOKEN_INVALID,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
+          },
+        },
+      },
+    },
+    ["body"],
   ),
 );

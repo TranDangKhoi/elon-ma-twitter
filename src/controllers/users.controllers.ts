@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
-import { TSignUpReqBody } from "~/models/requests/User.requests";
+import { TSignOutReqBody, TSignUpReqBody } from "~/models/requests/User.requests";
 import usersServices from "~/services/users.services";
 
 // Validation chain - Sử dụng cho bản express-validator 6 cho xuống
@@ -31,11 +31,9 @@ export const signUpController = async (req: Request<ParamsDictionary, any, TSign
   });
 };
 
-export const signOutController = async (
-  req: Request<ParamsDictionary, any, { refresh_token: string }>,
-  res: Response,
-) => {
-  res.status(201).json({
-    message: "Đăng xuất thành công",
-  });
+export const signOutController = async (req: Request<ParamsDictionary, any, TSignOutReqBody>, res: Response) => {
+  const { refresh_token } = req.body;
+  const { decoded_refresh_token } = req;
+  const result = await usersServices.signOut(refresh_token);
+  res.status(201).json(result);
 };
