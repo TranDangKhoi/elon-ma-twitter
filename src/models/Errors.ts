@@ -25,3 +25,7 @@ export class UnprocessableEntityError extends ErrorWithStatus {
     this.errors = errors;
   }
 }
+
+export class UnauthorizedError extends ErrorWithStatus {
+  // errors: TError;
+}

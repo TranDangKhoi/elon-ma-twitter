@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
 import { TSignUpReqBody } from "~/models/requests/User.requests";
@@ -13,7 +13,7 @@ import usersServices from "~/services/users.services";
 //   return res.status(400).send({ errors: errors.array() });
 // };
 
-export const loginController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+export const signInController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const { user } = req;
   const userId = user?._id as ObjectId;
   const result = await usersServices.signIn(userId.toString());
@@ -23,10 +23,19 @@ export const loginController = async (req: Request<ParamsDictionary, any, any>, 
   });
 };
 
-export const registerController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
+export const signUpController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
   const result = await usersServices.signUp(req.body);
   res.status(201).json({
     message: "Đăng ký thành công",
     result,
+  });
+};
+
+export const signOutController = async (
+  req: Request<ParamsDictionary, any, { refresh_token: string }>,
+  res: Response,
+) => {
+  res.status(201).json({
+    message: "Đăng xuất thành công",
   });
 };

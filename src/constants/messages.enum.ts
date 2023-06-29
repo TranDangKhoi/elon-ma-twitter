@@ -1,5 +1,6 @@
 export enum UserMessage {
   VALIDATION_ERROR = "VALIDATION_ERROR",
+  TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau!",
   EMAIL_OR_PASSWORD_IS_INCORRECT = "E-mail hoặc mật khẩu không chính xác",
   NAME_IS_REQUIRED = "Không được để trống tên người dùng",
   NAME_LENGTH_IS_INVALID = "Tên người dùng phải có độ dài từ 1 đến 100 ký tự",
