@@ -20,6 +20,7 @@
   - Upload images
   - Upload videos
   - Upload GIFs
+  - Streaming Video (HLS Streaming)
 
 - Tweet
   - Create tweet
