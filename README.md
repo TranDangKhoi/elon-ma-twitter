@@ -34,8 +34,10 @@
 
 - Programming Language: Typescript
 - Framework: Express
+- Validations: Express Validator
 - Database: MongoDB
 - Authentication: JWT & OAuth 2.0 (Google)
+- Image Convertion: Sharp
 - Websocket: Socket.io
 - TypeODM: MongoDB Driver (I know it's not an ORM, but i don't want to use neither Mongoose nor Prisma)
 - Deployment: AWS, Docker
