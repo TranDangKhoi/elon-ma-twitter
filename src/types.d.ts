@@ -9,7 +9,9 @@ declare global {
       CLOUD_DB_USERNAME: string;
       CLOUD_DB_PASSWORD: string;
       PASSWORD_SECRET: string;
-      JWT_SECRET: string;
+      JWT_SECRET_ACCESS_TOKEN: string;
+      JWT_SECRET_REFRESH_TOKEN: string;
+      JWT_SECRET_EMAIL_VERIFY_TOKEN: string;
       ACCESS_TOKEN_EXPIRES_IN: string;
       REFRESH_TOKEN_EXPIRES_IN: string;
     }

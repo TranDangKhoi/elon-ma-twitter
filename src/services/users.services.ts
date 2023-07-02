@@ -17,6 +17,7 @@ class UsersServices {
   private signAccessToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.ACCESS_TOKEN },
+      privateKey: process.env.JWT_SECRET_ACCESS_TOKEN,
       options: {
         algorithm: "HS256",
         expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
@@ -26,6 +27,7 @@ class UsersServices {
   private signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.REFRESH_TOKEN },
+      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN,
       options: {
         algorithm: "HS256",
         expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,

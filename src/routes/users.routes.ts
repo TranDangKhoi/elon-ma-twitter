@@ -17,5 +17,6 @@ const usersRouter = Router();
 usersRouter.post("/signin", signInValidator, wrapRequestHandler(signInController));
 usersRouter.post("/signup", registerValidator, wrapRequestHandler(signUpController));
 usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRequestHandler(signOutController));
-
+usersRouter.post("/refresh-token");
+usersRouter.post("/verify-email");
 export default usersRouter;
