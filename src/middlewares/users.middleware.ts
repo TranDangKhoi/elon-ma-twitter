@@ -143,7 +143,7 @@ export const accessTokenValidator = validate(
       authorization: {
         custom: {
           options: async (value, { req }) => {
-            const access_token = value.split(" ")[1];
+            const access_token = (value || "").split(" ")[1];
             const auth_type = value.split(" ")[0];
             if (!access_token || auth_type !== "Bearer") {
               throw new ErrorWithStatus({
@@ -176,8 +176,15 @@ export const refreshTokenValidator = validate(
   checkSchema(
     {
       refresh_token: {
+        trim: true,
         custom: {
           options: async (value, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.REFRESH_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
             try {
               const [decoded_refresh_token, found_refresh_token] = await Promise.all([
                 verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN }),
@@ -203,4 +210,38 @@ export const refreshTokenValidator = validate(
     },
     ["body"],
   ),
+);
+
+export const emailVerifyTokenValidator = validate(
+  checkSchema({
+    email_verify_token: {
+      trim: true,
+      custom: {
+        options: async (value, { req }) => {
+          if (!value) {
+            throw new ErrorWithStatus({
+              message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+              status: HttpStatusCode.UNAUTHORIZED,
+            });
+          }
+          // const [decoded_email_verify_token, found_email_verify_token] = await Promise.all([
+          //   verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN }),
+          //   databaseService.refreshTokens.findOne({ token: value }),
+          // ]);
+          const decoded_email_verify_token = await verifyToken({
+            token: value,
+            secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
+          });
+          // if (!found_email_verify_token) {
+          //   throw new ErrorWithStatus({
+          //     message: ValidationMessage.EMAIL_VERIFY_TOKEN_INVALID,
+          //     status: HttpStatusCode.UNAUTHORIZED,
+          //   });
+          // }
+          (req as Request).decoded_email_verify_token = decoded_email_verify_token;
+          return true;
+        },
+      },
+    },
+  }),
 );

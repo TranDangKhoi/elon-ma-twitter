@@ -14,6 +14,7 @@ declare global {
       JWT_SECRET_EMAIL_VERIFY_TOKEN: string;
       ACCESS_TOKEN_EXPIRES_IN: string;
       REFRESH_TOKEN_EXPIRES_IN: string;
+      EMAIL_VERIFY_TOKEN_EXPIRES_IN: string;
     }
   }
 }
@@ -23,5 +24,6 @@ declare module "express" {
     user?: User;
     decoded_access_token?: TokenPayload;
     decoded_refresh_token?: TokenPayload;
+    decoded_email_verify_token?: TokenPayload;
   }
 }
