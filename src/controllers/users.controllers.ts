@@ -48,7 +48,7 @@ export const emailVerifyController = async (
   const { email_verify_token } = req.body;
   const { user_id } = req.decoded_email_verify_token as TokenPayload;
   // Id của user trong MongoDB sẽ được indexed, nên để tối ưu nhất thì nên find theo ID (sẽ giải thích thêm sau)
-  const user = await databaseService.users.findOne({ _id: new ObjectId(email_verify_token) });
+  const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
   // Nếu không tìm thấy user dựa theo id
   if (!user) {
     return res.status(HttpStatusCode.NOT_FOUND).json({

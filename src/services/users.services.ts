@@ -3,7 +3,7 @@ import User from "~/models/schemas/User.schema";
 import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
 import { signToken } from "~/utils/jwt";
-import { TokenType } from "~/constants/enums";
+import { TokenType, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
 import { config } from "dotenv";
@@ -107,7 +107,7 @@ class UsersServices {
       this.returnAccessAndRefreshToken(user_id),
       await databaseService.users.updateOne(
         { _id: new ObjectId(user_id) },
-        { $set: { email_verify_token: "", updated_at: new Date() } },
+        { $set: { email_verify_token: "", updated_at: new Date(), verify: UserVerifyStatus.VERIFIED } },
       ),
     ]);
     const [access_token, refresh_token] = token;

@@ -218,28 +218,30 @@ export const emailVerifyTokenValidator = validate(
       trim: true,
       custom: {
         options: async (value, { req }) => {
-          if (!value) {
+          try {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
+            // const [decoded_email_verify_token, found_email_verify_token] = await Promise.all([
+            //   verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN }),
+            //   databaseService.refreshTokens.findOne({ token: value }),
+            // ]);
+            const decoded_email_verify_token = await verifyToken({
+              token: value,
+              secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
+            });
+
+            (req as Request).decoded_email_verify_token = decoded_email_verify_token;
+            return true;
+          } catch (err) {
             throw new ErrorWithStatus({
-              message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+              message: ValidationMessage.EMAIL_VERIFY_TOKEN_INVALID,
               status: HttpStatusCode.UNAUTHORIZED,
             });
           }
-          // const [decoded_email_verify_token, found_email_verify_token] = await Promise.all([
-          //   verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN }),
-          //   databaseService.refreshTokens.findOne({ token: value }),
-          // ]);
-          const decoded_email_verify_token = await verifyToken({
-            token: value,
-            secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
-          });
-          // if (!found_email_verify_token) {
-          //   throw new ErrorWithStatus({
-          //     message: ValidationMessage.EMAIL_VERIFY_TOKEN_INVALID,
-          //     status: HttpStatusCode.UNAUTHORIZED,
-          //   });
-          // }
-          (req as Request).decoded_email_verify_token = decoded_email_verify_token;
-          return true;
         },
       },
     },
