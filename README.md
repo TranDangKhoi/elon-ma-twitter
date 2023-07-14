@@ -20,7 +20,7 @@
   - Upload images
   - Upload videos
   - Upload GIFs
-  - Streaming Video (HLS Streaming)
+  - Streaming Video (HLS Streaming), i will also create a client demo for this feature
 
 - Tweet
   - Create tweet
