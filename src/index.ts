@@ -4,7 +4,7 @@ import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import databaseService from "./services/database.services";
 databaseService.connect().catch(console.dir);
 const app = express();
-const port = 9090;
+const port = 8080;
 app.use(express.json());
 app.use("/users", usersRouter);
 app.use(defaultErrorHandler);

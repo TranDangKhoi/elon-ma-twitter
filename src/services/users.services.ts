@@ -105,10 +105,11 @@ class UsersServices {
   async verifyEmail(user_id: string) {
     const [token] = await Promise.all([
       this.returnAccessAndRefreshToken(user_id),
-      await databaseService.users.updateOne(
-        { _id: new ObjectId(user_id) },
-        { $set: { email_verify_token: "", updated_at: new Date(), verify: UserVerifyStatus.VERIFIED } },
-      ),
+      await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+        {
+          $set: { email_verify_token: "", verify: UserVerifyStatus.VERIFIED, updated_at: "$$NOW" },
+        },
+      ]),
     ]);
     const [access_token, refresh_token] = token;
     console.log(access_token, refresh_token);
