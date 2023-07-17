@@ -21,4 +21,5 @@ usersRouter.post("/signup", registerValidator, wrapRequestHandler(signUpControll
 usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRequestHandler(signOutController));
 usersRouter.post("/refresh-token");
 usersRouter.post("/verify-email", emailVerifyTokenValidator, wrapRequestHandler(emailVerifyController));
+usersRouter.post("/resend-verify-email", accessTokenValidator, wrapRequestHandler(emailVerifyController));
 export default usersRouter;

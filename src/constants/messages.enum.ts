@@ -1,5 +1,6 @@
 export enum ValidationMessage {
   VALIDATION_ERROR = "VALIDATION_ERROR",
+  USER_NOT_FOUND = "Không tìm thấy người dùng",
   ACCESS_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token)",
   REFRESH_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống refresh token)",
