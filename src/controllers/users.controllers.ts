@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
-import { TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
+import { TLoginReqBody, TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
 
@@ -17,7 +17,7 @@ import usersServices from "~/services/users.services";
 //   return res.status(400).send({ errors: errors.array() });
 // };
 
-export const signInController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+export const signInController = async (req: Request<ParamsDictionary, any, TLoginReqBody>, res: Response) => {
   const { user } = req;
   const userId = user?._id as ObjectId;
   const result = await usersServices.signIn(userId.toString());
@@ -42,7 +42,7 @@ export const signOutController = async (req: Request<ParamsDictionary, any, TSig
   res.status(HttpStatusCode.CREATED).json(result);
 };
 
-export const emailVerifyController = async (
+export const verifyEmailController = async (
   req: Request<ParamsDictionary, any, { email_verify_token: string }>,
   res: Response,
 ) => {
@@ -83,9 +83,9 @@ export const resendVerifyEmailController = async (req: Request<ParamsDictionary,
       message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
     });
   }
-  await usersServices.resendVerifyEmail(user_id);
+  const result = await usersServices.resendVerifyEmail(user_id);
   return res.status(HttpStatusCode.OK).json({
     message: "Gửi lại email xác thực thành công",
-    result: user,
+    result,
   });
 };

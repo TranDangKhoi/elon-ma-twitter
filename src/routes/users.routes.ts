@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
-  emailVerifyController,
+  verifyEmailController,
+  resendVerifyEmailController,
   signInController as signInController,
   signOutController,
   signUpController,
@@ -20,6 +21,6 @@ usersRouter.post("/signin", signInValidator, wrapRequestHandler(signInController
 usersRouter.post("/signup", registerValidator, wrapRequestHandler(signUpController));
 usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRequestHandler(signOutController));
 usersRouter.post("/refresh-token");
-usersRouter.post("/verify-email", emailVerifyTokenValidator, wrapRequestHandler(emailVerifyController));
-usersRouter.post("/resend-verify-email", accessTokenValidator, wrapRequestHandler(emailVerifyController));
+usersRouter.post("/verify-email", emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController));
+usersRouter.post("/resend-verify-email", accessTokenValidator, wrapRequestHandler(resendVerifyEmailController));
 export default usersRouter;

@@ -1,6 +1,11 @@
 import { JwtPayload } from "jsonwebtoken";
 import { TokenType } from "~/constants/enums";
 
+export type TLoginReqBody = {
+  email: string;
+  password: string;
+};
+
 export type TSignUpReqBody = {
   name: string;
   email: string;
