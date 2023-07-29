@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
+import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
-import { TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
+import { TLoginReqBody, TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
 
@@ -16,7 +17,7 @@ import usersServices from "~/services/users.services";
 //   return res.status(400).send({ errors: errors.array() });
 // };
 
-export const signInController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+export const signInController = async (req: Request<ParamsDictionary, any, TLoginReqBody>, res: Response) => {
   const { user } = req;
   const userId = user?._id as ObjectId;
   const result = await usersServices.signIn(userId.toString());
@@ -41,11 +42,11 @@ export const signOutController = async (req: Request<ParamsDictionary, any, TSig
   res.status(HttpStatusCode.CREATED).json(result);
 };
 
-export const emailVerifyController = async (
+export const verifyEmailController = async (
   req: Request<ParamsDictionary, any, { email_verify_token: string }>,
   res: Response,
 ) => {
-  const { email_verify_token } = req.body;
+  // const { email_verify_token } = req.body;
   const { user_id } = req.decoded_email_verify_token as TokenPayload;
   // Id của user trong MongoDB sẽ được indexed, nên để tối ưu nhất thì nên find theo ID (sẽ giải thích thêm sau)
   const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
@@ -69,11 +70,22 @@ export const emailVerifyController = async (
   });
 };
 
-export const resendVerifyEmailController = async (req: Request, res: Response) => {
-  // const { user } = req;
-  // const result = await usersServices.resendVerifyEmail(user._id);
-  res.status(HttpStatusCode.OK).json({
+export const resendVerifyEmailController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const { user_id } = req.decoded_access_token as TokenPayload;
+  const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
+  if (!user) {
+    return res.status(HttpStatusCode.NOT_FOUND).json({
+      message: ValidationMessage.USER_NOT_FOUND,
+    });
+  }
+  if (user.verify === UserVerifyStatus.VERIFIED) {
+    return res.status(HttpStatusCode.OK).json({
+      message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
+    });
+  }
+  const result = await usersServices.resendVerifyEmail(user_id);
+  return res.status(HttpStatusCode.OK).json({
     message: "Gửi lại email xác thực thành công",
-    // result,
+    result,
   });
 };

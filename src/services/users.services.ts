@@ -14,6 +14,7 @@ class UsersServices {
     console.log(err);
     return err;
   }
+
   private signAccessToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.ACCESS_TOKEN },
@@ -24,6 +25,7 @@ class UsersServices {
       },
     });
   }
+
   private signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.REFRESH_TOKEN },
@@ -34,6 +36,7 @@ class UsersServices {
       },
     });
   }
+
   private async signEmailVerifyToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.EMAIL_VERIFY_TOKEN },
@@ -44,12 +47,14 @@ class UsersServices {
       },
     });
   }
+
   private async returnAccessAndRefreshToken(user_id: string) {
     return await Promise.all([
       this.signAccessToken(user_id).catch(this.onReject),
       this.signRefreshToken(user_id).catch(this.onReject),
     ]);
   }
+
   async signIn(user_id: string) {
     const [access_token, refresh_token] = await this.returnAccessAndRefreshToken(user_id as string);
     await databaseService.refreshTokens.insertOne(
@@ -57,6 +62,7 @@ class UsersServices {
     );
     return { access_token, refresh_token };
   }
+
   async signUp(payload: TSignUpReqBody) {
     const _id = new ObjectId();
     const user_id = _id.toString();
@@ -86,12 +92,14 @@ class UsersServices {
       refresh_token,
     };
   }
+
   async signOut(refresh_token: string) {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token });
     return {
       message: "Đăng xuất thành công",
     };
   }
+
   async checkEmailExist(email: string) {
     const user = await databaseService.users.findOne({ email });
     return Boolean(user);
@@ -100,6 +108,15 @@ class UsersServices {
   async checkPassword(password: string) {
     const user = await databaseService.users.findOne({ password: hashPassword(password) });
     return Boolean(user);
+  }
+
+  async resendVerifyEmail(user_id: string) {
+    const email_verify_token = await this.signEmailVerifyToken(user_id);
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: { email_verify_token, updated_at: "$$NOW" },
+      },
+    ]);
   }
 
   async verifyEmail(user_id: string) {
