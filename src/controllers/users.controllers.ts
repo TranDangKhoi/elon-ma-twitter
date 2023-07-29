@@ -68,3 +68,12 @@ export const emailVerifyController = async (
     result,
   });
 };
+
+export const resendVerifyEmailController = async (req: Request, res: Response) => {
+  // const { user } = req;
+  // const result = await usersServices.resendVerifyEmail(user._id);
+  res.status(HttpStatusCode.OK).json({
+    message: "Gửi lại email xác thực thành công",
+    // result,
+  });
+};
