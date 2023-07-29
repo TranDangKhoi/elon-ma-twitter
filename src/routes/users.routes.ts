@@ -5,6 +5,7 @@ import {
   signInController as signInController,
   signOutController,
   signUpController,
+  forgotPasswordController,
 } from "~/controllers/users.controllers";
 import {
   loginValidator as signInValidator,
@@ -12,6 +13,7 @@ import {
   accessTokenValidator,
   refreshTokenValidator,
   emailVerifyTokenValidator,
+  forgotPasswordValidator,
 } from "~/middlewares/users.middleware";
 import { wrapRequestHandler } from "~/utils/handlers";
 
@@ -23,4 +25,5 @@ usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRe
 usersRouter.post("/refresh-token");
 usersRouter.post("/verify-email", emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController));
 usersRouter.post("/resend-verify-email", accessTokenValidator, wrapRequestHandler(resendVerifyEmailController));
+usersRouter.post("/forgot-password", forgotPasswordValidator, wrapRequestHandler(forgotPasswordController));
 export default usersRouter;

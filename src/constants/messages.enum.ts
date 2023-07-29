@@ -13,6 +13,7 @@ export enum ValidationMessage {
   EMAIL_IS_REQUIRED = "Không được để trống địa chỉ e-mail",
   EMAIL_IS_INVALID = "Địa chỉ e-mail không hợp lệ",
   EMAIL_ALREADY_EXISTS = "Địa chỉ e-mail đã tồn tại, vui lòng sử dụng một e-mail khác",
+  EMAIL_DOES_NOT_EXIST = "Địa chỉ e-mail không tồn tại, vui lòng kiểm tra lại",
   PASSWORD_IS_REQUIRED = "Không được để trống mật khẩu",
   PASSWORD_LENGTH_INVALID = "Mật khẩu phải có độ dài từ 6 đến 50 ký tự",
   PASSWORD_MUST_BE_STRONG = "Mật khẩu cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",

@@ -247,3 +247,29 @@ export const emailVerifyTokenValidator = validate(
     },
   }),
 );
+
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        isEmail: {
+          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
+        },
+        notEmpty: {
+          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
+        },
+        trim: true,
+        custom: {
+          options: async (values) => {
+            const emailExisted = await usersServices.checkEmailExist(values);
+            if (!emailExisted) {
+              throw new Error(ValidationMessage.EMAIL_DOES_NOT_EXIST);
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["body"],
+  ),
+);

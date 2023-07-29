@@ -48,6 +48,17 @@ class UsersServices {
     });
   }
 
+  private async signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: { user_id, token_type: TokenType.FORGOT_PASSWORD_TOKEN },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+      options: {
+        algorithm: "HS256",
+        expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN,
+      },
+    });
+  }
+
   private async returnAccessAndRefreshToken(user_id: string) {
     return await Promise.all([
       this.signAccessToken(user_id).catch(this.onReject),
@@ -133,6 +144,22 @@ class UsersServices {
     return {
       access_token,
       refresh_token,
+    };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await databaseService.users.findOne({ email });
+    const userId = user?._id.toString();
+    const forgot_password_token = this.signForgotPasswordToken(userId as string);
+    await databaseService.users.updateOne({ _id: new ObjectId(userId) }, [
+      {
+        $set: { forgot_password_token, updated_at: "$$NOW" },
+      },
+    ]);
+    // Gửi email kèm đường link tới email của user: https://domain.com/forgot-password?token=forgot_password_token
+    console.log("forgot_password_token:", forgot_password_token);
+    return {
+      message: "Đã gửi e-mail xác thực mật khẩu, vui lòng kiểm tra email để tiếp tục",
     };
   }
 }

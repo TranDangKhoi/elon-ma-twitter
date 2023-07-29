@@ -89,3 +89,14 @@ export const resendVerifyEmailController = async (req: Request<ParamsDictionary,
     result,
   });
 };
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, { email: string }>,
+  res: Response,
+) => {
+  const { email } = req.body;
+  const result = await usersServices.forgotPassword(email);
+  return res.status(HttpStatusCode.OK).json({
+    result,
+  });
+};
