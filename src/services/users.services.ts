@@ -150,7 +150,7 @@ class UsersServices {
   async forgotPassword(email: string) {
     const user = await databaseService.users.findOne({ email });
     const userId = user?._id.toString();
-    const forgot_password_token = this.signForgotPasswordToken(userId as string);
+    const forgot_password_token = await this.signForgotPasswordToken(userId as string);
     await databaseService.users.updateOne({ _id: new ObjectId(userId) }, [
       {
         $set: { forgot_password_token, updated_at: "$$NOW" },
