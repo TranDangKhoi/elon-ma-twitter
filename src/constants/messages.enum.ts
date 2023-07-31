@@ -6,6 +6,8 @@ export enum ValidationMessage {
   REFRESH_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống refresh token)",
   EMAIL_VERIFY_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token)",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
+  FORGOT_PASSWORD_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token)",
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống forgot password token)",
   EMAIL_VERIFY_TOKEN_IS_VERIFIED = "Email đã được xác minh trước đó",
   EMAIL_OR_PASSWORD_IS_INCORRECT = "E-mail hoặc mật khẩu không chính xác",
   NAME_IS_REQUIRED = "Không được để trống tên người dùng",

@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { checkSchema } from "express-validator";
+import { check, checkSchema } from "express-validator";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
@@ -266,6 +266,39 @@ export const forgotPasswordValidator = validate(
               throw new Error(ValidationMessage.EMAIL_DOES_NOT_EXIST);
             }
             return true;
+          },
+        },
+      },
+    },
+    ["body"],
+  ),
+);
+
+export const verifyForgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
+            try {
+              const decoded_forgot_password_token = await verifyToken({
+                token: value,
+                secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+              });
+              req.decoded_forgot_password_token = decoded_forgot_password_token;
+            } catch (err) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
           },
         },
       },
