@@ -1,8 +1,8 @@
-import { TSignUpReqBody } from "~/models/requests/User.requests";
+import { TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
 import User from "~/models/schemas/User.schema";
 import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
-import { signToken } from "~/utils/jwt";
+import { signToken, verifyToken } from "~/utils/jwt";
 import { TokenType, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
@@ -163,16 +163,18 @@ class UsersServices {
     };
   }
 
-  async verifyForgotPasswordToken(user_id: string) {
-    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken(user_id);
+  async verifyForgotPasswordToken(forgot_password_token: string) {
+    const { user_id } = await verifyToken({
+      token: forgot_password_token,
+      secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+    });
     await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
       {
         $set: { forgot_password_token: "", updated_at: "$$NOW" },
       },
     ]);
     return {
-      access_token,
-      refresh_token,
+      message: "Xác thực token thành công",
     };
   }
 }

@@ -105,8 +105,8 @@ export const verifyForgotPasswordController = async (
   req: Request<ParamsDictionary, any, { forgot_password_token: string }>,
   res: Response,
 ) => {
-  await usersServices.verifyForgotPasswordToken(req.body.forgot_password_token);
+  const result = await usersServices.verifyForgotPasswordToken(req.body.forgot_password_token);
   res.status(HttpStatusCode.OK).json({
-    message: "Xác thực token thành công",
+    result,
   });
 };
