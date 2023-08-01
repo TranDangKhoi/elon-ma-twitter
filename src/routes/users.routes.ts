@@ -6,6 +6,7 @@ import {
   signOutController,
   signUpController,
   forgotPasswordController,
+  verifyForgotPasswordController,
 } from "~/controllers/users.controllers";
 import {
   loginValidator as signInValidator,

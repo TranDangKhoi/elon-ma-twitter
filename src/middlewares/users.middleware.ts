@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { check, checkSchema } from "express-validator";
+import { ObjectId } from "mongodb";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
@@ -292,10 +293,18 @@ export const verifyForgotPasswordTokenValidator = validate(
                 token: value,
                 secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
               });
-              req.decoded_forgot_password_token = decoded_forgot_password_token;
+              const foundUser = await databaseService.users.findOne({
+                _id: new ObjectId(decoded_forgot_password_token.user_id),
+              });
+              if (!foundUser) {
+                throw new ErrorWithStatus({
+                  message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                  status: HttpStatusCode.UNAUTHORIZED,
+                });
+              }
             } catch (err) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }

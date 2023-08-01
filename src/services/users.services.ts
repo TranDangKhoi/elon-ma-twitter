@@ -162,6 +162,19 @@ class UsersServices {
       message: "Đã gửi e-mail xác thực mật khẩu, vui lòng kiểm tra email để tiếp tục",
     };
   }
+
+  async verifyForgotPasswordToken(user_id: string) {
+    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken(user_id);
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: { forgot_password_token: "", updated_at: "$$NOW" },
+      },
+    ]);
+    return {
+      access_token,
+      refresh_token,
+    };
+  }
 }
 
 const usersServices = new UsersServices();
