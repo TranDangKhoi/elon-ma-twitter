@@ -298,6 +298,12 @@ export const verifyForgotPasswordTokenValidator = validate(
               });
               if (!foundUser) {
                 throw new ErrorWithStatus({
+                  message: ValidationMessage.USER_NOT_FOUND,
+                  status: HttpStatusCode.UNAUTHORIZED,
+                });
+              }
+              if (foundUser.forgot_password_token !== value) {
+                throw new ErrorWithStatus({
                   message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
