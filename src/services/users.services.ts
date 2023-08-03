@@ -164,15 +164,18 @@ class UsersServices {
   }
 
   async verifyForgotPasswordToken(forgot_password_token: string) {
-    const { user_id } = await verifyToken({
-      token: forgot_password_token,
-      secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
-    });
-    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
-      {
-        $set: { forgot_password_token: "", updated_at: "$$NOW" },
-      },
-    ]);
+    // const { user_id } = await verifyToken({
+    //   token: forgot_password_token,
+    //   secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+    // });
+    // Lúc này người dùng mới chỉ verify xem cái forgot_password_token có valid hay không, chứ họ chưa hề đổi mật khẩu mới
+    // Vì vậy ta sẽ chưa update lại forgot_password_token thành "" trong db được, phải đợi họ đổi xong mật khẩu mới
+    // Không thì nhỡ đâu họ mới click vào link => nhưng chưa change password, sau này muốn click lại thì sẽ không được nữa
+    // await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+    //   {
+    //     $set: { forgot_password_token: "", updated_at: "$$NOW" },
+    //   },
+    // ]);
     return {
       message: "Xác thực token thành công",
     };
