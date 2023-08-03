@@ -177,6 +177,7 @@ class UsersServices {
     //   },
     // ]);
     return {
+      token: forgot_password_token,
       message: "Xác thực token thành công",
     };
   }
