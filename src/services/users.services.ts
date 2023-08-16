@@ -181,6 +181,19 @@ class UsersServices {
       message: "Xác thực token thành công",
     };
   }
+
+  async resetPassword(user_id: string, newPassword: string) {
+    const result = await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: { password: hashPassword(newPassword), forgot_password_token: "" },
+        $currentDate: { updated_at: true },
+      },
+    );
+    return {
+      result,
+    };
+  }
 }
 
 const usersServices = new UsersServices();

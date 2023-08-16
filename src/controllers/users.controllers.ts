@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
@@ -114,8 +114,12 @@ export const verifyForgotPasswordController = async (
 export const resetPasswordController = async (
   req: Request<ParamsDictionary, any, { password: string; confirm_password: string }>,
   res: Response,
+  next: NextFunction,
 ) => {
+  const { user_id } = req.decoded_forgot_password_token as TokenPayload;
+  const result = await usersServices.resetPassword(user_id, req.body.password);
   res.status(HttpStatusCode.OK).json({
     message: "Đặt lại mật khẩu thành công",
+    result,
   });
 };

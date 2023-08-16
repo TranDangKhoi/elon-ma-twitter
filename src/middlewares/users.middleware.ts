@@ -49,6 +49,7 @@ const confirmPasswordSchema: ParamSchema = {
       if (value !== req.body.password) {
         throw new Error(ValidationMessage.CONFIRM_PASSWORD_INVALID);
       }
+
       return true;
     },
   },
@@ -344,6 +345,7 @@ export const resetPasswordValidator = validate(
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
+              (req as Request).decoded_forgot_password_token = decoded_forgot_password_token;
             } catch (err) {
               throw new ErrorWithStatus({
                 message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
