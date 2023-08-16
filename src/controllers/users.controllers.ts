@@ -110,3 +110,12 @@ export const verifyForgotPasswordController = async (
     result,
   });
 };
+
+export const resetPasswordController = async (
+  req: Request<ParamsDictionary, any, { password: string; confirm_password: string }>,
+  res: Response,
+) => {
+  res.status(HttpStatusCode.OK).json({
+    message: "Đặt lại mật khẩu thành công",
+  });
+};

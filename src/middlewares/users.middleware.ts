@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { check, checkSchema } from "express-validator";
+import { ParamSchema, check, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
@@ -9,6 +9,50 @@ import usersServices from "~/services/users.services";
 import { hashPassword } from "~/utils/crypto";
 import { verifyToken } from "~/utils/jwt";
 import { validate } from "~/utils/validation";
+
+const passwordSchema: ParamSchema = {
+  isString: true,
+  notEmpty: {
+    errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
+  },
+  trim: true,
+  isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
+  isStrongPassword: {
+    errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
+    options: {
+      minLength: 6,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+  },
+};
+
+const confirmPasswordSchema: ParamSchema = {
+  isString: true,
+  notEmpty: { errorMessage: ValidationMessage.CONFIRM_PASSWORD_IS_REQUIRED },
+  trim: true,
+  isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
+  isStrongPassword: {
+    errorMessage: ValidationMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
+    options: {
+      minLength: 6,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+  },
+  custom: {
+    options: (value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error(ValidationMessage.CONFIRM_PASSWORD_INVALID);
+      }
+      return true;
+    },
+  },
+};
 
 export const loginValidator = validate(
   checkSchema(
@@ -35,24 +79,7 @@ export const loginValidator = validate(
           },
         },
       },
-      password: {
-        isString: true,
-        notEmpty: {
-          errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
-        },
-        trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
-        isStrongPassword: {
-          errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
-          options: {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-          },
-        },
-      },
+      password: passwordSchema,
     },
     ["body"],
   ),
@@ -87,48 +114,8 @@ export const registerValidator = validate(
           },
         },
       },
-      password: {
-        isString: true,
-        notEmpty: {
-          errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
-        },
-        trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
-        isStrongPassword: {
-          errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
-          options: {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-          },
-        },
-      },
-      confirm_password: {
-        isString: true,
-        notEmpty: { errorMessage: ValidationMessage.CONFIRM_PASSWORD_IS_REQUIRED },
-        trim: true,
-        isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
-        isStrongPassword: {
-          errorMessage: ValidationMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
-          options: {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-          },
-        },
-        custom: {
-          options: (value, { req }) => {
-            if (value !== req.body.password) {
-              throw new Error(ValidationMessage.CONFIRM_PASSWORD_INVALID);
-            }
-            return true;
-          },
-        },
-      },
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema,
       date_of_birth: {
         notEmpty: true,
         isISO8601: { options: { strict: true, strictSeparator: true } },
@@ -278,6 +265,55 @@ export const forgotPasswordValidator = validate(
 export const verifyForgotPasswordTokenValidator = validate(
   checkSchema(
     {
+      forgot_password_token: {
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
+            try {
+              const decoded_forgot_password_token = await verifyToken({
+                token: value,
+                secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+              });
+              const foundUser = await databaseService.users.findOne({
+                _id: new ObjectId(decoded_forgot_password_token.user_id),
+              });
+              if (!foundUser) {
+                throw new ErrorWithStatus({
+                  message: ValidationMessage.USER_NOT_FOUND,
+                  status: HttpStatusCode.UNAUTHORIZED,
+                });
+              }
+              if (foundUser.forgot_password_token !== value) {
+                throw new ErrorWithStatus({
+                  message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                  status: HttpStatusCode.UNAUTHORIZED,
+                });
+              }
+            } catch (err) {
+              throw new ErrorWithStatus({
+                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
+          },
+        },
+      },
+    },
+    ["body"],
+  ),
+);
+
+export const resetPasswordValidator = validate(
+  checkSchema(
+    {
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema,
       forgot_password_token: {
         trim: true,
         custom: {
