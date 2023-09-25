@@ -121,6 +121,11 @@ class UsersServices {
     return Boolean(user);
   }
 
+  async getMe(user_id: string) {
+    const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
+    return user;
+  }
+
   async resendVerifyEmail(user_id: string) {
     const email_verify_token = await this.signEmailVerifyToken(user_id);
     await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [

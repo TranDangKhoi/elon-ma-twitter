@@ -8,6 +8,7 @@ import {
   forgotPasswordController,
   verifyForgotPasswordController,
   resetPasswordController,
+  getMeController,
 } from "~/controllers/users.controllers";
 import {
   loginValidator as signInValidator,
@@ -36,4 +37,5 @@ usersRouter.post(
   wrapRequestHandler(verifyForgotPasswordController),
 );
 usersRouter.post("/reset-password", resetPasswordValidator, wrapRequestHandler(resetPasswordController));
+usersRouter.get("/me", accessTokenValidator, wrapRequestHandler(getMeController));
 export default usersRouter;

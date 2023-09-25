@@ -123,3 +123,12 @@ export const resetPasswordController = async (
     result,
   });
 };
+
+export const getMeController = async (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
+  const { user_id } = req.decoded_access_token as TokenPayload;
+  const user = await usersServices.getMe(user_id);
+  res.status(HttpStatusCode.OK).json({
+    message: ValidationMessage.USER_FOUND,
+    result: user,
+  });
+};
