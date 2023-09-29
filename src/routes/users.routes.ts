@@ -9,6 +9,7 @@ import {
   verifyForgotPasswordController,
   resetPasswordController,
   getMeController,
+  updateMeController,
 } from "~/controllers/users.controllers";
 import {
   loginValidator as signInValidator,
@@ -20,6 +21,7 @@ import {
   verifyForgotPasswordTokenValidator,
   resetPasswordValidator,
   verifiedUserValidator,
+  updateMeValidator,
 } from "~/middlewares/users.middleware";
 import { wrapRequestHandler } from "~/utils/handlers";
 
@@ -39,5 +41,11 @@ usersRouter.post(
 );
 usersRouter.post("/reset-password", resetPasswordValidator, wrapRequestHandler(resetPasswordController));
 usersRouter.get("/me", accessTokenValidator, wrapRequestHandler(getMeController));
-usersRouter.patch("/me", accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getMeController));
+usersRouter.patch(
+  "/me",
+  accessTokenValidator,
+  verifiedUserValidator,
+  updateMeValidator,
+  wrapRequestHandler(updateMeController),
+);
 export default usersRouter;

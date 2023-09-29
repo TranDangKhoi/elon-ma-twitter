@@ -362,6 +362,16 @@ export const resetPasswordValidator = validate(
   ),
 );
 
+export const updateMeValidator = validate(
+  checkSchema(
+    {
+      name: {
+        optional: true,
+      },
+    },
+    ["body"],
+  ),
+);
 export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
   console.log(req.decoded_access_token);
   const { verify } = req.decoded_access_token as TokenPayload;
