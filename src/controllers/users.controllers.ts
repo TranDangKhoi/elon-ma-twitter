@@ -5,6 +5,7 @@ import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
 import { TLoginReqBody, TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
+import User from "~/models/schemas/User.schema";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
 
@@ -20,7 +21,7 @@ import usersServices from "~/services/users.services";
 export const signInController = async (req: Request<ParamsDictionary, any, TLoginReqBody>, res: Response) => {
   const { user } = req;
   const userId = user?._id as ObjectId;
-  const result = await usersServices.signIn(userId.toString());
+  const result = await usersServices.signIn({ user_id: userId.toString(), verify: user?.verify as UserVerifyStatus });
   res.status(HttpStatusCode.CREATED).json({
     message: "Đăng nhập thành công",
     result,
@@ -94,8 +95,8 @@ export const forgotPasswordController = async (
   req: Request<ParamsDictionary, any, { email: string }>,
   res: Response,
 ) => {
-  const { email } = req.body;
-  const result = await usersServices.forgotPassword(email);
+  const { _id, verify } = req.user as User;
+  const result = await usersServices.forgotPassword({ user_id: _id.toString(), verify });
   return res.status(HttpStatusCode.OK).json({
     result,
   });
@@ -131,4 +132,12 @@ export const getMeController = async (req: Request<ParamsDictionary, any, any>, 
     message: ValidationMessage.USER_FOUND,
     result: user,
   });
+};
+
+export const updateMeController = async (
+  req: Request<ParamsDictionary, any, any>,
+  res: Response,
+  next: NextFunction,
+) => {
+  return res.status(HttpStatusCode.OK).json({});
 };

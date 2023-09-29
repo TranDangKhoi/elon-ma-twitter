@@ -1,9 +1,11 @@
-import { Request } from "express";
-import { ParamSchema, check, checkSchema } from "express-validator";
+import { NextFunction, Request, Response } from "express";
+import { ParamSchema, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
+import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
+import { TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
 import { hashPassword } from "~/utils/crypto";
@@ -222,7 +224,6 @@ export const emailVerifyTokenValidator = validate(
               token: value,
               secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
             });
-
             (req as Request).decoded_email_verify_token = decoded_email_verify_token;
             return true;
           } catch (err) {
@@ -249,11 +250,12 @@ export const forgotPasswordValidator = validate(
         },
         trim: true,
         custom: {
-          options: async (values) => {
-            const emailExisted = await usersServices.checkEmailExist(values);
-            if (!emailExisted) {
+          options: async (values, { req }) => {
+            const user = await databaseService.users.findOne({ email: values });
+            if (user === null) {
               throw new Error(ValidationMessage.EMAIL_DOES_NOT_EXIST);
             }
+            req.user = user;
             return true;
           },
         },
@@ -359,3 +361,17 @@ export const resetPasswordValidator = validate(
     ["body"],
   ),
 );
+
+export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.decoded_access_token);
+  const { verify } = req.decoded_access_token as TokenPayload;
+  if (verify !== UserVerifyStatus.VERIFIED) {
+    return next(
+      new ErrorWithStatus({
+        message: "Bạn chưa xác thực e-mail, vui lòng xác thực e-mail",
+        status: HttpStatusCode.FORBIDDEN,
+      }),
+    );
+  }
+  next();
+};
