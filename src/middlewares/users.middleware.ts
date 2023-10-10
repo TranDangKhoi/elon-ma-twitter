@@ -57,6 +57,20 @@ const confirmPasswordSchema: ParamSchema = {
   },
 };
 
+const nameSchema: ParamSchema = {
+  isString: true,
+  notEmpty: {
+    errorMessage: ValidationMessage.NAME_IS_REQUIRED,
+  },
+  trim: true,
+  isLength: { options: { min: 1, max: 100 }, errorMessage: ValidationMessage.NAME_LENGTH_IS_INVALID },
+};
+
+const dateOfBirthSchema = {
+  notEmpty: true,
+  isISO8601: { options: { strict: true, strictSeparator: true } },
+};
+
 export const loginValidator = validate(
   checkSchema(
     {
@@ -91,14 +105,7 @@ export const loginValidator = validate(
 export const registerValidator = validate(
   checkSchema(
     {
-      name: {
-        isString: true,
-        notEmpty: {
-          errorMessage: ValidationMessage.NAME_IS_REQUIRED,
-        },
-        trim: true,
-        isLength: { options: { min: 1, max: 100 }, errorMessage: ValidationMessage.NAME_LENGTH_IS_INVALID },
-      },
+      name: nameSchema,
       email: {
         isEmail: {
           errorMessage: ValidationMessage.EMAIL_IS_INVALID,
@@ -119,10 +126,7 @@ export const registerValidator = validate(
       },
       password: passwordSchema,
       confirm_password: confirmPasswordSchema,
-      date_of_birth: {
-        notEmpty: true,
-        isISO8601: { options: { strict: true, strictSeparator: true } },
-      },
+      date_of_birth: dateOfBirthSchema,
     },
     ["body"],
   ),
@@ -366,7 +370,67 @@ export const updateMeValidator = validate(
   checkSchema(
     {
       name: {
+        ...nameSchema,
         optional: true,
+        notEmpty: undefined,
+      },
+      date_of_birth: {
+        ...dateOfBirthSchema,
+        optional: true,
+      },
+      bio: {
+        trim: true,
+        optional: true,
+        isString: true,
+        isLength: {
+          options: {
+            min: 0,
+            max: 200,
+          },
+        },
+      },
+      location: {
+        trim: true,
+        optional: true,
+        isString: true,
+        isLength: {
+          options: {
+            min: 0,
+            max: 200,
+          },
+        },
+      },
+      website: {
+        trim: true,
+        optional: true,
+        isString: true,
+        isLength: {
+          options: {
+            min: 0,
+            max: 200,
+          },
+        },
+      },
+      username: {
+        trim: true,
+        optional: true,
+        isString: true,
+        isLength: {
+          options: {
+            min: 0,
+            max: 50,
+          },
+        },
+      },
+      avatar: {
+        trim: true,
+        optional: true,
+        isString: true,
+      },
+      cover_photo: {
+        trim: true,
+        optional: true,
+        isString: true,
       },
     },
     ["body"],
