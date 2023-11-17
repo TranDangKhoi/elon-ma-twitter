@@ -4,7 +4,13 @@ import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ValidationMessage } from "~/constants/messages.enum";
-import { TLoginReqBody, TSignOutReqBody, TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
+import {
+  TLoginReqBody,
+  TSignOutReqBody,
+  TSignUpReqBody,
+  TUpdateReqBody,
+  TokenPayload,
+} from "~/models/requests/User.requests";
 import User from "~/models/schemas/User.schema";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
@@ -135,9 +141,15 @@ export const getMeController = async (req: Request<ParamsDictionary, any, any>, 
 };
 
 export const updateMeController = async (
-  req: Request<ParamsDictionary, any, any>,
+  req: Request<ParamsDictionary, any, TUpdateReqBody>,
   res: Response,
   next: NextFunction,
 ) => {
-  return res.status(HttpStatusCode.OK).json({});
+  const { user_id } = req.decoded_access_token as TokenPayload;
+  const { body } = req;
+  const user = await usersServices.updateMe(user_id, body);
+  return res.status(HttpStatusCode.OK).json({
+    message: "Updated profile successfully",
+    result: user,
+  });
 };

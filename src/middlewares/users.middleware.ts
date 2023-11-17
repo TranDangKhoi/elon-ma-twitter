@@ -12,13 +12,15 @@ import { hashPassword } from "~/utils/crypto";
 import { verifyToken } from "~/utils/jwt";
 import { validate } from "~/utils/validation";
 
+// LƯU Ý KHI DÙNG trim: true thì nên để nó ở dưới tất cả mọi validation
+
 const passwordSchema: ParamSchema = {
   isString: true,
   notEmpty: {
     errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
   },
-  trim: true,
   isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
+  trim: true,
   isStrongPassword: {
     errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
     options: {
@@ -34,7 +36,6 @@ const passwordSchema: ParamSchema = {
 const confirmPasswordSchema: ParamSchema = {
   isString: true,
   notEmpty: { errorMessage: ValidationMessage.CONFIRM_PASSWORD_IS_REQUIRED },
-  trim: true,
   isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
   isStrongPassword: {
     errorMessage: ValidationMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
@@ -46,6 +47,7 @@ const confirmPasswordSchema: ParamSchema = {
       minSymbols: 1,
     },
   },
+  trim: true,
   custom: {
     options: (value, { req }) => {
       if (value !== req.body.password) {
@@ -69,6 +71,18 @@ const nameSchema: ParamSchema = {
 const dateOfBirthSchema = {
   notEmpty: true,
   isISO8601: { options: { strict: true, strictSeparator: true } },
+};
+
+const imageSchema = {
+  optional: true,
+  isString: true,
+  trim: true,
+  isLength: {
+    options: {
+      min: 1,
+      max: 400,
+    },
+  },
 };
 
 export const loginValidator = validate(
@@ -379,9 +393,9 @@ export const updateMeValidator = validate(
         optional: true,
       },
       bio: {
-        trim: true,
         optional: true,
         isString: true,
+        trim: true,
         isLength: {
           options: {
             min: 0,
@@ -390,9 +404,9 @@ export const updateMeValidator = validate(
         },
       },
       location: {
-        trim: true,
         optional: true,
         isString: true,
+        trim: true,
         isLength: {
           options: {
             min: 0,
@@ -401,9 +415,9 @@ export const updateMeValidator = validate(
         },
       },
       website: {
-        trim: true,
         optional: true,
         isString: true,
+        trim: true,
         isLength: {
           options: {
             min: 0,
@@ -422,22 +436,13 @@ export const updateMeValidator = validate(
           },
         },
       },
-      avatar: {
-        trim: true,
-        optional: true,
-        isString: true,
-      },
-      cover_photo: {
-        trim: true,
-        optional: true,
-        isString: true,
-      },
+      avatar: imageSchema,
+      cover_photo: imageSchema,
     },
     ["body"],
   ),
 );
 export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.decoded_access_token);
   const { verify } = req.decoded_access_token as TokenPayload;
   if (verify !== UserVerifyStatus.VERIFIED) {
     return next(

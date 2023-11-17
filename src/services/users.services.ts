@@ -1,4 +1,4 @@
-import { TSignUpReqBody, TokenPayload } from "~/models/requests/User.requests";
+import { TSignUpReqBody, TUpdateReqBody, TokenPayload } from "~/models/requests/User.requests";
 import User from "~/models/schemas/User.schema";
 import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
@@ -103,7 +103,6 @@ class UsersServices {
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
     );
-    console.log("email_verify_token", email_verify_token);
     return {
       access_token,
       refresh_token,
@@ -139,6 +138,29 @@ class UsersServices {
       },
     );
     return user;
+  }
+
+  async updateMe(user_id: string, body: TUpdateReqBody) {
+    // Ở phần databaseService.users này sẽ có 2 methods là updateOne và findOneAndUpdate
+    // updateOne sẽ chỉ update thôi còn không trả ra thông tin cá nhân của user sau khi update
+    // còn findOneAndUpdate sẽ update và trả ra thông tin cá nhân của user sau khi update
+    const _body = body.date_of_birth ? { ...body, date_of_birth: new Date(body.date_of_birth) } : body;
+    const user = await databaseService.users.findOneAndUpdate(
+      {
+        _id: new ObjectId(user_id),
+      },
+      [
+        {
+          $set: {
+            ..._body,
+          },
+          $currentDate: {
+            updated_at: true,
+          },
+        },
+      ],
+    );
+    return user.value;
   }
 
   async resendVerifyEmail(user_id: string) {
@@ -183,7 +205,6 @@ class UsersServices {
       },
     ]);
     // Gửi email kèm đường link tới email của user: https://domain.com/forgot-password?token=forgot_password_token
-    console.log("forgot_password_token:", forgot_password_token);
     return {
       message: "Đã gửi e-mail xác thực mật khẩu, vui lòng kiểm tra email để tiếp tục",
     };
