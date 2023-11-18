@@ -153,12 +153,18 @@ class UsersServices {
         {
           $set: {
             ..._body,
-          },
-          $currentDate: {
-            updated_at: true,
+            updated_at: "$$NOW",
           },
         },
       ],
+      {
+        returnDocument: "after",
+        projection: {
+          password: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0,
+        },
+      },
     );
     return user.value;
   }
