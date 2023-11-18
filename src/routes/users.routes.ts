@@ -11,6 +11,7 @@ import {
   getMeController,
   updateMeController,
 } from "~/controllers/users.controllers";
+import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
   loginValidator as signInValidator,
   registerValidator,
@@ -23,6 +24,7 @@ import {
   verifiedUserValidator,
   updateMeValidator,
 } from "~/middlewares/users.middleware";
+import { TUpdateReqBody } from "~/models/requests/User.requests";
 import { wrapRequestHandler } from "~/utils/handlers";
 
 const usersRouter = Router();
@@ -46,6 +48,16 @@ usersRouter.patch(
   accessTokenValidator,
   verifiedUserValidator,
   updateMeValidator,
+  filterMiddleware<TUpdateReqBody>([
+    "avatar",
+    "bio",
+    "cover_photo",
+    "date_of_birth",
+    "location",
+    "name",
+    "website",
+    "username",
+  ]),
   wrapRequestHandler(updateMeController),
 );
 export default usersRouter;
