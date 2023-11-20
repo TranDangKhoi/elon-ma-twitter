@@ -29,4 +29,8 @@ export type TSignOutReqBody = {
   refresh_token: string;
 };
 
+export type TProfileReqParams = {
+  username: string;
+};
+
 export type TokenPayload = { user_id: string; token_type: TokenType } & JwtPayload;

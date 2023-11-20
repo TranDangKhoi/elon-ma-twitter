@@ -1,5 +1,5 @@
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { ValidationMessage } from "~/constants/messages.enum";
+import { UserMessage } from "~/constants/messages.enum";
 
 type TError = Record<
   string,
@@ -20,7 +20,7 @@ export class ErrorWithStatus {
 
 export class UnprocessableEntityError extends ErrorWithStatus {
   errors: TError;
-  constructor({ message = ValidationMessage.VALIDATION_ERROR, errors }: { message?: string; errors: TError }) {
+  constructor({ message = UserMessage.VALIDATION_ERROR, errors }: { message?: string; errors: TError }) {
     super({ message, status: HttpStatusCode.UNPROCESSABLE_ENTITY });
     this.errors = errors;
   }

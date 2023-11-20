@@ -1,4 +1,4 @@
-export enum ValidationMessage {
+export enum UserMessage {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   USER_NOT_FOUND = "Không tìm thấy người dùng",
   USER_FOUND = "Lấy thông tin người dùng thành công",

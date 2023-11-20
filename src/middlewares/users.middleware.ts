@@ -3,7 +3,7 @@ import { ParamSchema, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { ValidationMessage } from "~/constants/messages.enum";
+import { UserMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
@@ -17,12 +17,12 @@ import { validate } from "~/utils/validation";
 const passwordSchema: ParamSchema = {
   isString: true,
   notEmpty: {
-    errorMessage: ValidationMessage.PASSWORD_IS_REQUIRED,
+    errorMessage: UserMessage.PASSWORD_IS_REQUIRED,
   },
-  isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.PASSWORD_LENGTH_INVALID },
+  isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.PASSWORD_LENGTH_INVALID },
   trim: true,
   isStrongPassword: {
-    errorMessage: ValidationMessage.PASSWORD_MUST_BE_STRONG,
+    errorMessage: UserMessage.PASSWORD_MUST_BE_STRONG,
     options: {
       minLength: 6,
       minLowercase: 1,
@@ -35,10 +35,10 @@ const passwordSchema: ParamSchema = {
 
 const confirmPasswordSchema: ParamSchema = {
   isString: true,
-  notEmpty: { errorMessage: ValidationMessage.CONFIRM_PASSWORD_IS_REQUIRED },
-  isLength: { options: { min: 6, max: 50 }, errorMessage: ValidationMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
+  notEmpty: { errorMessage: UserMessage.CONFIRM_PASSWORD_IS_REQUIRED },
+  isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
   isStrongPassword: {
-    errorMessage: ValidationMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
+    errorMessage: UserMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
     options: {
       minLength: 6,
       minLowercase: 1,
@@ -51,7 +51,7 @@ const confirmPasswordSchema: ParamSchema = {
   custom: {
     options: (value, { req }) => {
       if (value !== req.body.password) {
-        throw new Error(ValidationMessage.CONFIRM_PASSWORD_INVALID);
+        throw new Error(UserMessage.CONFIRM_PASSWORD_INVALID);
       }
 
       return true;
@@ -62,10 +62,10 @@ const confirmPasswordSchema: ParamSchema = {
 const nameSchema: ParamSchema = {
   isString: true,
   notEmpty: {
-    errorMessage: ValidationMessage.NAME_IS_REQUIRED,
+    errorMessage: UserMessage.NAME_IS_REQUIRED,
   },
   trim: true,
-  isLength: { options: { min: 1, max: 100 }, errorMessage: ValidationMessage.NAME_LENGTH_IS_INVALID },
+  isLength: { options: { min: 1, max: 100 }, errorMessage: UserMessage.NAME_LENGTH_IS_INVALID },
 };
 
 const dateOfBirthSchema = {
@@ -90,10 +90,10 @@ export const loginValidator = validate(
     {
       email: {
         isEmail: {
-          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
+          errorMessage: UserMessage.EMAIL_IS_INVALID,
         },
         notEmpty: {
-          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
+          errorMessage: UserMessage.EMAIL_IS_REQUIRED,
         },
         trim: true,
         custom: {
@@ -103,7 +103,7 @@ export const loginValidator = validate(
               password: hashPassword(req.body.password),
             });
             if (user === null) {
-              throw new Error(ValidationMessage.EMAIL_OR_PASSWORD_IS_INCORRECT);
+              throw new Error(UserMessage.EMAIL_OR_PASSWORD_IS_INCORRECT);
             }
             req.user = user;
             return true;
@@ -122,17 +122,17 @@ export const registerValidator = validate(
       name: nameSchema,
       email: {
         isEmail: {
-          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
+          errorMessage: UserMessage.EMAIL_IS_INVALID,
         },
         notEmpty: {
-          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
+          errorMessage: UserMessage.EMAIL_IS_REQUIRED,
         },
         trim: true,
         custom: {
           options: async (values) => {
             const emailExisted = await usersServices.checkEmailExist(values);
             if (emailExisted) {
-              throw new Error(ValidationMessage.EMAIL_ALREADY_EXISTS);
+              throw new Error(UserMessage.EMAIL_ALREADY_EXISTS);
             }
             return true;
           },
@@ -156,7 +156,7 @@ export const accessTokenValidator = validate(
             const auth_type = value.split(" ")[0];
             if (!access_token || auth_type !== "Bearer") {
               throw new ErrorWithStatus({
-                message: ValidationMessage.ACCESS_TOKEN_INVALID,
+                message: UserMessage.ACCESS_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -168,7 +168,7 @@ export const accessTokenValidator = validate(
               (req as Request).decoded_access_token = decoded_access_token;
             } catch (err) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.ACCESS_TOKEN_INVALID,
+                message: UserMessage.ACCESS_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -190,7 +190,7 @@ export const refreshTokenValidator = validate(
           options: async (value, { req }) => {
             if (!value) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.REFRESH_TOKEN_IS_REQUIRED,
+                message: UserMessage.REFRESH_TOKEN_IS_REQUIRED,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -201,7 +201,7 @@ export const refreshTokenValidator = validate(
               ]);
               if (!found_refresh_token) {
                 throw new ErrorWithStatus({
-                  message: ValidationMessage.REFRESH_TOKEN_INVALID,
+                  message: UserMessage.REFRESH_TOKEN_INVALID,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
@@ -209,7 +209,7 @@ export const refreshTokenValidator = validate(
               return true;
             } catch (err) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.REFRESH_TOKEN_INVALID,
+                message: UserMessage.REFRESH_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -230,7 +230,7 @@ export const emailVerifyTokenValidator = validate(
           try {
             if (!value) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+                message: UserMessage.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -246,7 +246,7 @@ export const emailVerifyTokenValidator = validate(
             return true;
           } catch (err) {
             throw new ErrorWithStatus({
-              message: ValidationMessage.EMAIL_VERIFY_TOKEN_INVALID,
+              message: UserMessage.EMAIL_VERIFY_TOKEN_INVALID,
               status: HttpStatusCode.UNAUTHORIZED,
             });
           }
@@ -261,17 +261,17 @@ export const forgotPasswordValidator = validate(
     {
       email: {
         isEmail: {
-          errorMessage: ValidationMessage.EMAIL_IS_INVALID,
+          errorMessage: UserMessage.EMAIL_IS_INVALID,
         },
         notEmpty: {
-          errorMessage: ValidationMessage.EMAIL_IS_REQUIRED,
+          errorMessage: UserMessage.EMAIL_IS_REQUIRED,
         },
         trim: true,
         custom: {
           options: async (values, { req }) => {
             const user = await databaseService.users.findOne({ email: values });
             if (user === null) {
-              throw new Error(ValidationMessage.EMAIL_DOES_NOT_EXIST);
+              throw new Error(UserMessage.EMAIL_DOES_NOT_EXIST);
             }
             req.user = user;
             return true;
@@ -292,7 +292,7 @@ export const verifyForgotPasswordTokenValidator = validate(
           options: async (value, { req }) => {
             if (!value) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                message: UserMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -306,19 +306,19 @@ export const verifyForgotPasswordTokenValidator = validate(
               });
               if (!foundUser) {
                 throw new ErrorWithStatus({
-                  message: ValidationMessage.USER_NOT_FOUND,
+                  message: UserMessage.USER_NOT_FOUND,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
               if (foundUser.forgot_password_token !== value) {
                 throw new ErrorWithStatus({
-                  message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                  message: UserMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
             } catch (err) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                message: UserMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -341,7 +341,7 @@ export const resetPasswordValidator = validate(
           options: async (value, { req }) => {
             if (!value) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+                message: UserMessage.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }
@@ -355,20 +355,20 @@ export const resetPasswordValidator = validate(
               });
               if (!foundUser) {
                 throw new ErrorWithStatus({
-                  message: ValidationMessage.USER_NOT_FOUND,
+                  message: UserMessage.USER_NOT_FOUND,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
               if (foundUser.forgot_password_token !== value) {
                 throw new ErrorWithStatus({
-                  message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                  message: UserMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                   status: HttpStatusCode.UNAUTHORIZED,
                 });
               }
               (req as Request).decoded_forgot_password_token = decoded_forgot_password_token;
             } catch (err) {
               throw new ErrorWithStatus({
-                message: ValidationMessage.FORGOT_PASSWORD_TOKEN_INVALID,
+                message: UserMessage.FORGOT_PASSWORD_TOKEN_INVALID,
                 status: HttpStatusCode.UNAUTHORIZED,
               });
             }

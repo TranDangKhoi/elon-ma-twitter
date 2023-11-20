@@ -4,9 +4,10 @@ import { pick } from "lodash";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { ValidationMessage } from "~/constants/messages.enum";
+import { UserMessage } from "~/constants/messages.enum";
 import {
   TLoginReqBody,
+  TProfileReqParams,
   TSignOutReqBody,
   TSignUpReqBody,
   TUpdateReqBody,
@@ -61,14 +62,14 @@ export const verifyEmailController = async (
   // Nếu không tìm thấy user dựa theo id
   if (!user) {
     return res.status(HttpStatusCode.NOT_FOUND).json({
-      message: ValidationMessage.EMAIL_VERIFY_TOKEN_INVALID,
+      message: UserMessage.EMAIL_VERIFY_TOKEN_INVALID,
     });
   }
   // Nếu đã verify rồi (tức là email_verify_token === "")
   // Trả về status OK với message là đã verified trước đó rồi
   if (user.email_verify_token === "") {
     return res.status(HttpStatusCode.OK).json({
-      message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
+      message: UserMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
     });
   }
   const result = await usersServices.verifyEmail(user_id);
@@ -83,12 +84,12 @@ export const resendVerifyEmailController = async (req: Request<ParamsDictionary,
   const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
   if (!user) {
     return res.status(HttpStatusCode.NOT_FOUND).json({
-      message: ValidationMessage.USER_NOT_FOUND,
+      message: UserMessage.USER_NOT_FOUND,
     });
   }
   if (user.verify === UserVerifyStatus.VERIFIED) {
     return res.status(HttpStatusCode.OK).json({
-      message: ValidationMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
+      message: UserMessage.EMAIL_VERIFY_TOKEN_IS_VERIFIED,
     });
   }
   const result = await usersServices.resendVerifyEmail(user_id);
@@ -136,7 +137,7 @@ export const getMeController = async (req: Request<ParamsDictionary, any, any>, 
   const { user_id } = req.decoded_access_token as TokenPayload;
   const user = await usersServices.getMe(user_id);
   res.status(HttpStatusCode.OK).json({
-    message: ValidationMessage.USER_FOUND,
+    message: UserMessage.USER_FOUND,
     result: user,
   });
 };
@@ -153,4 +154,14 @@ export const updateMeController = async (
     message: "Updated profile successfully",
     result: user,
   });
+};
+
+export const getProfileController = async (
+  req: Request<TProfileReqParams, any, any>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { username } = req.params;
+  const result = await usersServices.getProfile(username);
+  res.status(HttpStatusCode.OK).json(result);
 };

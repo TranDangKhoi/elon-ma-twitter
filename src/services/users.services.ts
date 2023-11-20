@@ -7,6 +7,9 @@ import { TokenType, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
 import { config } from "dotenv";
+import { UserMessage } from "~/constants/messages.enum";
+import { ErrorWithStatus } from "~/models/Errors";
+import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 
 config();
 class UsersServices {
@@ -86,6 +89,7 @@ class UsersServices {
         ...payload,
         _id,
         email_verify_token,
+        username: `user${user_id.toString()}`,
         date_of_birth: new Date(payload.date_of_birth),
         password: hashPassword(payload.password),
       }),
@@ -138,6 +142,29 @@ class UsersServices {
       },
     );
     return user;
+  }
+
+  async getProfile(username: string) {
+    const user = await databaseService.users.findOne(
+      {
+        username: username,
+      },
+      {
+        projection: {
+          verify: 0,
+          email: 0,
+          password: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0,
+          created_at: 0,
+          updated_at: 0,
+        },
+      },
+    );
+    if (!user) {
+      throw new ErrorWithStatus({ message: UserMessage.USER_NOT_FOUND, status: HttpStatusCode.NOT_FOUND });
+    }
+    return { message: UserMessage.USER_FOUND, user };
   }
 
   async updateMe(user_id: string, body: TUpdateReqBody) {
