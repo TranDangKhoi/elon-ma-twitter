@@ -10,6 +10,7 @@ import { config } from "dotenv";
 import { UserMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
+import Follower from "~/models/schemas/Follower.schema";
 
 config();
 class UsersServices {
@@ -194,6 +195,39 @@ class UsersServices {
       },
     );
     return user.value;
+  }
+
+  async followUser(current_user_id: string, being_followed_user_id: string) {
+    const isThisUserFollowed = await databaseService.followers.findOne({
+      user_id: new ObjectId(current_user_id),
+      being_followed_user_id: new ObjectId(being_followed_user_id),
+    });
+    if (isThisUserFollowed) {
+      throw new ErrorWithStatus({ message: UserMessage.USER_ALREADY_FOLLOWED, status: HttpStatusCode.BAD_REQUEST });
+    }
+    await databaseService.followers.insertOne(
+      new Follower({
+        _id: new ObjectId(),
+        user_id: new ObjectId(current_user_id),
+        being_followed_user_id: new ObjectId(being_followed_user_id),
+      }),
+    );
+    const followedUserInfo = await databaseService.users.findOne(
+      {
+        _id: new ObjectId(being_followed_user_id),
+      },
+      {
+        projection: {
+          email: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0,
+          verify: 0,
+          password: 0,
+          created_at: 0,
+        },
+      },
+    );
+    return followedUserInfo;
   }
 
   async resendVerifyEmail(user_id: string) {

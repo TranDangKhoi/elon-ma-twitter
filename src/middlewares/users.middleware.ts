@@ -442,6 +442,38 @@ export const updateMeValidator = validate(
     ["body"],
   ),
 );
+
+export const followUserValidator = validate(
+  checkSchema(
+    {
+      being_followed_user_id: {
+        custom: {
+          options: async (value, { req }) => {
+            console.log(value);
+            if (!ObjectId.isValid(value)) {
+              throw new ErrorWithStatus({
+                message: UserMessage.OBJECT_ID_INVALID,
+                status: HttpStatusCode.NOT_FOUND,
+              });
+            }
+            const foundUser = await databaseService.users.findOne({
+              _id: new ObjectId(value),
+            });
+            if (!foundUser) {
+              throw new ErrorWithStatus({
+                message: UserMessage.USER_NOT_FOUND,
+                status: HttpStatusCode.NOT_FOUND,
+              });
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["body"],
+  ),
+);
+
 export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
   const { verify } = req.decoded_access_token as TokenPayload;
   if (verify !== UserVerifyStatus.VERIFIED) {

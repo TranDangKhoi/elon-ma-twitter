@@ -4,8 +4,9 @@ import { pick } from "lodash";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { UserMessage } from "~/constants/messages.enum";
+import { MutationMessage, UserMessage } from "~/constants/messages.enum";
 import {
+  TFollowUserReqBody,
   TLoginReqBody,
   TProfileReqParams,
   TSignOutReqBody,
@@ -164,4 +165,18 @@ export const getProfileController = async (
   const { username } = req.params;
   const result = await usersServices.getProfile(username);
   res.status(HttpStatusCode.OK).json(result);
+};
+
+export const followUserController = async (
+  req: Request<ParamsDictionary, any, TFollowUserReqBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
+  const { being_followed_user_id } = req.body;
+  const result = await usersServices.followUser(current_user_id, being_followed_user_id);
+  res.status(HttpStatusCode.OK).json({
+    message: MutationMessage.FOLLOW_SUCCESSFULLY,
+    result,
+  });
 };

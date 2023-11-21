@@ -11,6 +11,7 @@ import {
   getMeController,
   updateMeController,
   getProfileController,
+  followUserController,
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
@@ -24,6 +25,7 @@ import {
   resetPasswordValidator,
   verifiedUserValidator,
   updateMeValidator,
+  followUserValidator,
 } from "~/middlewares/users.middleware";
 import { TUpdateReqBody } from "~/models/requests/User.requests";
 import { wrapRequestHandler } from "~/utils/handlers";
@@ -62,4 +64,11 @@ usersRouter.patch(
   wrapRequestHandler(updateMeController),
 );
 usersRouter.get("/:username", wrapRequestHandler(getProfileController));
+usersRouter.post(
+  "/follow",
+  accessTokenValidator,
+  verifiedUserValidator,
+  followUserValidator,
+  wrapRequestHandler(followUserController),
+);
 export default usersRouter;

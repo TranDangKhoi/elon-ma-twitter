@@ -2,6 +2,8 @@ export enum UserMessage {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   USER_NOT_FOUND = "Không tìm thấy người dùng",
   USER_FOUND = "Lấy thông tin người dùng thành công",
+  USER_ALREADY_FOLLOWED = "Người dùng đã được theo dõi trước đó",
+  OBJECT_ID_INVALID = "ID người dùng không hợp lệ",
   ACCESS_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token)",
   REFRESH_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống refresh token)",
@@ -24,4 +26,9 @@ export enum UserMessage {
   CONFIRM_PASSWORD_LENGTH_INVALID = "Mật khẩu xác thực phải có độ dài từ 6 đến 50 ký tự",
   CONFIRM_PASSWORD_INVALID = "Mật khẩu xác thực không khớp",
   CONFIRM_PASSWORD_MUST_BE_STRONG = "Mật khẩu xác thực cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
+}
+
+export enum MutationMessage {
+  FOLLOW_SUCCESSFULLY = "Theo dõi người dùng thành công",
+  UNFOLLOW_SUCCESSFULLY = "Bỏ theo dõi người dùng thành công",
 }
