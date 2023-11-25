@@ -33,6 +33,10 @@ export type TProfileReqParams = {
   username: string;
 };
 
+export type TUnfollowedReqParams = {
+  being_followed_user_id: string;
+};
+
 export type TFollowUserReqBody = {
   being_followed_user_id: string;
 };

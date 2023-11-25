@@ -4,13 +4,14 @@ import { pick } from "lodash";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { MutationMessage, UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.enum";
 import {
   TFollowUserReqBody,
   TLoginReqBody,
   TProfileReqParams,
   TSignOutReqBody,
   TSignUpReqBody,
+  TUnfollowedReqParams,
   TUpdateReqBody,
   TokenPayload,
 } from "~/models/requests/User.requests";
@@ -176,7 +177,17 @@ export const followUserController = async (
   const { being_followed_user_id } = req.body;
   const result = await usersServices.followUser(current_user_id, being_followed_user_id);
   res.status(HttpStatusCode.OK).json({
-    message: MutationMessage.FOLLOW_SUCCESSFULLY,
+    message: FollowMessage.FOLLOW_SUCCESSFULLY,
+    result,
+  });
+};
+
+export const unfollowUserController = async (req: Request<TUnfollowedReqParams>, res: Response, next: NextFunction) => {
+  const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
+  const { being_followed_user_id } = req.params;
+  const result = await usersServices.unfollowUser(current_user_id, being_followed_user_id);
+  res.status(HttpStatusCode.OK).json({
+    message: FollowMessage.UNFOLLOW_SUCCESSFULLY,
     result,
   });
 };

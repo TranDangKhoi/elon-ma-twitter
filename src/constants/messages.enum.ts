@@ -28,7 +28,8 @@ export enum UserMessage {
   CONFIRM_PASSWORD_MUST_BE_STRONG = "Mật khẩu xác thực cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
 }
 
-export enum MutationMessage {
+export enum FollowMessage {
+  NEED_TO_FOLLOW_FIRST = "Bạn cần theo dõi người dùng hiện tại nếu muốn hủy theo dõi họ",
   FOLLOW_SUCCESSFULLY = "Theo dõi người dùng thành công",
   UNFOLLOW_SUCCESSFULLY = "Bỏ theo dõi người dùng thành công",
 }

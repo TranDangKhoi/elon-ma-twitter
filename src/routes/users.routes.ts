@@ -12,6 +12,7 @@ import {
   updateMeController,
   getProfileController,
   followUserController,
+  unfollowUserController,
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
@@ -26,6 +27,7 @@ import {
   verifiedUserValidator,
   updateMeValidator,
   followUserValidator,
+  unfollowUserValidator,
 } from "~/middlewares/users.middleware";
 import { TUpdateReqBody } from "~/models/requests/User.requests";
 import { wrapRequestHandler } from "~/utils/handlers";
@@ -70,5 +72,12 @@ usersRouter.post(
   verifiedUserValidator,
   followUserValidator,
   wrapRequestHandler(followUserController),
+);
+usersRouter.delete(
+  "/follow/:being_followed_user_id",
+  accessTokenValidator,
+  verifiedUserValidator,
+  unfollowUserValidator,
+  wrapRequestHandler(unfollowUserController),
 );
 export default usersRouter;

@@ -3,7 +3,7 @@ import { ParamSchema, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
@@ -68,12 +68,12 @@ const nameSchema: ParamSchema = {
   isLength: { options: { min: 1, max: 100 }, errorMessage: UserMessage.NAME_LENGTH_IS_INVALID },
 };
 
-const dateOfBirthSchema = {
+const dateOfBirthSchema: ParamSchema = {
   notEmpty: true,
   isISO8601: { options: { strict: true, strictSeparator: true } },
 };
 
-const imageSchema = {
+const imageSchema: ParamSchema = {
   optional: true,
   isString: true,
   trim: true,
@@ -81,6 +81,21 @@ const imageSchema = {
     options: {
       min: 1,
       max: 400,
+    },
+  },
+};
+
+const userIdSchema: ParamSchema = {
+  isString: true,
+  trim: true,
+  custom: {
+    options: (values, { req }) => {
+      if (!ObjectId.isValid(values)) {
+        throw new ErrorWithStatus({
+          message: UserMessage.USER_NOT_FOUND,
+          status: HttpStatusCode.NOT_FOUND,
+        });
+      }
     },
   },
 };
@@ -471,6 +486,36 @@ export const followUserValidator = validate(
       },
     },
     ["body"],
+  ),
+);
+
+export const unfollowUserValidator = validate(
+  checkSchema(
+    {
+      being_followed_user_id: {
+        custom: {
+          options: async (value, { req }) => {
+            if (!ObjectId.isValid(value)) {
+              throw new ErrorWithStatus({
+                message: UserMessage.OBJECT_ID_INVALID,
+                status: HttpStatusCode.NOT_FOUND,
+              });
+            }
+            const foundUser = await databaseService.users.findOne({
+              _id: new ObjectId(value),
+            });
+            if (!foundUser) {
+              throw new ErrorWithStatus({
+                message: UserMessage.USER_NOT_FOUND,
+                status: HttpStatusCode.NOT_FOUND,
+              });
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["params"],
   ),
 );
 

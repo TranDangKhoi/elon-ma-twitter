@@ -7,7 +7,7 @@ import { TokenType, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
 import { config } from "dotenv";
-import { UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import Follower from "~/models/schemas/Follower.schema";
@@ -228,6 +228,20 @@ class UsersServices {
       },
     );
     return followedUserInfo;
+  }
+
+  async unfollowUser(current_user_id: string, followed_user_id: string) {
+    const beingUnfollowedUser = await databaseService.followers.findOneAndDelete({
+      user_id: new ObjectId(current_user_id),
+      being_followed_user_id: new ObjectId(followed_user_id),
+    });
+    if (!beingUnfollowedUser.value) {
+      throw new ErrorWithStatus({
+        message: FollowMessage.NEED_TO_FOLLOW_FIRST,
+        status: HttpStatusCode.BAD_REQUEST,
+      });
+    }
+    return beingUnfollowedUser.ok;
   }
 
   async resendVerifyEmail(user_id: string) {
