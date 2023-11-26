@@ -4,7 +4,8 @@ import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { FollowMessage, UserMessage } from "~/constants/messages.enum";
-import { ErrorWithStatus } from "~/models/Errors";
+import { REGEX_USERNAME } from "~/constants/regex";
+import { ErrorWithStatus, UnprocessableEntityError } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
@@ -448,6 +449,22 @@ export const updateMeValidator = validate(
           options: {
             min: 0,
             max: 50,
+          },
+        },
+        custom: {
+          options: async (values, { req }) => {
+            if (!REGEX_USERNAME.test(values)) {
+              throw Error(UserMessage.USERNAME_VALIDATION_ERROR);
+            }
+            const user = await databaseService.users.findOne({
+              username: values,
+            });
+            if (user) {
+              throw new ErrorWithStatus({
+                message: UserMessage.USERNAME_ALREADY_EXISTS,
+                status: HttpStatusCode.FORBIDDEN,
+              });
+            }
           },
         },
       },

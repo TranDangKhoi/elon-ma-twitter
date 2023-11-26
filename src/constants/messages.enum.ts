@@ -7,6 +7,8 @@ export enum UserMessage {
   ACCESS_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token)",
   REFRESH_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống refresh token)",
+  USERNAME_VALIDATION_ERROR = "Username cần có độ dài từ 4 tới 15 kí tự và chỉ được có chữ, số, dấu gạch dưới. Và không được chỉ có mỗi số",
+  USERNAME_ALREADY_EXISTS = "Username đã có người sử dụng, vui lòng sử dụng một cái khác",
   EMAIL_VERIFY_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token)",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
   FORGOT_PASSWORD_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token)",
