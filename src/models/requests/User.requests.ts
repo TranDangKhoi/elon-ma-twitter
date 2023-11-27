@@ -33,6 +33,12 @@ export type TProfileReqParams = {
   username: string;
 };
 
+export type TChangePasswordReqBody = {
+  old_password: string;
+  new_password: string;
+  confirm_new_password: string;
+};
+
 export type TUnfollowedReqParams = {
   being_followed_user_id: string;
 };

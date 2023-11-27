@@ -6,6 +6,7 @@ import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { FollowMessage, UserMessage } from "~/constants/messages.enum";
 import {
+  TChangePasswordReqBody,
   TFollowUserReqBody,
   TLoginReqBody,
   TProfileReqParams,
@@ -155,6 +156,19 @@ export const updateMeController = async (
   return res.status(HttpStatusCode.OK).json({
     message: "Updated profile successfully",
     result: user,
+  });
+};
+
+export const changePassswordController = async (
+  req: Request<ParamsDictionary, any, TChangePasswordReqBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { confirm_new_password } = req.body;
+  const { user_id } = req.decoded_access_token as TokenPayload;
+  await usersServices.changePassword(user_id, confirm_new_password);
+  res.status(HttpStatusCode.OK).json({
+    message: UserMessage.CHANGE_PASSWORD_SUCCESSFULLY,
   });
 };
 

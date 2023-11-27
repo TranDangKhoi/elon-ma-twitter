@@ -13,6 +13,7 @@ import {
   getProfileController,
   followUserController,
   unfollowUserController,
+  changePassswordController,
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
@@ -28,6 +29,7 @@ import {
   updateMeValidator,
   followUserValidator,
   unfollowUserValidator,
+  changePasswordValidator,
 } from "~/middlewares/users.middleware";
 import { TUpdateReqBody } from "~/models/requests/User.requests";
 import { wrapRequestHandler } from "~/utils/handlers";
@@ -64,6 +66,13 @@ usersRouter.patch(
     "username",
   ]),
   wrapRequestHandler(updateMeController),
+);
+usersRouter.put(
+  "/change-password",
+  accessTokenValidator,
+  verifiedUserValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePassswordController),
 );
 usersRouter.get("/:username", wrapRequestHandler(getProfileController));
 usersRouter.post(

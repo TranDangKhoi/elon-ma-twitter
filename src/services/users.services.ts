@@ -309,7 +309,21 @@ class UsersServices {
       message: "Xác thực token thành công",
     };
   }
-
+  async changePassword(user_id: string, confirm_new_password: string) {
+    await databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id),
+      },
+      [
+        {
+          $set: {
+            password: hashPassword(confirm_new_password),
+            updated_at: "$$NOW",
+          },
+        },
+      ],
+    );
+  }
   async resetPassword(user_id: string, newPassword: string) {
     const result = await databaseService.users.updateOne(
       { _id: new ObjectId(user_id) },

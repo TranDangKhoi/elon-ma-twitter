@@ -60,6 +60,32 @@ const confirmPasswordSchema: ParamSchema = {
   },
 };
 
+const confirmNewPasswordSchema: ParamSchema = {
+  isString: true,
+  notEmpty: { errorMessage: UserMessage.CONFIRM_PASSWORD_IS_REQUIRED },
+  isLength: { options: { min: 6, max: 50 }, errorMessage: UserMessage.CONFIRM_PASSWORD_LENGTH_INVALID },
+  isStrongPassword: {
+    errorMessage: UserMessage.CONFIRM_PASSWORD_MUST_BE_STRONG,
+    options: {
+      minLength: 6,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+  },
+  trim: true,
+  custom: {
+    options: (value, { req }) => {
+      if (value !== req.body.new_password) {
+        throw new Error(UserMessage.CONFIRM_PASSWORD_INVALID);
+      }
+
+      return true;
+    },
+  },
+};
+
 const nameSchema: ParamSchema = {
   isString: true,
   notEmpty: {
@@ -470,6 +496,58 @@ export const updateMeValidator = validate(
       },
       avatar: imageSchema,
       cover_photo: imageSchema,
+    },
+    ["body"],
+  ),
+);
+
+export const changePasswordValidator = validate(
+  checkSchema(
+    {
+      old_password: {
+        ...passwordSchema,
+        custom: {
+          options: async (values, { req }) => {
+            const { user_id } = (req as Request).decoded_access_token as TokenPayload;
+            const user = await databaseService.users.findOne({
+              _id: new ObjectId(user_id),
+            });
+            if (!user) {
+              throw new ErrorWithStatus({
+                message: UserMessage.USER_NOT_FOUND,
+                status: HttpStatusCode.NOT_FOUND,
+              });
+            }
+            const { password } = user;
+            const passwordIsMatched = password === hashPassword(values);
+            if (!passwordIsMatched) {
+              throw new ErrorWithStatus({
+                message: UserMessage.OLD_PASSWORD_IS_MISMATCHED,
+                status: HttpStatusCode.FORBIDDEN,
+              });
+            }
+          },
+        },
+      },
+      new_password: {
+        ...passwordSchema,
+        custom: {
+          options: async (values, { req }) => {
+            const { user_id } = (req as Request).decoded_access_token as TokenPayload;
+            const currentUser = await databaseService.users.findOne({
+              _id: new ObjectId(user_id),
+            });
+            if (currentUser?.password === hashPassword(values)) {
+              throw new ErrorWithStatus({
+                message: "Mật khẩu mới không được giống mật khẩu cũ",
+                status: HttpStatusCode.FORBIDDEN,
+              });
+            }
+            return true;
+          },
+        },
+      },
+      confirm_new_password: confirmNewPasswordSchema,
     },
     ["body"],
   ),

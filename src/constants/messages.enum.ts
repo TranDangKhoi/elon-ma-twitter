@@ -24,6 +24,8 @@ export enum UserMessage {
   PASSWORD_IS_REQUIRED = "Không được để trống mật khẩu",
   PASSWORD_LENGTH_INVALID = "Mật khẩu phải có độ dài từ 6 đến 50 ký tự",
   PASSWORD_MUST_BE_STRONG = "Mật khẩu cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
+  CHANGE_PASSWORD_SUCCESSFULLY = "Thay đổi mật khẩu thành công!",
+  OLD_PASSWORD_IS_MISMATCHED = "Mật khẩu cũ không đúng, vui lòng nhập lại",
   CONFIRM_PASSWORD_IS_REQUIRED = "Không được để trống mật khẩu xác thực",
   CONFIRM_PASSWORD_LENGTH_INVALID = "Mật khẩu xác thực phải có độ dài từ 6 đến 50 ký tự",
   CONFIRM_PASSWORD_INVALID = "Mật khẩu xác thực không khớp",
