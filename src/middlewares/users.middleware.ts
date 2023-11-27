@@ -533,11 +533,7 @@ export const changePasswordValidator = validate(
         ...passwordSchema,
         custom: {
           options: async (values, { req }) => {
-            const { user_id } = (req as Request).decoded_access_token as TokenPayload;
-            const currentUser = await databaseService.users.findOne({
-              _id: new ObjectId(user_id),
-            });
-            if (currentUser?.password === hashPassword(values)) {
+            if (hashPassword(req.body.old_password) === hashPassword(values)) {
               throw new ErrorWithStatus({
                 message: "Mật khẩu mới không được giống mật khẩu cũ",
                 status: HttpStatusCode.FORBIDDEN,
