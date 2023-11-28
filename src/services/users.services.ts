@@ -269,6 +269,27 @@ class UsersServices {
       ]),
     ]);
     const [access_token, refresh_token] = token;
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        user_id: new ObjectId(user_id),
+        token: refresh_token,
+      }),
+    );
+    // Nếu ta update lại token khi verify thành công thì các thiết bị khác sẽ bị đăng xuất ra khỏi tài khoản sau khi verify thành công
+    // do refresh_token không còn tồn tại trong db nữa, vì vậy ta sẽ sử dụng insertOne nha. Và sau này mình sẽ cải thiện việc xóa refresh_token cũ sau khi verify sau
+    // await databaseService.refreshTokens.updateOne(
+    //   {
+    //     user_id: new ObjectId(user_id),
+    //   },
+    //   [
+    //     {
+    //       $set: {
+    //         token: refresh_token,
+    //         created_at: "$$NOW",
+    //       },
+    //     },
+    //   ],
+    // );
     return {
       access_token,
       refresh_token,
