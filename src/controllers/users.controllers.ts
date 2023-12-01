@@ -39,6 +39,16 @@ export const signInController = async (req: Request<ParamsDictionary, any, TLogi
   });
 };
 
+export const oAuth2Controller = async (req: Request, res: Response) => {
+  const { code } = req.query;
+  console.log(code);
+  const result = await usersServices.signInUsingOAuth2(code as string);
+  res.status(HttpStatusCode.OK).json({
+    message: "Đăng nhập bằng Google thành công",
+    result,
+  });
+};
+
 export const signUpController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
   const result = await usersServices.signUp(req.body);
   res.status(HttpStatusCode.CREATED).json({
@@ -126,7 +136,6 @@ export const verifyForgotPasswordController = async (
 export const resetPasswordController = async (
   req: Request<ParamsDictionary, any, { password: string; confirm_password: string }>,
   res: Response,
-  next: NextFunction,
 ) => {
   const { user_id } = req.decoded_forgot_password_token as TokenPayload;
   const result = await usersServices.resetPassword(user_id, req.body.password);

@@ -14,6 +14,7 @@ import {
   followUserController,
   unfollowUserController,
   changePassswordController,
+  oAuth2Controller,
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
@@ -37,6 +38,7 @@ import { wrapRequestHandler } from "~/utils/handlers";
 const usersRouter = Router();
 
 usersRouter.post("/signin", signInValidator, wrapRequestHandler(signInController));
+usersRouter.get("/oauth/google", wrapRequestHandler(oAuth2Controller));
 usersRouter.post("/signup", registerValidator, wrapRequestHandler(signUpController));
 usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRequestHandler(signOutController));
 usersRouter.post("/refresh-token");

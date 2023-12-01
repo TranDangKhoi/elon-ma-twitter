@@ -11,7 +11,7 @@ import { FollowMessage, UserMessage } from "~/constants/messages.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import Follower from "~/models/schemas/Follower.schema";
-
+import axios from "axios";
 config();
 class UsersServices {
   private onReject(err: any) {
@@ -79,6 +79,27 @@ class UsersServices {
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
     );
     return { access_token, refresh_token };
+  }
+
+  async getAccessTokenThroughAuthorizationCode(code: string) {
+    const body = {
+      code,
+      client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+      client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
+      grant_type: "authorization_code",
+    };
+    const { data } = await axios.post("https://oauth2.googleapis.com/token", body, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlenconded",
+      },
+    });
+    return data;
+  }
+
+  async signInUsingOAuth2(code: string) {
+    const data = await this.getAccessTokenThroughAuthorizationCode(code);
+    return data;
   }
 
   async signUp(payload: TSignUpReqBody) {
