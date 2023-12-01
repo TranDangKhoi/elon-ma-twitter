@@ -13,6 +13,9 @@ declare global {
       JWT_SECRET_REFRESH_TOKEN: string;
       JWT_SECRET_EMAIL_VERIFY_TOKEN: string;
       JWT_SECRET_FORGOT_PASSWORD_TOKEN: string;
+      GOOGLE_OAUTH_CLIENT_ID: string;
+      GOOGLE_OAUTH_CLIENT_SECRET: string;
+      GOOGLE_OAUTH_REDIRECT_URI: string;
       ACCESS_TOKEN_EXPIRES_IN: string;
       REFRESH_TOKEN_EXPIRES_IN: string;
       EMAIL_VERIFY_TOKEN_EXPIRES_IN: string;
