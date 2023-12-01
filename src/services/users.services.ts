@@ -12,6 +12,7 @@ import { ErrorWithStatus } from "~/models/Errors";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import Follower from "~/models/schemas/Follower.schema";
 import axios from "axios";
+import { TGoogleOAuthConsent, TGoogleUserInfo } from "~/types/google-oauth.types";
 config();
 class UsersServices {
   private onReject(err: any) {
@@ -89,7 +90,7 @@ class UsersServices {
       redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
       grant_type: "authorization_code",
     };
-    const { data } = await axios.post("https://oauth2.googleapis.com/token", body, {
+    const { data } = await axios.post<TGoogleOAuthConsent>("https://oauth2.googleapis.com/token", body, {
       headers: {
         "Content-Type": "application/x-www-form-urlenconded",
       },
@@ -99,6 +100,54 @@ class UsersServices {
 
   async signInUsingOAuth2(code: string) {
     const data = await this.getAccessTokenThroughAuthorizationCode(code);
+    const userInfo = await this.getGoogleUserInfo(data.access_token, data.id_token);
+    if (!userInfo.verified_email) {
+      throw new ErrorWithStatus({
+        status: HttpStatusCode.FORBIDDEN,
+        message: UserMessage.GMAIL_NOT_VERIFIED,
+      });
+    }
+    // Tiếp theo kiểm tra xem e-mail này đã tồn tại trong db hay chưa, tồn tại rồi thì cho login vào
+    const user = await databaseService.users.findOne({
+      email: userInfo.email,
+    });
+
+    if (user) {
+      const [access_token, refresh_token] = await this.returnAccessAndRefreshToken({
+        user_id: user._id.toString(),
+        verify: user.verify,
+      });
+      await databaseService.refreshTokens.insertOne(
+        new RefreshToken({ user_id: user._id, token: refresh_token, created_at: new Date() }),
+      );
+      return {
+        access_token,
+        refresh_token,
+        newUser: false,
+      };
+    } else {
+      const randomPassword = Math.random().toString(36).substring(2, 15);
+      const result = await this.signUp({
+        email: userInfo.email,
+        name: `${userInfo.given_name} ${userInfo.family_name}`,
+        date_of_birth: new Date().toISOString(),
+        password: randomPassword,
+        confirm_password: randomPassword,
+      });
+      return { ...result, newUser: true };
+    }
+  }
+
+  async getGoogleUserInfo(access_token: string, id_token: string) {
+    const { data } = await axios.get<TGoogleUserInfo>("https://www.googleapis.com/oauth2/v1/userinfo", {
+      params: {
+        access_token,
+        alt: "json",
+      },
+      headers: {
+        Authorization: `Bearer ${id_token}`,
+      },
+    });
     return data;
   }
 

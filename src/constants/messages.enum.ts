@@ -11,6 +11,7 @@ export enum UserMessage {
   USERNAME_ALREADY_EXISTS = "Username đã có người sử dụng, vui lòng sử dụng một cái khác",
   EMAIL_VERIFY_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token)",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
+  GMAIL_NOT_VERIFIED = "Tài khoản Google của bạn chưa được xác  thực, vui lòng xác thực trước khi tiếp tục",
   FORGOT_PASSWORD_TOKEN_INVALID = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token)",
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED = "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống forgot password token)",
   EMAIL_VERIFY_TOKEN_IS_VERIFIED = "Email đã được xác minh trước đó",

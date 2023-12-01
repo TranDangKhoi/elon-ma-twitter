@@ -1,3 +1,4 @@
+import { config } from "dotenv";
 import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { pick } from "lodash";
@@ -19,7 +20,7 @@ import {
 import User from "~/models/schemas/User.schema";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
-
+config();
 // Validation chain - Sử dụng cho bản express-validator 6 cho xuống
 // export const testController = (req: Request, res: Response) => {
 //   const errors = validationResult(req);
@@ -41,12 +42,9 @@ export const signInController = async (req: Request<ParamsDictionary, any, TLogi
 
 export const oAuth2Controller = async (req: Request, res: Response) => {
   const { code } = req.query;
-  console.log(code);
   const result = await usersServices.signInUsingOAuth2(code as string);
-  res.status(HttpStatusCode.OK).json({
-    message: "Đăng nhập bằng Google thành công",
-    result,
-  });
+  const urlRedirect = `${process.env.GOOGLE_OAUTH_CLIENT_REDIRECT_URI}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}`;
+  res.redirect(urlRedirect);
 };
 
 export const signUpController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
