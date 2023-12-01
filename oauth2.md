@@ -97,4 +97,40 @@ Sau khi xong hết các bước trên thì lúc này ta sẽ nhận được Cli
 
 ### 3. Đăng ký xong dịch vụ ròi thì code thôi
 
-_Còn tiếp..._
+#### Bước 1: Thực hiện hiển thị được màn hình đăng nhập bằng Google khi click vô Login with Google bên phía FE
+
+Các bạn có thể đọc, và làm theo tại đây:
+
+- Phía FE: https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow
+- Phía BE: https://developers.google.com/identity/protocols/oauth2/web-server
+
+- Đầu tiên, thì ta cần phải hiểu được rằng là, muốn hiển thị được màn hình đăng nhập bằng Google và có thể chọn tài khoản muốn sử dụng để đăng nhập, thì ta phải được sự chấp thuận từ phía dịch vụ của Google. Để làm được việc này thì ta cần có các thông tin như sau:
+
+  - Sử dụng đường dẫn sau để có quyền truy cập vào Google OAuth 2.0 : https://accounts.google.com/o/oauth2/v2/auth, đường dẫn này chỉ chấp nhận kiểu giao thức HTTPS, nếu ta cố tình đổi sang http thì google sẽ refuse và đổi lại qua https
+  - Sau khi có được đường dẫn rồi, thì ta cần phải thực hiện truyền một vài tham số vào URL để bên phía Google có thể xác thực rằng: "À, thằng này đã đăng kí dịch vụ OAuth 2.0 của bên mình rồi, ok tao sẽ cho nó quyền sử dụng chức năng này"
+  - Thì các tham số này chính là những tham số trong file Credentials JSON mà mình đã tải về khi đăng kí sử dụng dịch vụ OAuth 2.0 bên phía Google, và những tham số này cần đc bảo mật kĩ, nên bạn hãy lưu nó vào một file .env, và gitignore nó nha
+
+Thì đây là danh sách các tham số mà ta cần truyền vào, để Google chấp thuận chúng ta:
+
+![Parameters](https://media.discordapp.net/attachments/1145987650222817322/1180093253828214866/image.png?ex=657c2a7c&is=6569b57c&hm=5e5a773fc2c6f3ce37e4855a7f24f95d627908c9ad4e13311cf0d940840b3881&=&format=webp&quality=lossless&width=697&height=545)
+
+Mình sẽ giải thích tác dụng của từng params theo nghĩa mình hiểu:
+
+- response_type: Dùng để chỉ định rõ kiểu response mà bạn muốn trả về cho server sau khi thực hiện login = google thành công, sẽ có 3 value mình có thể điền vào là "code", "token", "id_token". Ok vậy là có 3 trường hợp phải giải thích:
+
+  - code: Flow ở phần này thì cũng khá dễ hiểu thôi. Khi chúng ta thực hiện đăng nhập = Google và được chấp nhận/thông qua cái middleware của bọn họ, thì server sẽ trả ra cho chúng ta một đoạn authorization code để mình có thể dùng nó lấy ra access token của người dùng
+  - token: Flow ở phần này thì nó ngắn hơn bên trên một chút. Khi chúng ta thực hiện đăng nhập = Google và được chấp nhận/thông qua, thì server sẽ lập tức trả ra access token cho phía client luôn, không cần sử dụng authorization code để lấy được access token nữa. Chỉ dùng vào trường hợp khi mà phía client không có cách nào để có thể bảo quản được access_token ở một nơi an toàn
+
+  Bạn có thể tìm hiểu thêm về vấn đề này qua việc đọc các bài viết liên quan tới PKCE
+
+  - id_token: Response type này sẽ được sử dụng khi bạn làm việc với OpenID Connect (OIDC). Nó trả ra cho chúng ta một ID Token, có thể hiểu nôm na là một JWT chứa những dữ liệu chứng thực về tình trạng authentication của người dùng
+
+Ngoài ra, bạn còn có thể kết hợp nhiều kiểu response_type cùng một lúc, bằng cách ngăn cách chúng giữa các dấu space, ví dụ như sau:
+
+```jsx
+const query = {
+  client_id: VITE_GOOGLE_OAUTH_CLIENT_ID,
+  redirect_uri: VITE_GOOGLE_REDIRECT_URI,
+  response_type: "code id_token",
+};
+```
