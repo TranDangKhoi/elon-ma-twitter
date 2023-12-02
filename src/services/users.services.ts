@@ -123,7 +123,8 @@ class UsersServices {
       return {
         access_token,
         refresh_token,
-        newUser: false,
+        new_user: false,
+        verify: user.verify,
       };
     } else {
       const randomPassword = Math.random().toString(36).substring(2, 15);
@@ -134,7 +135,7 @@ class UsersServices {
         password: randomPassword,
         confirm_password: randomPassword,
       });
-      return { ...result, newUser: true };
+      return { ...result, new_user: true, verify: UserVerifyStatus.UNVERIFIED };
     }
   }
 
