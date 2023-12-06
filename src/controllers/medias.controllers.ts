@@ -15,6 +15,8 @@ export const uploadSingleImage = async (req: Request, res: Response) => {
     if (err) {
       throw err;
     }
+    console.log(fields);
+    console.log(files);
     return res.status(HttpStatusCode.OK).json({
       message: "Upload ảnh thành công",
     });
