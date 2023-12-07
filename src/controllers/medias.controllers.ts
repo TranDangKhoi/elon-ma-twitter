@@ -1,27 +1,10 @@
-import { Request, Response } from "express";
-import formidable from "formidable";
-import path from "path";
+import { NextFunction, Request, Response } from "express";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-const uploadDir = path.resolve("uploads");
-export const uploadSingleImage = async (req: Request, res: Response) => {
-  const form = formidable({
-    uploadDir,
-    maxFiles: 1,
-    keepExtensions: true,
-    // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
-    maxFileSize: 10 * 1024 * 1024,
+import { formiddableSingleUploadHandler } from "~/utils/file";
+
+export const uploadSingleImage = async (req: Request, res: Response, next: NextFunction) => {
+  const data = await formiddableSingleUploadHandler(req);
+  res.status(HttpStatusCode.OK).json({
+    result: data,
   });
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      throw err;
-    }
-    console.log(fields);
-    console.log(files);
-    return res.status(HttpStatusCode.OK).json({
-      message: "Upload ảnh thành công",
-    });
-  });
-  // return res.status(HttpStatusCode.OK).json({
-  //   message: "Hahaha",
-  // });
 };
