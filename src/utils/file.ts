@@ -1,12 +1,10 @@
 import { Request } from "express";
-import formidable from "formidable";
+import formidable, { File } from "formidable";
 import fs from "fs";
-import path from "path";
-import { uploadDir } from "src/constants/constants";
+import { UPLOAD_DIR, UPLOAD_DIR_TEMP } from "src/constants/constants";
 export const initFolder = () => {
-  const uploadFolderPath = path.resolve("uploads");
-  if (!fs.existsSync(uploadFolderPath)) {
-    fs.mkdirSync(uploadFolderPath, {
+  if (!fs.existsSync(UPLOAD_DIR_TEMP)) {
+    fs.mkdirSync(UPLOAD_DIR_TEMP, {
       // Mục đích là để tạo nested folder
       recursive: true,
     });
@@ -15,9 +13,15 @@ export const initFolder = () => {
   }
 };
 
+export const getFileNameWithoutExtensions = (filename: string) => {
+  const splittedFileName = filename.split(".");
+  splittedFileName.pop();
+  return splittedFileName.join("");
+};
+
 export const formiddableSingleUploadHandler = (req: Request) => {
   const form = formidable({
-    uploadDir,
+    uploadDir: UPLOAD_DIR_TEMP,
     maxFiles: 1,
     keepExtensions: true,
     // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
@@ -38,16 +42,15 @@ export const formiddableSingleUploadHandler = (req: Request) => {
       return isFileValid;
     },
   });
-  return new Promise((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
-      console.log(files);
       if (err) {
         return reject(err);
       }
       if (!files.image) {
         return reject(new Error("Can not upload empty stuffs"));
       }
-      return resolve(files);
+      return resolve(files.image[0]);
     });
   });
 };

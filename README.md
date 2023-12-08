@@ -38,7 +38,7 @@
 - Database: MongoDB
 - Authentication: JWT & OAuth 2.0 (Google)
 - File upload: Formidable v3
-- Image Convertion: Sharp
+- Image Processing: Sharp
 - Websocket: Socket.io
 - TypeODM: MongoDB Driver (I know it's not an ORM, but i don't want to use neither Mongoose nor Prisma)
 - Deployment: Docker
