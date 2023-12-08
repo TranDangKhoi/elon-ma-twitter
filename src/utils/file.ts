@@ -27,7 +27,6 @@ export const formiddableSingleUploadHandler = (req: Request) => {
     // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
     maxFileSize: 10 * 1024 * 1024,
     filter: function ({ mimetype, name, originalFilename }) {
-      console.log(mimetype);
       const isFileValid = Boolean(mimetype?.includes("image"));
       const isKeyValid = name === "image";
       if (!isFileValid) {

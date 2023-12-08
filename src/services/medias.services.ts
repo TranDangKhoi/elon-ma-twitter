@@ -17,6 +17,7 @@ class MediasServices {
       })
       .toFile(UPLOAD_DIR + `/${fileWithoutExtensions}.jpg`);
     fs.unlinkSync(file.filepath);
+
     return `http://localhost:8080/uploads/${fileWithoutExtensions}.jpg`;
   }
 }
