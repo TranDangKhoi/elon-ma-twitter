@@ -14,7 +14,6 @@ app.use(express.json());
 app.use("/users", usersRouter);
 app.use("/medias", mediasRouter);
 app.use(defaultErrorHandler);
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

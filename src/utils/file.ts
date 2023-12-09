@@ -1,11 +1,10 @@
 import { Request } from "express";
 import formidable, { File } from "formidable";
-import fs from "fs";
-import { UPLOAD_DIR, UPLOAD_DIR_TEMP } from "src/constants/constants";
+import { UPLOAD_DIR_TEMP } from "~/constants/constants";
+import fs from "node:fs";
 export const initFolder = () => {
   if (!fs.existsSync(UPLOAD_DIR_TEMP)) {
     fs.mkdirSync(UPLOAD_DIR_TEMP, {
-      // Mục đích là để tạo nested folder
       recursive: true,
     });
   } else {
@@ -22,6 +21,7 @@ export const getFileNameWithoutExtensions = (filename: string) => {
 export const formiddableSingleUploadHandler = (req: Request) => {
   const form = formidable({
     uploadDir: UPLOAD_DIR_TEMP,
+    allowEmptyFiles: false,
     maxFiles: 1,
     keepExtensions: true,
     // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
