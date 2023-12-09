@@ -1,5 +1,6 @@
 import { Request } from "express";
 import sharp from "sharp";
+import { isProduction } from "~/constants/config";
 import { UPLOAD_DIR } from "~/constants/constants";
 import { formiddableSingleUploadHandler, getFileNameWithoutExtensions } from "~/utils/file";
 class MediasServices {
@@ -14,7 +15,9 @@ class MediasServices {
         quality: 80,
       })
       .toFile(UPLOAD_DIR + `/${fileWithoutExtensions}.jpg`);
-    return `http://localhost:8080/uploads/${fileWithoutExtensions}.jpg`;
+    return isProduction
+      ? `${process.env.API_HOST}/uploads/${fileWithoutExtensions}`
+      : `http://localhost:8080/uploads/${fileWithoutExtensions}.jpg`;
   }
 }
 

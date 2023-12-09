@@ -6,9 +6,9 @@
   "author": "TranDangKhoi <baits16@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "npx nodemon development",
+    "dev": "npx nodemon --development",
     "build": "rimraf ./dist && tsc && tsc-alias",
-    "start": "node dist/index.js production",
+    "start": "node dist/index.js --production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
@@ -20,6 +20,7 @@
     "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/lodash": "^4.14.195",
+    "@types/minimist": "^1.2.5",
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
@@ -43,6 +44,7 @@
     "formidable": "^3.5.1",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
+    "minimist": "^1.2.8",
     "mongodb": "^5.6.0",
     "sharp": "^0.33.0"
   }
