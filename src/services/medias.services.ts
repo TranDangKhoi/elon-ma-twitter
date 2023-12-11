@@ -16,8 +16,8 @@ class MediasServices {
       })
       .toFile(UPLOAD_DIR + `/${fileWithoutExtensions}.jpg`);
     return isProduction
-      ? `${process.env.API_HOST}/uploads/${fileWithoutExtensions}`
-      : `http://localhost:8080/uploads/${fileWithoutExtensions}.jpg`;
+      ? `${process.env.API_HOST}/${fileWithoutExtensions}`
+      : `http://localhost:8080/${fileWithoutExtensions}.jpg`;
   }
 }
 
