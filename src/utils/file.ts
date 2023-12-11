@@ -22,10 +22,12 @@ export const formiddableSingleUploadHandler = (req: Request) => {
   const form = formidable({
     uploadDir: UPLOAD_DIR_TEMP,
     allowEmptyFiles: false,
-    maxFiles: 1,
+    maxFiles: 4,
     keepExtensions: true,
     // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
     maxFileSize: 10 * 1024 * 1024,
+    // totalFileSize maximum sẽ là 40MB, tức là nếu upload nhiều ảnh một lúc thì max chỉ được là 40MB thôi
+    maxTotalFileSize: 10 * 4 * 1024 * 1024,
     filter: function ({ mimetype, name, originalFilename }) {
       const isFileValid = Boolean(mimetype?.includes("image"));
       const isKeyValid = name === "image";
@@ -41,7 +43,7 @@ export const formiddableSingleUploadHandler = (req: Request) => {
       return isFileValid;
     },
   });
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err);
@@ -49,7 +51,7 @@ export const formiddableSingleUploadHandler = (req: Request) => {
       if (!files.image) {
         return reject(new Error("Can not upload empty stuffs"));
       }
-      return resolve(files.image[0]);
+      return resolve(files.image);
     });
   });
 };
