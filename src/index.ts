@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/users", usersRouter);
 app.use("/medias", mediasRouter);
-app.use("/medias", express.static(UPLOAD_DIR));
+// app.use("/medias", express.static(UPLOAD_DIR));
 app.use(defaultErrorHandler);
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
