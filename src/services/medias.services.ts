@@ -1,16 +1,22 @@
 import { Request } from "express";
 import sharp from "sharp";
 import { isProduction } from "~/constants/config";
-import { UPLOAD_DIR } from "~/constants/constants";
+import { IMAGE_UPLOAD_DIR } from "~/constants/constants";
 import { MediaType } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
-import { formiddableSingleUploadHandler, getFileNameWithoutExtensions } from "~/utils/file";
+import {
+  formiddableImageUploadHandler,
+  formiddableVideoUploadHandler,
+  getFileNameWithoutExtensions,
+} from "~/utils/file";
 class MediasServices {
   async handleUploadImages(req: Request) {
-    const files = await formiddableSingleUploadHandler(req);
+    console.log(req);
+    const imageFiles = await formiddableImageUploadHandler(req);
     const result: TMediaResponse[] = await Promise.all(
-      files.map(async (file) => {
-        const fileWithoutExtensions = getFileNameWithoutExtensions(file.newFilename);
+      imageFiles.map(async (file) => {
+        // const fileWithoutExtensions = getFileNameWithoutExtensions(file.newFilename);
+        console.log(file.filepath);
         await sharp(file.filepath)
           .resize(1200, 1200, {
             fit: "inside",
@@ -18,16 +24,28 @@ class MediasServices {
           .jpeg({
             quality: 80,
           })
-          .toFile(UPLOAD_DIR + `/${fileWithoutExtensions}.jpg`);
+          .toFile(IMAGE_UPLOAD_DIR + `/${file.newFilename}.jpg`);
         return {
           url: isProduction
-            ? `${process.env.API_HOST}/${fileWithoutExtensions}`
-            : `http://localhost:8080/${fileWithoutExtensions}.jpg`,
+            ? `${process.env.API_HOST}/medias/image/${file.newFilename}.jpg`
+            : `http://localhost:8080/medias/image/${file.newFilename}.jpg`,
           type: MediaType.Image,
         };
       }),
     );
     return result;
+  }
+
+  async handleUploadVideos(req: Request) {
+    const videoFile = await formiddableVideoUploadHandler(req);
+    const videoFileWithoutExtensions = getFileNameWithoutExtensions(videoFile.newFilename);
+
+    return {
+      url: isProduction
+        ? `${process.env.API_HOST}/${videoFileWithoutExtensions}`
+        : `http://localhost:8080/${videoFileWithoutExtensions}`,
+      type: MediaType.Video,
+    };
   }
 }
 

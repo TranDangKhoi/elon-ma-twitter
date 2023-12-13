@@ -5,7 +5,7 @@ import mediasRouter from "~/routes/medias.routes";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import databaseService from "./services/database.services";
 import { initFolder } from "./utils/file";
-import { UPLOAD_DIR } from "./constants/constants";
+import { IMAGE_UPLOAD_DIR } from "./constants/constants";
 
 databaseService.connect().catch(console.dir);
 initFolder();

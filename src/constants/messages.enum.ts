@@ -38,3 +38,8 @@ export enum FollowMessage {
   FOLLOW_SUCCESSFULLY = "Theo dõi người dùng thành công",
   UNFOLLOW_SUCCESSFULLY = "Bỏ theo dõi người dùng thành công",
 }
+
+export enum MediaMessage {
+  UPLOAD_IMAGE_SUCCESSFULLY = "Upload ảnh thành công",
+  UPLOAD_VIDEO_SUCCESSFULLY = "Upload video thành công",
+}

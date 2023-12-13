@@ -1,10 +1,11 @@
 import { Request } from "express";
 import formidable, { File } from "formidable";
-import { UPLOAD_DIR_TEMP } from "~/constants/constants";
+import { IMAGE_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import fs from "node:fs";
+import path from "node:path";
 export const initFolder = () => {
-  if (!fs.existsSync(UPLOAD_DIR_TEMP)) {
-    fs.mkdirSync(UPLOAD_DIR_TEMP, {
+  if (!fs.existsSync(IMAGE_UPLOAD_TEMP_DIR)) {
+    fs.mkdirSync(IMAGE_UPLOAD_TEMP_DIR, {
       recursive: true,
     });
   } else {
@@ -13,18 +14,16 @@ export const initFolder = () => {
 };
 
 export const getFileNameWithoutExtensions = (filename: string) => {
-  const splittedFileName = filename.split(".");
-  splittedFileName.pop();
-  return splittedFileName.join("");
+  return path.parse(filename).name;
 };
 
-export const formiddableSingleUploadHandler = (req: Request) => {
+export const formiddableImageUploadHandler = (req: Request) => {
   const form = formidable({
-    uploadDir: UPLOAD_DIR_TEMP,
+    uploadDir: IMAGE_UPLOAD_TEMP_DIR,
     allowEmptyFiles: false,
     maxFiles: 4,
-    keepExtensions: true,
-    // 10 * 1024 = 10KB => 10KB * 1024 = 10MB
+    // keepExtensions: true,
+    // 10 * 1024 bytes = 10KB => 10KB * 1024 bytes = 10MB
     maxFileSize: 10 * 1024 * 1024,
     // totalFileSize maximum sẽ là 40MB, tức là nếu upload nhiều ảnh một lúc thì max chỉ được là 40MB thôi
     maxTotalFileSize: 10 * 4 * 1024 * 1024,
@@ -52,6 +51,42 @@ export const formiddableSingleUploadHandler = (req: Request) => {
         return reject(new Error("Can not upload empty stuffs"));
       }
       return resolve(files.image);
+    });
+  });
+};
+
+export const formiddableVideoUploadHandler = (req: Request) => {
+  const form = formidable({
+    uploadDir: IMAGE_UPLOAD_TEMP_DIR,
+    allowEmptyFiles: false,
+    maxFiles: 1,
+    keepExtensions: true,
+    // 10 * 1024 bytes = 10KB => 10KB * 1024 bytes = 10MB
+    maxFileSize: 25 * 1024 * 1024,
+    // filter: function ({ mimetype, name, originalFilename }) {
+    //   const isFileValid = Boolean(mimetype?.includes("image"));
+    //   const isKeyValid = name === "image";
+    //   if (!isFileValid) {
+    //     form.emit("error" as "data", new Error("File type is not valid") as any);
+    //   }
+    //   if (!isKeyValid) {
+    //     form.emit(
+    //       "error" as "data",
+    //       new Error(`The key "${name}" in form-data is not valid, please replace it with "image" `) as any,
+    //     );
+    //   }
+    //   return isFileValid;
+    // },
+  });
+  return new Promise<File>((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        return reject(err);
+      }
+      if (!files.video) {
+        return reject(new Error("Can not upload empty stuffs"));
+      }
+      return resolve(files.video[0]);
     });
   });
 };
