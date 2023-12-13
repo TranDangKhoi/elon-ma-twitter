@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   serveImageController,
+  serveVideoController,
   uploadImagesController as uploadImagesController,
   uploadVideosController,
 } from "~/controllers/medias.controllers";
@@ -10,6 +11,7 @@ import { wrapRequestHandler } from "~/utils/handlers";
 const mediasRouter = Router();
 
 mediasRouter.get("/image/:name", wrapRequestHandler(serveImageController));
+mediasRouter.get("/video/:name", wrapRequestHandler(serveVideoController));
 mediasRouter.post(
   "/upload-image",
   accessTokenValidator,

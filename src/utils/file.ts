@@ -1,6 +1,6 @@
 import { Request } from "express";
 import formidable, { File } from "formidable";
-import { IMAGE_UPLOAD_TEMP_DIR } from "~/constants/constants";
+import { IMAGE_UPLOAD_TEMP_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import fs from "node:fs";
 import path from "node:path";
 export const initFolder = () => {
@@ -8,13 +8,21 @@ export const initFolder = () => {
     fs.mkdirSync(IMAGE_UPLOAD_TEMP_DIR, {
       recursive: true,
     });
-  } else {
-    return;
   }
+  if (!fs.existsSync(VIDEO_UPLOAD_TEMP_DIR)) {
+    fs.mkdirSync(VIDEO_UPLOAD_TEMP_DIR, {
+      recursive: true,
+    });
+  }
+  return;
 };
 
 export const getFileNameWithoutExtensions = (filename: string) => {
   return path.parse(filename).name;
+};
+
+export const getExtensionWithoutFilename = (filename: string) => {
+  return path.parse(filename as string).ext;
 };
 
 export const formiddableImageUploadHandler = (req: Request) => {
@@ -57,10 +65,9 @@ export const formiddableImageUploadHandler = (req: Request) => {
 
 export const formiddableVideoUploadHandler = (req: Request) => {
   const form = formidable({
-    uploadDir: IMAGE_UPLOAD_TEMP_DIR,
+    uploadDir: VIDEO_UPLOAD_DIR,
     allowEmptyFiles: false,
     maxFiles: 1,
-    keepExtensions: true,
     // 10 * 1024 bytes = 10KB => 10KB * 1024 bytes = 10MB
     maxFileSize: 25 * 1024 * 1024,
     // filter: function ({ mimetype, name, originalFilename }) {
@@ -78,7 +85,7 @@ export const formiddableVideoUploadHandler = (req: Request) => {
     //   return isFileValid;
     // },
   });
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err);
@@ -86,7 +93,12 @@ export const formiddableVideoUploadHandler = (req: Request) => {
       if (!files.video) {
         return reject(new Error("Can not upload empty stuffs"));
       }
-      return resolve(files.video[0]);
+      const videos = files.video;
+      videos.forEach((video) => {
+        const extensionOfFilename = getExtensionWithoutFilename(video.originalFilename as string);
+        fs.renameSync(video.filepath, `${video.filepath}${extensionOfFilename}`);
+      });
+      return resolve(files.video);
     });
   });
 };
