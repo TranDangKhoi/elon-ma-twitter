@@ -3,6 +3,7 @@ export enum HttpStatusCode {
   CREATED = 201,
   ACCEPTED = 202,
   NO_CONTENT = 204,
+  PARTIAL_CONTENT = 206,
   // 4xx Client Error
   BAD_REQUEST = 400,
   UNAUTHORIZED = 401,
