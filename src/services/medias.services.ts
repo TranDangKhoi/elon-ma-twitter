@@ -37,14 +37,16 @@ class MediasServices {
   }
 
   async handleUploadVideos(req: Request) {
-    const videoFile = await formiddableVideoUploadHandler(req);
-    const videoFileWithoutExtensions = getFileNameWithoutExtensions(videoFile[0].newFilename);
-    return {
-      url: isProduction
-        ? `${process.env.API_HOST}/medias/video/${videoFileWithoutExtensions}.mp4`
-        : `http://localhost:8080/medias/video/${videoFileWithoutExtensions}.mp4`,
-      type: MediaType.Video,
-    };
+    const videoFiles = await formiddableVideoUploadHandler(req);
+    const result = videoFiles.map((file) => {
+      return {
+        url: isProduction
+          ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
+          : `http://localhost:8080/medias/video/${file.newFilename}`,
+        type: MediaType.Video,
+      };
+    });
+    return result;
   }
 }
 
