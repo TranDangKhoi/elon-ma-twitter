@@ -16,7 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/users", usersRouter);
 app.use("/medias", mediasRouter);
-app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
+// Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
+// app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

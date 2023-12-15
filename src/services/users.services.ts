@@ -82,6 +82,33 @@ class UsersServices {
     return { access_token, refresh_token };
   }
 
+  async refreshToken(refresh_token: string) {
+    const { user_id, verify } = await verifyToken({
+      token: refresh_token,
+      secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN,
+    });
+    const [new_access_token, new_refresh_token] = await this.returnAccessAndRefreshToken({
+      user_id,
+      verify,
+    });
+    await databaseService.refreshTokens.updateOne(
+      {
+        token: refresh_token,
+      },
+      [
+        {
+          $set: {
+            token: new_refresh_token,
+            created_at: "$$NOW",
+          },
+        },
+      ],
+    );
+    return {
+      access_token: new_access_token,
+      refresh_token: new_refresh_token,
+    };
+  }
   async getAccessTokenThroughAuthorizationCode(code: string) {
     const body = {
       code,
@@ -97,7 +124,6 @@ class UsersServices {
     });
     return data;
   }
-
   async signInUsingOAuth2(code: string) {
     const data = await this.getAccessTokenThroughAuthorizationCode(code);
     const userInfo = await this.getGoogleUserInfo(data.access_token, data.id_token);

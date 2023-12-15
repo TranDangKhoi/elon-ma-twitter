@@ -1,7 +1,6 @@
 import { config } from "dotenv";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
-import { pick } from "lodash";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
@@ -57,9 +56,17 @@ export const signUpController = async (req: Request<ParamsDictionary, any, TSign
 
 export const signOutController = async (req: Request<ParamsDictionary, any, TSignOutReqBody>, res: Response) => {
   const { refresh_token } = req.body;
-  const { decoded_refresh_token } = req;
   const result = await usersServices.signOut(refresh_token);
   res.status(HttpStatusCode.CREATED).json(result);
+};
+
+export const refreshTokenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const { refresh_token } = req.body;
+  const result = await usersServices.refreshToken(refresh_token);
+  res.status(HttpStatusCode.OK).json({
+    message: UserMessage.REFRESH_TOKEN_SUCCESSFULLY,
+    result,
+  });
 };
 
 export const verifyEmailController = async (
@@ -143,7 +150,7 @@ export const resetPasswordController = async (
   });
 };
 
-export const getMeController = async (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
+export const getMeController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const { user_id } = req.decoded_access_token as TokenPayload;
   const user = await usersServices.getMe(user_id);
   res.status(HttpStatusCode.OK).json({
@@ -152,11 +159,7 @@ export const getMeController = async (req: Request<ParamsDictionary, any, any>, 
   });
 };
 
-export const updateMeController = async (
-  req: Request<ParamsDictionary, any, TUpdateReqBody>,
-  res: Response,
-  next: NextFunction,
-) => {
+export const updateMeController = async (req: Request<ParamsDictionary, any, TUpdateReqBody>, res: Response) => {
   const { user_id } = req.decoded_access_token as TokenPayload;
   const body = req.body;
   const user = await usersServices.updateMe(user_id, body);
@@ -169,7 +172,6 @@ export const updateMeController = async (
 export const changePassswordController = async (
   req: Request<ParamsDictionary, any, TChangePasswordReqBody>,
   res: Response,
-  next: NextFunction,
 ) => {
   const { confirm_new_password } = req.body;
   const { user_id } = req.decoded_access_token as TokenPayload;
@@ -179,21 +181,13 @@ export const changePassswordController = async (
   });
 };
 
-export const getProfileController = async (
-  req: Request<TProfileReqParams, any, any>,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getProfileController = async (req: Request<TProfileReqParams, any, any>, res: Response) => {
   const { username } = req.params;
   const result = await usersServices.getProfile(username);
   res.status(HttpStatusCode.OK).json(result);
 };
 
-export const followUserController = async (
-  req: Request<ParamsDictionary, any, TFollowUserReqBody>,
-  res: Response,
-  next: NextFunction,
-) => {
+export const followUserController = async (req: Request<ParamsDictionary, any, TFollowUserReqBody>, res: Response) => {
   const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
   const { being_followed_user_id } = req.body;
   const result = await usersServices.followUser(current_user_id, being_followed_user_id);
@@ -203,7 +197,7 @@ export const followUserController = async (
   });
 };
 
-export const unfollowUserController = async (req: Request<TUnfollowedReqParams>, res: Response, next: NextFunction) => {
+export const unfollowUserController = async (req: Request<TUnfollowedReqParams>, res: Response) => {
   const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
   const { being_followed_user_id } = req.params;
   const result = await usersServices.unfollowUser(current_user_id, being_followed_user_id);

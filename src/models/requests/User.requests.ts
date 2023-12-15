@@ -1,5 +1,9 @@
 import { JwtPayload } from "jsonwebtoken";
-import { TokenType } from "~/constants/enums";
+import { TokenType, UserVerifyStatus } from "~/constants/enums";
+
+export type TRefreshTokenReqBody = {
+  refresh_token: string;
+};
 
 export type TUpdateReqBody = {
   name?: string;
@@ -47,4 +51,4 @@ export type TFollowUserReqBody = {
   being_followed_user_id: string;
 };
 
-export type TokenPayload = { user_id: string; token_type: TokenType } & JwtPayload;
+export type TokenPayload = { user_id: string; token_type: TokenType; verify: UserVerifyStatus } & JwtPayload;

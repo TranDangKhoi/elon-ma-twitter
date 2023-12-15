@@ -15,6 +15,7 @@ import {
   unfollowUserController,
   changePassswordController,
   oAuth2Controller,
+  refreshTokenController,
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
@@ -41,7 +42,12 @@ usersRouter.post("/signin", signInValidator, wrapRequestHandler(signInController
 usersRouter.get("/oauth/google", wrapRequestHandler(oAuth2Controller));
 usersRouter.post("/signup", registerValidator, wrapRequestHandler(signUpController));
 usersRouter.post("/signout", accessTokenValidator, refreshTokenValidator, wrapRequestHandler(signOutController));
-usersRouter.post("/refresh-token");
+usersRouter.post(
+  "/refresh-token",
+  accessTokenValidator,
+  refreshTokenValidator,
+  wrapRequestHandler(refreshTokenController),
+);
 usersRouter.post("/verify-email", emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController));
 usersRouter.post("/resend-verify-email", accessTokenValidator, wrapRequestHandler(resendVerifyEmailController));
 usersRouter.post("/forgot-password", forgotPasswordValidator, wrapRequestHandler(forgotPasswordController));
