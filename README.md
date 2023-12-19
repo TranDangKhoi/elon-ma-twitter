@@ -39,7 +39,7 @@
 - Authentication: JWT & OAuth 2.0 (Google)
 - File upload: Formidable v3
 - Image Processing: Sharp
-- Video Streaming: HLS Streaming
+- Video Streaming: HLS
 - Websocket: Socket.io
 - TypeODM: MongoDB Driver (I know it's not an ORM, but i don't want to use neither Mongoose nor Prisma)
 - Deployment: Docker
