@@ -9,14 +9,13 @@ import {
   formiddableVideoUploadHandler,
   getFileNameWithoutExtensions,
 } from "~/utils/file";
+import { encodeHLSWithMultipleVideoStreams } from "~/utils/ffmpeg";
 class MediasServices {
   async handleUploadImages(req: Request) {
-    console.log(req);
     const imageFiles = await formiddableImageUploadHandler(req);
     const result: TMediaResponse[] = await Promise.all(
       imageFiles.map(async (file) => {
         // const fileWithoutExtensions = getFileNameWithoutExtensions(file.newFilename);
-        console.log(file.filepath);
         await sharp(file.filepath)
           .resize(1200, 1200, {
             fit: "inside",
@@ -48,9 +47,10 @@ class MediasServices {
     });
     return result;
   }
-  async handleUploadHlsVideo(req: Request) {
+  async handleUploadHlsVideos(req: Request) {
     const videoFiles = await formiddableVideoUploadHandler(req);
-    const result = videoFiles.map((file) => {
+    const result = videoFiles.map(async (file) => {
+      const encodedHls = await encodeHLSWithMultipleVideoStreams(file.filepath);
       return {
         url: isProduction
           ? `${process.env.API_HOST}/medias/video/${file.newFilename}`

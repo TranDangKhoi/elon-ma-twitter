@@ -3,6 +3,7 @@ import {
   hlsStreamVideoController,
   serveImageController,
   streamVideoController,
+  uploadHlsVideoController,
   uploadImagesController as uploadImagesController,
   uploadVideosController,
 } from "~/controllers/medias.controllers";
@@ -29,6 +30,6 @@ mediasRouter.post(
   "/upload-video-hls",
   accessTokenValidator,
   verifiedUserValidator,
-  wrapRequestHandler(hlsStreamVideoController),
+  wrapRequestHandler(uploadHlsVideoController),
 );
 export default mediasRouter;

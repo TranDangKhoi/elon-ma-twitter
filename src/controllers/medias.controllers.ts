@@ -44,7 +44,6 @@ export const streamVideoController = async (req: Request, res: Response, next: N
 
   // Dung lượng video (bytes)
   const videoSize = fs.statSync(videoPath).size;
-  console.log(videoSize);
   // Dung lượng video cho mỗi phân đoạn stream
   const chunkSize = 19 * 10 ** 6; // 10^6 = 1MB
 
@@ -88,7 +87,7 @@ export const streamVideoController = async (req: Request, res: Response, next: N
 };
 
 export const uploadHlsVideoController = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await mediasServices.handleUploadHlsVideo(req);
+  const result = await mediasServices.handleUploadHlsVideos(req);
   res.status(HttpStatusCode.OK).json({
     message: MediaMessage.UPLOAD_VIDEO_SUCCESSFULLY,
     result,

@@ -555,7 +555,6 @@ export const followUserValidator = validate(
       being_followed_user_id: {
         custom: {
           options: async (value, { req }) => {
-            console.log(value);
             if (!ObjectId.isValid(value)) {
               throw new ErrorWithStatus({
                 message: UserMessage.OBJECT_ID_INVALID,
