@@ -49,15 +49,17 @@ class MediasServices {
   }
   async handleUploadHlsVideos(req: Request) {
     const videoFiles = await formiddableVideoUploadHandler(req);
-    const result = videoFiles.map(async (file) => {
-      const encodedHls = await encodeHLSWithMultipleVideoStreams(file.filepath);
-      return {
-        url: isProduction
-          ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
-          : `http://localhost:8080/medias/video/${file.newFilename}`,
-        type: MediaType.Video,
-      };
-    });
+    const result = await Promise.all(
+      videoFiles.map(async (file) => {
+        await encodeHLSWithMultipleVideoStreams(file.filepath);
+        return {
+          url: isProduction
+            ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
+            : `http://localhost:8080/medias/video/${file.newFilename}`,
+          type: MediaType.Video,
+        };
+      }),
+    );
     return result;
   }
 }

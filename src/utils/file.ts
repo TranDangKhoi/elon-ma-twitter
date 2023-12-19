@@ -72,7 +72,6 @@ export const formiddableVideoUploadHandler = (req: Request) => {
     // 10 * 1024 bytes = 10KB => 10KB * 1024 bytes = 10MB
     maxFileSize: 25 * 1024 * 1024,
     filter: function ({ mimetype, name, originalFilename }) {
-      console.log(mimetype);
       const isFileValid = Boolean(mimetype?.includes("video"));
       const isKeyValid = name === "video";
       if (!isFileValid) {
@@ -100,6 +99,7 @@ export const formiddableVideoUploadHandler = (req: Request) => {
         const extensionOfFilename = getExtensionWithoutFilename(video.originalFilename as string);
         fs.renameSync(video.filepath, `${video.filepath}${extensionOfFilename}`);
         video.newFilename = `${getFileNameWithoutExtensions(video.filepath)}${extensionOfFilename}`;
+        video.filepath = `${video.filepath}${extensionOfFilename}`;
       });
       return resolve(files.video);
     });
