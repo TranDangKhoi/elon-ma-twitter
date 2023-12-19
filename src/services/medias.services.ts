@@ -48,6 +48,18 @@ class MediasServices {
     });
     return result;
   }
+  async handleUploadHlsVideo(req: Request) {
+    const videoFiles = await formiddableVideoUploadHandler(req);
+    const result = videoFiles.map((file) => {
+      return {
+        url: isProduction
+          ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
+          : `http://localhost:8080/medias/video/${file.newFilename}`,
+        type: MediaType.Video,
+      };
+    });
+    return result;
+  }
 }
 
 const mediasServices = new MediasServices();

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  hlsStreamVideoController,
   serveImageController,
   streamVideoController,
   uploadImagesController as uploadImagesController,
@@ -23,5 +24,11 @@ mediasRouter.post(
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(uploadVideosController),
+);
+mediasRouter.post(
+  "/upload-video-hls",
+  accessTokenValidator,
+  verifiedUserValidator,
+  wrapRequestHandler(hlsStreamVideoController),
 );
 export default mediasRouter;

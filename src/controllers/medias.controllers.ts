@@ -6,7 +6,6 @@ import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/con
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { MediaMessage } from "~/constants/messages.enum";
 import mediasServices from "~/services/medias.services";
-import { OutgoingHttpHeaders } from "node:http2";
 
 export const uploadImagesController = async (req: Request, res: Response, next: NextFunction) => {
   const result = await mediasServices.handleUploadImages(req);
@@ -86,4 +85,16 @@ export const streamVideoController = async (req: Request, res: Response, next: N
   res.writeHead(HttpStatusCode.PARTIAL_CONTENT, "", headers);
   const videoStream = fs.createReadStream(videoPath, { start, end });
   videoStream.pipe(res);
+};
+
+export const uploadHlsVideoController = async (req: Request, res: Response, next: NextFunction) => {
+  const result = await mediasServices.handleUploadHlsVideo(req);
+  res.status(HttpStatusCode.OK).json({
+    message: MediaMessage.UPLOAD_VIDEO_SUCCESSFULLY,
+    result,
+  });
+};
+
+export const hlsStreamVideoController = async (req: Request, res: Response, next: NextFunction) => {
+  res.status(HttpStatusCode.OK).send("HLS Stream Video");
 };
