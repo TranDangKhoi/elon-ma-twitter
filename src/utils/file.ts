@@ -3,6 +3,8 @@ import formidable, { File } from "formidable";
 import { IMAGE_UPLOAD_TEMP_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import fs from "node:fs";
 import path from "node:path";
+import { nanoid } from "nanoid";
+
 export const initFolder = () => {
   if (!fs.existsSync(IMAGE_UPLOAD_TEMP_DIR)) {
     fs.mkdirSync(IMAGE_UPLOAD_TEMP_DIR, {
@@ -63,12 +65,17 @@ export const formiddableImageUploadHandler = (req: Request) => {
   });
 };
 
-export const formiddableVideoUploadHandler = (req: Request) => {
+export const formiddableVideoUploadHandler = async (req: Request) => {
+  const uniqueId = nanoid();
+  const UNIQUE_VIDEO_UPLOAD_DIR = path.join(VIDEO_UPLOAD_DIR, uniqueId);
+  fs.mkdirSync(UNIQUE_VIDEO_UPLOAD_DIR);
   const form = formidable({
-    uploadDir: VIDEO_UPLOAD_DIR,
+    uploadDir: UNIQUE_VIDEO_UPLOAD_DIR,
     allowEmptyFiles: false,
     maxFiles: 1,
-
+    filename: (filename, ext) => {
+      return uniqueId + ext;
+    },
     // 10 * 1024 bytes = 10KB => 10KB * 1024 bytes = 10MB
     maxFileSize: 25 * 1024 * 1024,
     filter: function ({ mimetype, name, originalFilename }) {

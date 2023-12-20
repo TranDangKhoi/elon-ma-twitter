@@ -4,6 +4,7 @@ import { isProduction } from "~/constants/config";
 import { IMAGE_UPLOAD_DIR } from "~/constants/constants";
 import { MediaType } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
+import fsPromise from "fs/promises";
 import {
   formiddableImageUploadHandler,
   formiddableVideoUploadHandler,
@@ -52,11 +53,13 @@ class MediasServices {
     const result = await Promise.all(
       videoFiles.map(async (file) => {
         await encodeHLSWithMultipleVideoStreams(file.filepath);
+        const newFileName = getFileNameWithoutExtensions(file.filepath);
+        fsPromise.unlink(file.filepath);
         return {
           url: isProduction
-            ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
-            : `http://localhost:8080/medias/video/${file.newFilename}`,
-          type: MediaType.Video,
+            ? `${process.env.API_HOST}/medias/video-hls/${newFileName}`
+            : `http://localhost:8080/medias/video-hls/${newFileName}`,
+          type: MediaType.HLS,
         };
       }),
     );
