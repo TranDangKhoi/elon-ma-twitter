@@ -7,7 +7,12 @@ import databaseService from "./services/database.services";
 import { initFolder } from "./utils/file";
 import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR } from "./constants/constants";
 
-databaseService.connect().catch(console.dir);
+databaseService
+  .connect()
+  .then(() => {
+    databaseService.indexUsers();
+  })
+  .catch(console.dir);
 initFolder();
 const app = express();
 const port = 8080;

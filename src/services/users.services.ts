@@ -31,7 +31,16 @@ class UsersServices {
     });
   }
 
-  private signRefreshToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
+    if (exp) {
+      return signToken({
+        payload: { user_id, token_type: TokenType.REFRESH_TOKEN, verify, exp },
+        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN,
+        options: {
+          algorithm: "HS256",
+        },
+      });
+    }
     return signToken({
       payload: { user_id, token_type: TokenType.REFRESH_TOKEN, verify },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN,
@@ -82,18 +91,14 @@ class UsersServices {
     return { access_token, refresh_token };
   }
 
-  async refreshToken(refresh_token: string) {
-    const { user_id, verify } = await verifyToken({
-      token: refresh_token,
-      secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN,
-    });
-    const [new_access_token, new_refresh_token] = await this.returnAccessAndRefreshToken({
-      user_id,
-      verify,
-    });
+  async refreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp: number }) {
+    const [new_access_token, new_refresh_token] = await Promise.all([
+      this.signAccessToken({ user_id, verify }).catch(this.onReject),
+      this.signRefreshToken({ user_id, verify, exp }).catch(this.onReject),
+    ]);
     await databaseService.refreshTokens.updateOne(
       {
-        token: refresh_token,
+        token: new_refresh_token,
       },
       [
         {

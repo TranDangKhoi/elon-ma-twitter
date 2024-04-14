@@ -51,4 +51,9 @@ export type TFollowUserReqBody = {
   being_followed_user_id: string;
 };
 
-export type TokenPayload = { user_id: string; token_type: TokenType; verify: UserVerifyStatus } & JwtPayload;
+export type TokenPayload = {
+  user_id: string;
+  token_type: TokenType;
+  verify: UserVerifyStatus;
+  exp: number;
+} & JwtPayload;

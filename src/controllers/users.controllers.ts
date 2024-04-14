@@ -61,8 +61,8 @@ export const signOutController = async (req: Request<ParamsDictionary, any, TSig
 };
 
 export const refreshTokenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
-  const { refresh_token } = req.body;
-  const result = await usersServices.refreshToken(refresh_token);
+  const { user_id, verify, exp } = req.decoded_refresh_token as TokenPayload;
+  const result = await usersServices.refreshToken({ user_id, verify, exp });
   res.status(HttpStatusCode.OK).json({
     message: UserMessage.REFRESH_TOKEN_SUCCESSFULLY,
     result,
