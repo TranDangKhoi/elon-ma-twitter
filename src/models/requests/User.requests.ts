@@ -56,4 +56,5 @@ export type TokenPayload = {
   token_type: TokenType;
   verify: UserVerifyStatus;
   exp: number;
+  iat: number;
 } & JwtPayload;

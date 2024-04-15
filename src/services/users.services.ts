@@ -20,6 +20,13 @@ class UsersServices {
     return err;
   }
 
+  private decodeRefreshToken(refresh_token: string) {
+    return verifyToken({
+      token: refresh_token,
+      secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN,
+    });
+  }
+
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return signToken({
       payload: { user_id, token_type: TokenType.ACCESS_TOKEN, verify },
@@ -80,25 +87,24 @@ class UsersServices {
     ]);
   }
 
-  async signIn({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
-    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken({
-      user_id,
-      verify,
-    });
-    await databaseService.refreshTokens.insertOne(
-      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
-    );
-    return { access_token, refresh_token };
-  }
-
-  async refreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp: number }) {
+  async refreshToken({
+    refresh_token,
+    user_id,
+    verify,
+    exp,
+  }: {
+    refresh_token: string;
+    user_id: string;
+    verify: UserVerifyStatus;
+    exp: number;
+  }) {
     const [new_access_token, new_refresh_token] = await Promise.all([
       this.signAccessToken({ user_id, verify }).catch(this.onReject),
       this.signRefreshToken({ user_id, verify, exp }).catch(this.onReject),
     ]);
     await databaseService.refreshTokens.updateOne(
       {
-        token: new_refresh_token,
+        token: refresh_token,
       },
       [
         {
@@ -129,6 +135,19 @@ class UsersServices {
     });
     return data;
   }
+
+  async signIn({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+    const [access_token, refresh_token] = await this.returnAccessAndRefreshToken({
+      user_id,
+      verify,
+    });
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token);
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date(), iat, exp }),
+    );
+    return { access_token, refresh_token };
+  }
+
   async signInUsingOAuth2(code: string) {
     const data = await this.getAccessTokenThroughAuthorizationCode(code);
     const userInfo = await this.getGoogleUserInfo(data.access_token, data.id_token);
@@ -148,8 +167,9 @@ class UsersServices {
         user_id: user._id.toString(),
         verify: user.verify,
       });
+      const { iat, exp } = await this.decodeRefreshToken(refresh_token);
       await databaseService.refreshTokens.insertOne(
-        new RefreshToken({ user_id: user._id, token: refresh_token, created_at: new Date() }),
+        new RefreshToken({ user_id: user._id, token: refresh_token, created_at: new Date(), iat, exp }),
       );
       return {
         access_token,
@@ -201,6 +221,7 @@ class UsersServices {
       user_id,
       verify: UserVerifyStatus.UNVERIFIED,
     });
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token);
     if (access_token instanceof Error) {
       console.log(access_token);
     }
@@ -208,7 +229,13 @@ class UsersServices {
       console.log(refresh_token);
     }
     await databaseService.refreshTokens.insertOne(
-      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, created_at: new Date() }),
+      new RefreshToken({
+        user_id: new ObjectId(user_id),
+        token: refresh_token,
+        created_at: new Date(),
+        iat,
+        exp,
+      }),
     );
     return {
       access_token,
@@ -371,10 +398,13 @@ class UsersServices {
       ]),
     ]);
     const [access_token, refresh_token] = token;
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token);
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({
         user_id: new ObjectId(user_id),
         token: refresh_token,
+        iat,
+        exp,
       }),
     );
     // Nếu ta update lại token khi verify thành công thì các thiết bị khác sẽ bị đăng xuất ra khỏi tài khoản sau khi verify thành công
