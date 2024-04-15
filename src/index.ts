@@ -11,6 +11,7 @@ databaseService
   .connect()
   .then(() => {
     databaseService.indexUsers();
+    databaseService.indexRefreshTokens();
   })
   .catch(console.dir);
 initFolder();

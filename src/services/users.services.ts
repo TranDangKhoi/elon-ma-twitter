@@ -110,6 +110,7 @@ class UsersServices {
         {
           $set: {
             token: new_refresh_token,
+            iat: "$$NOW",
             created_at: "$$NOW",
           },
         },

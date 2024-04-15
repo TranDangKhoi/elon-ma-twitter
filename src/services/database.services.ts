@@ -40,6 +40,12 @@ class DatabaseServices {
     console.log("Indexed users collection");
   }
 
+  indexRefreshTokens() {
+    this.refreshTokens.createIndex({ token: 1 });
+    this.refreshTokens.createIndex({ exp: 1 }, { expireAfterSeconds: 0 });
+    console.log("Indexed refresh_tokens collection");
+  }
+
   get users(): Collection<User> {
     return this.db.collection("users");
   }
