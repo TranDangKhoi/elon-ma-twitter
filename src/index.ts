@@ -12,6 +12,7 @@ databaseService
   .then(() => {
     databaseService.indexUsers();
     databaseService.indexRefreshTokens();
+    databaseService.indexFollowers();
   })
   .catch(console.dir);
 initFolder();
