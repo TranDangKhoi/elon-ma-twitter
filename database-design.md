@@ -168,10 +168,10 @@ Vậy nên ta sẽ lưu trường `parent_id` để biết tweet này là con c�
 
 - Bên twitter sẽ có rất là nhiều chỉ số để phân tích lượt tiếp cận của 1 tweet. Trong giới hạn khả năng thì chúng ta chỉ phân tích lượt view thôi.
 
-  Lượt view thì chúng ta chia ra làm 2 loại là `guest_views` là số lượng lượt xem của tweet từ người dùng không đăng nhập và `user_views` là dành cho đã đăng nhập. 2 trường này mình sẽ cho kiểu dữ liệu là `number`.
+Lượt view thì chúng ta chia ra làm 2 loại là `guest_views` là số lượng lượt xem của tweet từ người dùng không đăng nhập và `user_views` là dành cho đã đăng nhập. 2 trường này mình sẽ cho kiểu dữ liệu là `number`.
 
 ```ts
-interface Tweet {
+interface TTweetReqBody {
   _id: ObjectId;
   user_id: ObjectId;
   type: TweetType;
