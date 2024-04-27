@@ -71,6 +71,10 @@ class DatabaseServices {
   get followers(): Collection<Follower> {
     return this.db.collection("followers");
   }
+
+  get tweets(): Collection<any> {
+    return this.db.collection("tweets");
+  }
 }
 
 const databaseService = new DatabaseServices();

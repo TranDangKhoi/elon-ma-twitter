@@ -2,7 +2,7 @@ import { Request } from "express";
 import sharp from "sharp";
 import { isProduction } from "~/constants/config";
 import { IMAGE_UPLOAD_DIR } from "~/constants/constants";
-import { MediaType } from "~/constants/enums";
+import { MediaEnum } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
 import fsPromise from "fs/promises";
 import {
@@ -29,7 +29,7 @@ class MediasServices {
           url: isProduction
             ? `${process.env.API_HOST}/medias/image/${file.newFilename}.jpg`
             : `http://localhost:8080/medias/image/${file.newFilename}.jpg`,
-          type: MediaType.Image,
+          type: MediaEnum.Image,
         };
       }),
     );
@@ -43,7 +43,7 @@ class MediasServices {
         url: isProduction
           ? `${process.env.API_HOST}/medias/video/${file.newFilename}`
           : `http://localhost:8080/medias/video/${file.newFilename}`,
-        type: MediaType.Video,
+        type: MediaEnum.Video,
       };
     });
     return result;
@@ -59,7 +59,7 @@ class MediasServices {
           url: isProduction
             ? `${process.env.API_HOST}/medias/video-hls/${newFileName}`
             : `http://localhost:8080/medias/video-hls/${newFileName}`,
-          type: MediaType.HLS,
+          type: MediaEnum.HLS,
         };
       }),
     );

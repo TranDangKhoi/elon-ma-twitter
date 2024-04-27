@@ -1,6 +1,6 @@
-import { MediaType } from "~/constants/enums";
+import { MediaEnum } from "~/constants/enums";
 
 export type TMediaResponse = {
   url: string;
-  type: MediaType;
+  type: MediaEnum;
 };

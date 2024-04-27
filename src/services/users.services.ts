@@ -3,7 +3,7 @@ import User from "~/models/schemas/User.schema";
 import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
 import { signToken, verifyToken } from "~/utils/jwt";
-import { TokenType, UserVerifyStatus } from "~/constants/enums";
+import { TokenEnum, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
 import { config } from "dotenv";
@@ -29,7 +29,7 @@ class UsersServices {
 
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return signToken({
-      payload: { user_id, token_type: TokenType.ACCESS_TOKEN, verify },
+      payload: { user_id, token_type: TokenEnum.ACCESS_TOKEN, verify },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN,
       options: {
         algorithm: "HS256",
@@ -41,7 +41,7 @@ class UsersServices {
   private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
     if (exp) {
       return signToken({
-        payload: { user_id, token_type: TokenType.REFRESH_TOKEN, verify, exp },
+        payload: { user_id, token_type: TokenEnum.REFRESH_TOKEN, verify, exp },
         privateKey: process.env.JWT_SECRET_REFRESH_TOKEN,
         options: {
           algorithm: "HS256",
@@ -49,7 +49,7 @@ class UsersServices {
       });
     }
     return signToken({
-      payload: { user_id, token_type: TokenType.REFRESH_TOKEN, verify },
+      payload: { user_id, token_type: TokenEnum.REFRESH_TOKEN, verify },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN,
       options: {
         algorithm: "HS256",
@@ -60,7 +60,7 @@ class UsersServices {
 
   private async signEmailVerifyToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return signToken({
-      payload: { user_id, verify, token_type: TokenType.EMAIL_VERIFY_TOKEN },
+      payload: { user_id, verify, token_type: TokenEnum.EMAIL_VERIFY_TOKEN },
       privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
       options: {
         algorithm: "HS256",
@@ -71,7 +71,7 @@ class UsersServices {
 
   private async signForgotPasswordToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return signToken({
-      payload: { user_id, verify, token_type: TokenType.FORGOT_PASSWORD_TOKEN },
+      payload: { user_id, verify, token_type: TokenEnum.FORGOT_PASSWORD_TOKEN },
       privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN,
       options: {
         algorithm: "HS256",
