@@ -7,7 +7,7 @@ import { TokenEnum, UserVerifyStatus } from "~/constants/enums";
 import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import { ObjectId } from "mongodb";
 import { config } from "dotenv";
-import { FollowMessage, UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.constants";
 import { ErrorWithStatus } from "~/models/Errors";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import Follower from "~/models/schemas/Follower.schema";

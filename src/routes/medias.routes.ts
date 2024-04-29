@@ -8,7 +8,7 @@ import {
   uploadVideosController,
 } from "~/controllers/medias.controllers";
 import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
-import { wrapRequestHandler } from "~/utils/handlers";
+import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const mediasRouter = Router();
 

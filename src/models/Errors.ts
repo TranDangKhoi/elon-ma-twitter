@@ -1,5 +1,5 @@
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { UserMessage } from "~/constants/messages.enum";
+import { UserMessage } from "~/constants/messages.constants";
 
 type TError = Record<
   string,

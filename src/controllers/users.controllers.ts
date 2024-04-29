@@ -4,7 +4,7 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { FollowMessage, UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.constants";
 import {
   TChangePasswordReqBody,
   TFollowUserReqBody,

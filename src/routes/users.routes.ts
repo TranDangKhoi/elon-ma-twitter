@@ -34,7 +34,7 @@ import {
   changePasswordValidator,
 } from "~/middlewares/users.middleware";
 import { TUpdateReqBody } from "~/models/requests/User.requests";
-import { wrapRequestHandler } from "~/utils/handlers";
+import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const usersRouter = Router();
 

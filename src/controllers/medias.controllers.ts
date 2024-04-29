@@ -4,7 +4,7 @@ import path from "node:path";
 import mime from "mime";
 import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { MediaMessage } from "~/constants/messages.enum";
+import { MediaMessage } from "~/constants/messages.constants";
 import mediasServices from "~/services/medias.services";
 
 export const uploadImagesController = async (req: Request, res: Response, next: NextFunction) => {

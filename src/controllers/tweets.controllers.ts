@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { TweetMessage } from "~/constants/messages.enum";
+import { TweetMessage } from "~/constants/messages.constants";
 
 export const createTweetController = async (req: Request, res: Response) => {
   res.status(HttpStatusCode.OK).json({

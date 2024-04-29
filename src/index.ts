@@ -7,6 +7,8 @@ import databaseService from "./services/database.services";
 import { initFolder } from "./utils/file";
 import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR } from "./constants/constants";
 import tweetsRouter from "~/routes/tweets.routes";
+import { TweetTypeEnum } from "~/constants/enums";
+import { enumValuesToArray } from "~/utils/enumsToArray";
 
 databaseService
   .connect()
@@ -28,6 +30,7 @@ app.use("/medias", mediasRouter);
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

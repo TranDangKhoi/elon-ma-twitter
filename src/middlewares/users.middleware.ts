@@ -3,7 +3,7 @@ import { ParamSchema, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { FollowMessage, UserMessage } from "~/constants/messages.enum";
+import { FollowMessage, UserMessage } from "~/constants/messages.constants";
 import { REGEX_USERNAME } from "~/constants/regex";
 import { ErrorWithStatus, UnprocessableEntityError } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
