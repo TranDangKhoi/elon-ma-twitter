@@ -2,6 +2,8 @@ import { ObjectId } from "mongodb";
 import { MediaEnum as MediaEnum, TweetAudienceEnum } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
 
+// Documentation: Filename: database-design.md, Line 143
+
 type TTweet = {
   _id?: ObjectId;
   user_id: ObjectId;

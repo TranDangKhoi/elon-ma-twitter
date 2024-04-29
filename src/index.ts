@@ -6,6 +6,7 @@ import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import databaseService from "./services/database.services";
 import { initFolder } from "./utils/file";
 import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR } from "./constants/constants";
+import tweetsRouter from "~/routes/tweets.routes";
 
 databaseService
   .connect()
@@ -22,6 +23,7 @@ const port = 8080;
 app.use(cors());
 app.use(express.json());
 app.use("/users", usersRouter);
+app.use("/tweets", tweetsRouter);
 app.use("/medias", mediasRouter);
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));

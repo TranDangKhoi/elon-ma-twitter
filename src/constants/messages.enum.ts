@@ -44,3 +44,7 @@ export enum MediaMessage {
   UPLOAD_IMAGE_SUCCESSFULLY = "Upload ảnh thành công",
   UPLOAD_VIDEO_SUCCESSFULLY = "Upload video thành công",
 }
+
+export enum TweetMessage {
+  TWEET_SUCCESSFULLY = "Tạo tweet thành công",
+}

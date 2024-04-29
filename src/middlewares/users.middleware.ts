@@ -285,6 +285,7 @@ export const emailVerifyTokenValidator = validate(
               secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN,
             });
             (req as Request).decoded_email_verify_token = decoded_email_verify_token;
+            console.log("?");
             return true;
           } catch (err) {
             throw new ErrorWithStatus({
