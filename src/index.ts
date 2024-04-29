@@ -1,14 +1,12 @@
-import express from "express";
 import cors from "cors";
-import usersRouter from "~/routes/users.routes";
+import express from "express";
 import mediasRouter from "~/routes/medias.routes";
+import tweetsRouter from "~/routes/tweets.routes";
+import usersRouter from "~/routes/users.routes";
+import { VIDEO_UPLOAD_DIR } from "./constants/constants";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import databaseService from "./services/database.services";
 import { initFolder } from "./utils/file";
-import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR } from "./constants/constants";
-import tweetsRouter from "~/routes/tweets.routes";
-import { TweetTypeEnum } from "~/constants/enums";
-import { enumValuesToArray } from "~/utils/enumsToArray";
 
 databaseService
   .connect()
