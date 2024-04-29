@@ -1,8 +1,9 @@
 import { ObjectId } from "mongodb";
-import { MediaEnum as MediaEnum } from "~/constants/enums";
+import { MediaEnum as MediaEnum, TweetAudienceEnum } from "~/constants/enums";
+import { TMediaResponse } from "~/types/media.types";
 
 type TTweet = {
-  _id: ObjectId;
+  _id?: ObjectId;
   user_id: ObjectId;
   type: TTweet;
   // audience: TAudience;
@@ -11,27 +12,27 @@ type TTweet = {
   parent_id: null | ObjectId; //  chỉ null khi tweet gốc
   hashtags: ObjectId[]; // Vì twitter không phân biệt hashtags viết chữ thường với hoa nên hashtags ta sẽ lưu ở dạng ObjectId[] chứ không phải string[]
   mentions: ObjectId[];
-  medias: MediaEnum[];
+  medias: TMediaResponse[];
   guest_views: number;
   user_views: number;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 };
 
 export default class Tweet {
-  _id: ObjectId;
+  _id?: ObjectId;
   user_id: ObjectId;
   type: TTweet;
-  audience: any;
+  audience: TweetAudienceEnum;
   content: string;
   parent_id: null | ObjectId;
   hashtags: ObjectId[];
   mentions: ObjectId[];
-  medias: any;
+  medias: TMediaResponse[];
   guest_views: number;
   user_views: number;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
   constructor({
     _id,
     user_id,
@@ -47,7 +48,7 @@ export default class Tweet {
     created_at,
     updated_at,
   }: TTweet) {
-    this._id = _id;
+    this._id = _id || new ObjectId();
     this.user_id = user_id;
     this.type = type;
     this.audience = audience;
@@ -58,7 +59,7 @@ export default class Tweet {
     this.medias = medias;
     this.guest_views = guest_views;
     this.user_views = user_views;
-    this.created_at = created_at;
-    this.updated_at = updated_at;
+    this.created_at = created_at || new Date();
+    this.updated_at = updated_at || new Date();
   }
 }

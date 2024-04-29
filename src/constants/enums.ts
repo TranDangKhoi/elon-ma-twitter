@@ -25,7 +25,6 @@ export enum TweetTypeEnum {
 }
 
 export enum TweetAudienceEnum {
-  PUBLIC,
-  FOLLOWER,
-  PRIVATE,
+  EVERYONE,
+  TWITTERCIRCLE,
 }
