@@ -1,4 +1,4 @@
-import { TweetAudienceEnum } from "~/constants/enums";
+import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { enumValuesToArray } from "~/utils/enumsToArray";
 
 export const UserMessage = {
@@ -54,7 +54,10 @@ export const MediaMessage = {
 export const TweetMessage = {
   TWEET_SUCCESSFULLY: "Tạo tweet thành công",
   DELETE_TWEET_SUCCESSFULLY: "Xóa tweet thành công",
-  TWEET_TYPE_INVALID: `Đối tượng xem tweet phải là một trong các giá trị sau: ${enumValuesToArray(
-    TweetAudienceEnum,
-  ).join(", ")}`,
+  TWEET_TYPE_INVALID: `Đối tượng xem tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetTypeEnum).join(
+    ", ",
+  )}`,
+  TWEET_AUDIENCE_INVALID: `Kiểu tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetAudienceEnum).join(
+    ", ",
+  )}`,
 } as const;
