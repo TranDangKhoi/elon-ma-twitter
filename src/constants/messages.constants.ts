@@ -9,15 +9,18 @@ export const UserMessage = {
   OBJECT_ID_INVALID: "ID người dùng không hợp lệ",
   ACCESS_TOKEN_INVALID: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_SUCCESSFULLY: "Refresh token thành công",
-  REFRESH_TOKEN_INVALID: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token)",
+  REFRESH_TOKEN_INVALID:
+    "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi refresh_token), hãy kiểm tra xem bạn đã sử dụng đúng token hay token đã hết hạn hay chưa hay chưa",
   REFRESH_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống refresh token)",
   USERNAME_VALIDATION_ERROR:
     "Username cần có độ dài từ 4 tới 15 kí tự và chỉ được có chữ, số, dấu gạch dưới. Và không được chỉ có mỗi số",
   USERNAME_ALREADY_EXISTS: "Username đã có người sử dụng, vui lòng sử dụng một cái khác",
-  EMAIL_VERIFY_TOKEN_INVALID: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token)",
+  EMAIL_VERIFY_TOKEN_INVALID:
+    "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token), hãy kiểm tra xem bạn đã sử dụng đúng token hoặc token đã hết hạn hay chưa",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
   GMAIL_NOT_VERIFIED: "Tài khoản Google của bạn chưa được xác  thực, vui lòng xác thực trước khi tiếp tục",
-  FORGOT_PASSWORD_TOKEN_INVALID: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token)",
+  FORGOT_PASSWORD_TOKEN_INVALID:
+    "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token), hãy kiểm tra xem bạn đã sử dụng đúng token hoặc token đã hết hạn hay chưa",
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống forgot password token)",
   EMAIL_VERIFY_TOKEN_IS_VERIFIED: "Email đã được xác minh trước đó",
   EMAIL_OR_PASSWORD_IS_INCORRECT: "E-mail hoặc mật khẩu không chính xác",
@@ -65,4 +68,7 @@ export const TweetMessage = {
   PARENT_ID_CAN_NOT_BE_INVALID: "Khi retweet, quotetweet và comment thì parent_id phải hợp lệ",
   CONTENT_IS_REQUIRED: "Nội dung tweet không được để trống",
   CONTENT_MUST_BE_EMPTY: "Khi retweet thì nội dung tweet phải để trống",
+  HASHTAGS_MUST_BE_STRINGS: "Hashtags phải là một mảng chứa các chuỗi",
+  MENTIONS_MUST_BE_STRINGS: "Mentions phải là một mảng chứa các user_id",
+  MEDIAS_MUST_BE_OBJECTS: "Medias phải là một mảng chứa các medias object có dạng {url: string, type: string}",
 } as const;

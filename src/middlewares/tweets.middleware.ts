@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
 import { isEmpty } from "lodash";
 import { ObjectId } from "mongodb";
-import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
+import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TweetMessage } from "~/constants/messages.constants";
 import { enumValuesToArray } from "~/utils/enumsToArray";
 import { validate } from "~/utils/validation";
@@ -11,23 +11,20 @@ export const createTweetValidator = validate(
   checkSchema(
     {
       type: {
-        isString: true,
         isIn: {
-          options: enumValuesToArray(TweetTypeEnum),
+          options: [enumValuesToArray(TweetTypeEnum)],
           errorMessage: `Kiểu tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetTypeEnum).join(", ")}`,
         },
       },
       audience: {
-        isString: true,
         isIn: {
-          options: enumValuesToArray(TweetAudienceEnum),
+          options: [enumValuesToArray(TweetAudienceEnum)],
           errorMessage: `Đối tượng xem tweet phải là một trong các giá trị sau: ${enumValuesToArray(
             TweetAudienceEnum,
           ).join(", ")}`,
         },
       },
       parent_id: {
-        isString: true,
         custom: {
           options: (value, { req }) => {
             if (req.body.type !== TweetTypeEnum.TWEET && !value) {
@@ -39,6 +36,7 @@ export const createTweetValidator = validate(
             if (req.body.type === TweetTypeEnum.TWEET && value) {
               throw new Error(TweetMessage.PARENT_ID_MUST_BE_NULL);
             }
+            return true;
           },
         },
       },
@@ -59,20 +57,56 @@ export const createTweetValidator = validate(
             ) {
               throw new Error(TweetMessage.CONTENT_IS_REQUIRED);
             }
+            return true;
           },
         },
       },
       hashtags: {
         isArray: true,
         optional: true,
+        custom: {
+          options: async (value, { req }) => {
+            // Yêu cầu mỗi phần tử trong array phải là một string
+            if (value.some((item: string) => typeof item !== "string")) {
+              throw new Error(TweetMessage.HASHTAGS_MUST_BE_STRINGS);
+            }
+            return true;
+          },
+        },
       },
       mentions: {
         isArray: true,
         optional: true,
+        custom: {
+          options: async (value, { req }) => {
+            // Yêu cầu mỗi phần tử trong array phải là một user_id
+            if (value.some((item: string | ObjectId) => !ObjectId.isValid(item))) {
+              throw new Error(TweetMessage.MENTIONS_MUST_BE_STRINGS);
+            }
+            return true;
+          },
+        },
       },
       medias: {
         isArray: true,
         optional: true,
+        custom: {
+          options: async (value, { req }) => {
+            // Yêu cầu mỗi phần tử trong array phải là một object có các key-value như sau:
+            // {
+            //   url: string,
+            //   type: MediaEnum,
+            // }
+            if (
+              value.some(
+                (item: any) => typeof item?.url !== "string" || enumValuesToArray(MediaEnum).includes(item?.type),
+              )
+            ) {
+              throw new Error(TweetMessage.MEDIAS_MUST_BE_OBJECTS);
+            }
+            return true;
+          },
+        },
       },
     },
     ["body"],
