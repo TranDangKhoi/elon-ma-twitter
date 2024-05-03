@@ -18,9 +18,9 @@ class TweetsServices {
         guest_views: 0,
         user_views: 0,
       }),
-      {},
     );
-    return newTweet;
+    const theTweetThatWasJustCreated = await databaseService.tweets.findOne({ _id: newTweet.insertedId });
+    return theTweetThatWasJustCreated;
   }
 }
 
