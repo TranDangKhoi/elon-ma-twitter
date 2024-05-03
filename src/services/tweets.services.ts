@@ -4,17 +4,23 @@ import Tweet from "~/models/schemas/Tweet.schema";
 import databaseService from "~/services/database.services";
 
 class TweetsServices {
-  async createTweets(body: TTweetReqBody) {
-    // const currentUserId
-    // const newTweet = await databaseService.tweets.insertOne(
-    //   new Tweet({
-    //     ...body,
-    //     guest_views: 0,
-    //     user_views: 0,
-    //     user_id: new ObjectId(),
-    //   }),
-    // );
-    return body;
+  async createTweets(body: TTweetReqBody, user_id: string) {
+    const newTweet = await databaseService.tweets.insertOne(
+      new Tweet({
+        user_id: new ObjectId(user_id),
+        content: body.content,
+        parent_id: null,
+        audience: body.audience,
+        type: body.type,
+        hashtags: [],
+        mentions: body.mentions,
+        medias: body.medias,
+        guest_views: 0,
+        user_views: 0,
+      }),
+      {},
+    );
+    return newTweet;
   }
 }
 
