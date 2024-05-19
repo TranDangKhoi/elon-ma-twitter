@@ -155,7 +155,7 @@ class UsersServices {
     if (!userInfo.verified_email) {
       throw new ErrorWithStatus({
         status: HttpStatusCode.FORBIDDEN,
-        message: UserMessage.GMAIL_NOT_VERIFIED,
+        message: UserMessage.GOOGLE_ACCOUNT_NOT_VERIFIED,
       });
     }
     // Tiếp theo kiểm tra xem e-mail này đã tồn tại trong db hay chưa, tồn tại rồi thì cho login vào

@@ -42,6 +42,7 @@ export const signInController = async (req: Request<ParamsDictionary, any, TLogi
 export const oAuth2Controller = async (req: Request, res: Response) => {
   const { code } = req.query;
   const result = await usersServices.signInUsingOAuth2(code as string);
+  console.log(result);
   const urlRedirect = `${process.env.GOOGLE_OAUTH_CLIENT_REDIRECT_URI}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.new_user}&verify=${result.verify}`;
   res.redirect(urlRedirect);
 };

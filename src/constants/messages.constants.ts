@@ -18,7 +18,7 @@ export const UserMessage = {
   EMAIL_VERIFY_TOKEN_INVALID:
     "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token), hãy kiểm tra xem bạn đã sử dụng đúng token hoặc token đã hết hạn hay chưa",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
-  GMAIL_NOT_VERIFIED: "Tài khoản Google của bạn chưa được xác  thực, vui lòng xác thực trước khi tiếp tục",
+  GOOGLE_ACCOUNT_NOT_VERIFIED: "Tài khoản Google của bạn chưa được xác  thực, vui lòng xác thực trước khi tiếp tục",
   FORGOT_PASSWORD_TOKEN_INVALID:
     "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi sai forgot password token), hãy kiểm tra xem bạn đã sử dụng đúng token hoặc token đã hết hạn hay chưa",
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống forgot password token)",
