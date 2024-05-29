@@ -22,7 +22,7 @@ class TweetsServices {
         ),
       ),
     );
-    return hashTagsToInsert;
+    return (await hashTagsToInsert).map((hashtag) => hashtag.value?._id as ObjectId);
   }
   async createTweets(body: TTweetReqBody, user_id: string) {
     const hashtags = await this.checkAndCreateHashTags(body.hashtags);
@@ -33,7 +33,7 @@ class TweetsServices {
         parent_id: null,
         audience: body.audience,
         type: body.type,
-        hashtags: [],
+        hashtags: hashtags,
         mentions: body.mentions,
         medias: body.medias,
         guest_views: 0,
