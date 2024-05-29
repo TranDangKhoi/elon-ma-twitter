@@ -1,12 +1,12 @@
 import cors from "cors";
+import databaseService from "./services/database.services";
 import express from "express";
+import { defaultErrorHandler } from "./middlewares/errors.middlewares";
+import { initFolder } from "./utils/file";
+import { VIDEO_UPLOAD_DIR } from "./constants/constants";
 import mediasRouter from "~/routes/medias.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
-import { VIDEO_UPLOAD_DIR } from "./constants/constants";
-import { defaultErrorHandler } from "./middlewares/errors.middlewares";
-import databaseService from "./services/database.services";
-import { initFolder } from "./utils/file";
 
 databaseService
   .connect()

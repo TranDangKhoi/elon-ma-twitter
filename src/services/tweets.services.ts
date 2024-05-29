@@ -1,10 +1,31 @@
 import { ObjectId } from "mongodb";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
+import Hashtag from "~/models/schemas/Hashtag.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
 import databaseService from "~/services/database.services";
 
 class TweetsServices {
+  async checkAndCreateHashTags(hashtags: string[]) {
+    const hashTagsToInsert = Promise.all(
+      hashtags.map((hashtag) =>
+        databaseService.hashtags.findOneAndUpdate(
+          {
+            name: hashtag,
+          },
+          {
+            $setOnInsert: new Hashtag({ name: hashtag }),
+          },
+          {
+            upsert: true,
+            returnDocument: "after",
+          },
+        ),
+      ),
+    );
+    return hashTagsToInsert;
+  }
   async createTweets(body: TTweetReqBody, user_id: string) {
+    const hashtags = await this.checkAndCreateHashTags(body.hashtags);
     const newTweet = await databaseService.tweets.insertOne(
       new Tweet({
         user_id: new ObjectId(user_id),
