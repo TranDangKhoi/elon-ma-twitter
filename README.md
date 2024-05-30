@@ -26,6 +26,7 @@
   - Create tweet
   - Delete tweet
   - Retweet
+  - Bookmarks
   - Twitter Circle
   - Hashtags
   - ...e.t.c

@@ -7,6 +7,7 @@ import { VIDEO_UPLOAD_DIR } from "./constants/constants";
 import mediasRouter from "~/routes/medias.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
+import bookmarkRouter from "~/routes/bookmarks.routes";
 
 databaseService
   .connect()
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use("/users", usersRouter);
 app.use("/tweets", tweetsRouter);
 app.use("/medias", mediasRouter);
+app.use("/bookmarks", bookmarkRouter);
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);

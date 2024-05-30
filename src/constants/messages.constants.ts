@@ -72,3 +72,8 @@ export const TweetMessage = {
   MENTIONS_MUST_BE_STRINGS: "Mentions phải là một mảng chứa các user_id",
   MEDIAS_MUST_BE_OBJECTS: "Medias phải là một mảng chứa các medias object có dạng {url: string, type: string}",
 } as const;
+
+export const BookmarkMessage = {
+  BOOKMARK_SUCCESSFULLY: "Lưu tweet thành công",
+  UNBOOKMARK_SUCCESSFULLY: "Bỏ lưu tweet thành công",
+} as const;

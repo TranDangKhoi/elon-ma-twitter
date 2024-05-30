@@ -5,6 +5,7 @@ import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import Follower from "~/models/schemas/Follower.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
 import Hashtag from "~/models/schemas/Hashtag.schema";
+import Bookmark from "~/models/schemas/Bookmark.schema";
 dotenv.config();
 const uri = `mongodb+srv://${process.env.CLOUD_DB_USERNAME}:${process.env.CLOUD_DB_PASSWORD}@twittercluster0.wkhc8f0.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -80,6 +81,10 @@ class DatabaseServices {
 
   get hashtags(): Collection<Hashtag> {
     return this.db.collection("hashtags");
+  }
+
+  get bookmarks(): Collection<Bookmark> {
+    return this.db.collection("bookmarks");
   }
 }
 
