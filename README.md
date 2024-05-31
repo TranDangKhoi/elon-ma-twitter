@@ -26,7 +26,8 @@
   - Create tweet
   - Delete tweet
   - Retweet
-  - Bookmarks
+  - Like tweets
+  - Bookmark, Unbookmark
   - Twitter Circle
   - Hashtags
   - ...e.t.c
@@ -42,7 +43,7 @@
 - Image Processing: Sharp
 - Video Streaming: HLS
 - Websocket: Socket.io
-- TypeODM: MongoDB Driver (I know it's not an ORM, but i don't want to use neither Mongoose nor Prisma)
+- TypeODM: MongoDB Driver (I know it's not an ORM, but i don't want to use neither Mongoose nor Prisma)`
 - Deployment: Docker
 - 3rd party services (E-mail sending, remote computing, ...): AWS
 - API Documentation: Swagger

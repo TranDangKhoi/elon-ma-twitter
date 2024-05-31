@@ -22,6 +22,17 @@ class BookmarkServices {
 
     return bookmark.value;
   }
+
+  async removeBookmark(tweet_id: string, user_id: string) {
+    const tweetObjectId = new ObjectId(tweet_id);
+    const userObjectId = new ObjectId(user_id);
+    const bookmark = await databaseService.bookmarks.findOneAndDelete({
+      tweet_id: tweetObjectId,
+      user_id: userObjectId,
+    });
+
+    return bookmark.value;
+  }
 }
 
 const bookmarkServices = new BookmarkServices();
