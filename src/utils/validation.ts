@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, ValidationChain } from "express-validator";
-import { RunnableValidationChains } from "express-validator/src/middlewares/schema";
+import { RunnableValidationChains } from "express-validator/lib/middlewares/schema";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ErrorWithStatus, UnprocessableEntityError } from "~/models/Errors";
 // can be reused by many routes
