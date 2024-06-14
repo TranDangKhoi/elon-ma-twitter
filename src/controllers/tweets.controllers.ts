@@ -6,6 +6,12 @@ import tweetsServices from "~/services/tweets.services";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
 
+export const getTweetController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  res.status(HttpStatusCode.OK).json({
+    message: TweetMessage.GET_TWEET_SUCCESSFULLY,
+  });
+};
+
 export const createTweetController = async (req: Request<ParamsDictionary, any, TTweetReqBody>, res: Response) => {
   const tweetRequestBody = req.body;
   const decoded_access_token = req.decoded_access_token;
