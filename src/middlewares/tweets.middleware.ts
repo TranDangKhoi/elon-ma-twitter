@@ -4,6 +4,8 @@ import { isEmpty } from "lodash";
 import { ObjectId } from "mongodb";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TweetMessage } from "~/constants/messages.constants";
+import databaseService from "~/services/database.services";
+import tweetsServices from "~/services/tweets.services";
 import { enumValuesToArray } from "~/utils/enumsToArray";
 import { validate } from "~/utils/validation";
 
@@ -110,5 +112,27 @@ export const createTweetValidator = validate(
       },
     },
     ["body"],
+  ),
+);
+
+export const tweetIdValidator = validate(
+  checkSchema(
+    {
+      tweet_id: {
+        isMongoId: true,
+        custom: {
+          options: async (value, { req }) => {
+            const tweet = await databaseService.tweets.findOne({
+              _id: new ObjectId(value),
+            });
+            if (!tweet) {
+              throw new Error(TweetMessage.TWEET_NOT_FOUND);
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["params", "body"],
   ),
 );
