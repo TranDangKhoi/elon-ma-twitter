@@ -5,7 +5,6 @@ import { ObjectId } from "mongodb";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TweetMessage } from "~/constants/messages.constants";
 import databaseService from "~/services/database.services";
-import tweetsServices from "~/services/tweets.services";
 import { enumValuesToArray } from "~/utils/enumsToArray";
 import { validate } from "~/utils/validation";
 

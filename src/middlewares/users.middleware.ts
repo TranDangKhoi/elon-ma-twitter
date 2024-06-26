@@ -188,6 +188,15 @@ export const registerValidator = validate(
   ),
 );
 
+export const isUserLoggedInValidator =
+  (middleware: (req: Request, res: Response, next: NextFunction) => void) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization) {
+      return middleware(req, res, next);
+    }
+    next();
+  };
+
 export const accessTokenValidator = validate(
   checkSchema(
     {
