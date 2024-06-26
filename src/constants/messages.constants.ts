@@ -7,6 +7,7 @@ export const UserMessage = {
   USER_FOUND: "Lấy thông tin người dùng thành công",
   USER_ALREADY_FOLLOWED: "Người dùng đã được theo dõi trước đó",
   OBJECT_ID_INVALID: "ID người dùng không hợp lệ",
+  ACCESS_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống access token)",
   ACCESS_TOKEN_INVALID: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi access token)",
   REFRESH_TOKEN_SUCCESSFULLY: "Refresh token thành công",
   REFRESH_TOKEN_INVALID:

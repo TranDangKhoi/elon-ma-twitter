@@ -194,6 +194,12 @@ export const accessTokenValidator = validate(
       authorization: {
         custom: {
           options: async (value, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: UserMessage.ACCESS_TOKEN_IS_REQUIRED,
+                status: HttpStatusCode.UNAUTHORIZED,
+              });
+            }
             const access_token = (value || "").split(" ")[1];
             const auth_type = value.split(" ")[0];
             if (!access_token || auth_type !== "Bearer") {
