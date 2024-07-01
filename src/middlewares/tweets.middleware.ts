@@ -2,10 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
 import { isEmpty } from "lodash";
 import { ObjectId } from "mongodb";
-import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
-import { TweetMessage } from "~/constants/messages.constants";
+import { MediaEnum, TweetAudienceEnum, TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
+import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
+import { TweetMessage, UserMessage } from "~/constants/messages.constants";
+import { ErrorWithStatus } from "~/models/Errors";
+import Tweet from "~/models/schemas/Tweet.schema";
 import databaseService from "~/services/database.services";
 import { enumValuesToArray } from "~/utils/enumsToArray";
+import { wrapRequestHandler } from "~/utils/requestHandlers";
 import { validate } from "~/utils/validation";
 
 export const createTweetValidator = validate(
@@ -127,6 +131,7 @@ export const tweetIdValidator = validate(
             if (!tweet) {
               throw new Error(TweetMessage.TWEET_NOT_FOUND);
             }
+            (req as Request).tweet = tweet;
             return true;
           },
         },
@@ -135,3 +140,37 @@ export const tweetIdValidator = validate(
     ["params", "body"],
   ),
 );
+
+// If you want to use async await in a middleware, you need to wrap it in a wrapRequestHandler function
+// or you can use try catch, and call next with the error
+export const audienceValidator = wrapRequestHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const tweet = req.tweet;
+  if (tweet?.audience === TweetAudienceEnum.TWITTERCIRCLE) {
+    if (!req.decoded_access_token) {
+      throw new ErrorWithStatus({
+        status: HttpStatusCode.UNAUTHORIZED,
+        message: UserMessage.ACCESS_TOKEN_IS_REQUIRED,
+      });
+    }
+
+    // Check if the OP's account are banned or locked
+    const tweetOwner = await databaseService.users.findOne({ _id: new ObjectId(tweet.user_id) });
+    console.log(tweetOwner);
+    if (!tweetOwner || tweetOwner.verify === UserVerifyStatus.BANNED) {
+      throw new ErrorWithStatus({
+        status: HttpStatusCode.NOT_FOUND,
+        message: UserMessage.USER_NOT_FOUND,
+      });
+    }
+
+    const { user_id } = req.decoded_access_token;
+    const isInTwitterCircle = tweetOwner.twitter_circle?.some((user_circle_id) => user_circle_id.equals(user_id));
+    if (!isInTwitterCircle && !tweetOwner._id.equals(new ObjectId(user_id))) {
+      throw new ErrorWithStatus({
+        status: HttpStatusCode.FORBIDDEN,
+        message: TweetMessage.TWEET_INSUFFICIENT_PERMISSION,
+      });
+    }
+  }
+  next();
+});

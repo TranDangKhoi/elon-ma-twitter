@@ -66,6 +66,7 @@ export const TweetMessage = {
   TWEET_AUDIENCE_INVALID: `Kiểu tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetAudienceEnum).join(
     ", ",
   )}`,
+  TWEET_INSUFFICIENT_PERMISSION: "Bạn không có quyền xem nội dung này!",
   PARENT_ID_MUST_BE_NULL: "Khi tạo tweet thì parent_id phải là null",
   PARENT_ID_IS_REQUIRED: "Khi retweet, quotetweet và comment thì parent_id là bắt buộc",
   PARENT_ID_CAN_NOT_BE_INVALID: "Khi retweet, quotetweet và comment thì parent_id phải hợp lệ",
