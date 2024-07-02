@@ -29,8 +29,9 @@ Giống như trong SQL, ở trong MongoDB chúng ta cũng có cách để có th
    name: "Tran Dang Khoi",
    username: "khoitran",
    email: "khoi@gmail.com",
+   bio: "Why don't eggs tell jokes? They'd crack each other up",
    tweets: Array(1),
-   liked_tweets: Array(5),
+   liked_tweets: Array(5)
    }
    ```
 
