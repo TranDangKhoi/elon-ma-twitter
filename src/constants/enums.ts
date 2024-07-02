@@ -27,4 +27,5 @@ export enum TweetTypeEnum {
 export enum TweetAudienceEnum {
   EVERYONE,
   TWITTERCIRCLE,
+  PRIVATE,
 }

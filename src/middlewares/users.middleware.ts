@@ -5,7 +5,7 @@ import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { FollowMessage, UserMessage } from "~/constants/messages.constants";
 import { REGEX_USERNAME } from "~/constants/regex";
-import { ErrorWithStatus, UnprocessableEntityError } from "~/models/Errors";
+import { ErrorWithStatus } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
 import databaseService from "~/services/database.services";
 import usersServices from "~/services/users.services";
