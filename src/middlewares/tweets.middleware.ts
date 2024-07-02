@@ -31,7 +31,7 @@ export const createTweetValidator = validate(
       },
       parent_id: {
         custom: {
-          options: (value, { req }) => {
+          options: async (value, { req }) => {
             if (req.body.type !== TweetTypeEnum.TWEET && !value) {
               throw new Error(TweetMessage.PARENT_ID_IS_REQUIRED);
             }
@@ -40,6 +40,16 @@ export const createTweetValidator = validate(
             }
             if (req.body.type === TweetTypeEnum.TWEET && value) {
               throw new Error(TweetMessage.PARENT_ID_MUST_BE_NULL);
+            }
+            // Kiểm tra nếu Parent Tweet bật Twitter Circle thì không cho phép ReTweet hoặc QuoteTweet
+            if (value) {
+              const parentTweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) });
+              if (
+                parentTweet?.audience === TweetAudienceEnum.TWITTERCIRCLE &&
+                (req.body.type === TweetTypeEnum.RETWEET || req.body.type === TweetTypeEnum.QUOTETWEET)
+              ) {
+                throw new Error(TweetMessage.TWEET_TYPE_MUST_BE_PUBLIC);
+              }
             }
             return true;
           },

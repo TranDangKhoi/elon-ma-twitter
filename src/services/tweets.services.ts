@@ -26,11 +26,12 @@ class TweetsServices {
   }
   async createTweets(body: TTweetReqBody, user_id: string) {
     const hashtags = await this.checkAndCreateHashTags(body.hashtags);
+    const parent_id = body.parent_id ? new ObjectId(body.parent_id) : null;
     const newTweet = await databaseService.tweets.insertOne(
       new Tweet({
         user_id: new ObjectId(user_id),
         content: body.content,
-        parent_id: null,
+        parent_id,
         audience: body.audience,
         type: body.type,
         hashtags: hashtags,

@@ -11,7 +11,7 @@ type TTweet = {
   // audience: TAudience;
   audience: any;
   content: string;
-  parent_id: null | string; //  chỉ null khi tweet gốc
+  parent_id: ObjectId | null; //  chỉ null khi tweet gốc
   hashtags: ObjectId[]; // Vì twitter không phân biệt hashtags viết chữ thường với hoa nên hashtags ta sẽ lưu ở dạng ObjectId[] chứ không phải string[]
   mentions: string[];
   medias: TMediaResponse[];
@@ -27,7 +27,7 @@ export default class Tweet {
   type: TweetTypeEnum;
   audience: TweetAudienceEnum;
   content: string;
-  parent_id: null | ObjectId;
+  parent_id: ObjectId | null;
   hashtags?: ObjectId[];
   mentions?: ObjectId[];
   medias?: TMediaResponse[];
