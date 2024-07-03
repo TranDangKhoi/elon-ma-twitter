@@ -24,6 +24,7 @@ class TweetsServices {
     );
     return (await hashTagsToInsert).map((hashtag) => hashtag.value?._id as ObjectId);
   }
+
   async createTweets(body: TTweetReqBody, user_id: string) {
     const hashtags = await this.checkAndCreateHashTags(body.hashtags);
     const parent_id = body.parent_id ? new ObjectId(body.parent_id) : null;

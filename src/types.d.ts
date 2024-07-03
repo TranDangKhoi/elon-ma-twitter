@@ -29,10 +29,10 @@ declare global {
 declare module "express" {
   interface Request {
     user?: User;
+    tweet?: Tweet;
     decoded_access_token?: TokenPayload;
     decoded_refresh_token?: TokenPayload;
     decoded_email_verify_token?: TokenPayload;
     decoded_forgot_password_token?: TokenPayload;
-    tweet?: Tweet;
   }
 }

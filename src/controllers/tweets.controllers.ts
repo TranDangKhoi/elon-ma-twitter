@@ -7,8 +7,10 @@ import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
 
 export const getTweetController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const { tweet: result } = req;
   res.status(HttpStatusCode.OK).json({
     message: TweetMessage.GET_TWEET_SUCCESSFULLY,
+    result,
   });
 };
 

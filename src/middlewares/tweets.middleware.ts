@@ -135,9 +135,116 @@ export const tweetIdValidator = validate(
         isMongoId: true,
         custom: {
           options: async (value, { req }) => {
-            const tweet = await databaseService.tweets.findOne({
-              _id: new ObjectId(value),
-            });
+            const [tweet] = await databaseService.tweets
+              .aggregate<Tweet>([
+                {
+                  $match: {
+                    _id: new ObjectId(value),
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "hashtags",
+                    localField: "hashtags",
+                    foreignField: "_id",
+                    as: "hashtags",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "users",
+                    localField: "mentions",
+                    foreignField: "_id",
+                    as: "mentions",
+                  },
+                },
+                {
+                  $addFields: {
+                    mentions: {
+                      $map: {
+                        input: "$mentions",
+                        as: "mention",
+                        in: {
+                          _id: "$$mention._id",
+                          name: "$$mention.name",
+                          username: "$$mention.username",
+                        },
+                      },
+                    },
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "bookmarks",
+                    localField: "_id",
+                    foreignField: "tweet_id",
+                    as: "bookmarks",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "likes",
+                    localField: "_id",
+                    foreignField: "tweet_id",
+                    as: "likes",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "tweets",
+                    localField: "_id",
+                    foreignField: "parent_id",
+                    as: "tweets_children",
+                  },
+                },
+                {
+                  $addFields: {
+                    bookmarks_count: {
+                      $size: "$bookmarks",
+                    },
+                    likes_count: {
+                      $size: "$likes",
+                    },
+                    retweets_count: {
+                      $size: {
+                        $filter: {
+                          input: "$tweets_children",
+                          as: "item",
+                          cond: {
+                            $eq: ["$$item.type", 1],
+                          },
+                        },
+                      },
+                    },
+                    comments_count: {
+                      $size: {
+                        $filter: {
+                          input: "$tweets_children",
+                          as: "item",
+                          cond: {
+                            $eq: ["$$item.type", 2],
+                          },
+                        },
+                      },
+                    },
+                    quote_tweets_count: {
+                      $size: {
+                        $filter: {
+                          input: "$tweets_children",
+                          as: "item",
+                          cond: {
+                            $eq: ["$$item.type", 3],
+                          },
+                        },
+                      },
+                    },
+                    views_count: {
+                      $add: ["$guest_views", "$user_views"],
+                    },
+                  },
+                },
+              ])
+              .toArray();
             if (!tweet) {
               throw new Error(TweetMessage.TWEET_NOT_FOUND);
             }
@@ -163,9 +270,8 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
       });
     }
 
-    // Check if the OP's account are banned or locked
+    // Check if the OP's account are banned
     const tweetOwner = await databaseService.users.findOne({ _id: new ObjectId(tweet.user_id) });
-    console.log(tweetOwner);
     if (!tweetOwner || tweetOwner.verify === UserVerifyStatus.BANNED) {
       throw new ErrorWithStatus({
         status: HttpStatusCode.NOT_FOUND,
