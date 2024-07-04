@@ -1,6 +1,6 @@
 ## Aggregations Pipeline trong MongoDB
 
-Giống như trong SQL, ở trong MongoDB chúng ta cũng có cách để có thể join dữ liệu của các bảng lại với nhau để query và trả ra API đúng như ý muốn cho phía Front-end xử lí
+Giống như trong SQL, ở trong MongoDB chúng ta cũng có cách để có thể JOIN dữ liệu của các bảng lại với nhau HOẶC là sử dụng các câu lệnh tương tự như trong SQL như WHERE, GROUP BY, HAVE, ...v.v để query và trả ra API đúng như ý muốn cho phía Front-end xử lí
 
 1. Aggregations Pipeline là gì?
 

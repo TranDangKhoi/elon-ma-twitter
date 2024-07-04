@@ -13,6 +13,7 @@ tweetsRouter.get(
   audienceValidator,
   wrapRequestHandler(getTweetController),
 );
+tweetsRouter.get("/comments");
 
 tweetsRouter.post(
   "/",
