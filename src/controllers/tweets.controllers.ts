@@ -5,9 +5,16 @@ import { ParamsDictionary } from "express-serve-static-core";
 import tweetsServices from "~/services/tweets.services";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
+import { ObjectId } from "mongodb";
 
 export const getTweetController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
-  const { tweet: result } = req;
+  const { tweet } = req;
+  const { user_id } = (req.decoded_access_token as TokenPayload) || {};
+  const updatedTweetViews = await tweetsServices.increaseTweetViewCount(tweet?._id as ObjectId, user_id);
+  const result = {
+    ...tweet,
+    ...updatedTweetViews,
+  };
   res.status(HttpStatusCode.OK).json({
     message: TweetMessage.GET_TWEET_SUCCESSFULLY,
     result,

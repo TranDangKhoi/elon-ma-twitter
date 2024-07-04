@@ -1,4 +1,5 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
+import { UserVerifyStatus } from "~/constants/enums";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import Hashtag from "~/models/schemas/Hashtag.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
@@ -44,6 +45,31 @@ class TweetsServices {
     );
     const theTweetThatWasJustCreated = await databaseService.tweets.findOne({ _id: newTweet.insertedId });
     return theTweetThatWasJustCreated;
+  }
+
+  async increaseTweetViewCount(tweet_id: ObjectId, user_id?: string) {
+    const viewsType = user_id ? { user_views: 1 } : { guest_views: 1 };
+    const result = await databaseService.tweets.findOneAndUpdate(
+      { _id: tweet_id },
+      {
+        $inc: viewsType,
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+      {
+        returnDocument: "after",
+        projection: {
+          user_views: 1,
+          guest_views: 1,
+        },
+      },
+    );
+
+    return result.value as WithId<{
+      guest_views: number;
+      user_views: number;
+    }>;
   }
 }
 
