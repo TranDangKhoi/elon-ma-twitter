@@ -6,6 +6,7 @@ import tweetsServices from "~/services/tweets.services";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
 import { ObjectId } from "mongodb";
+import { TweetTypeEnum } from "~/constants/enums";
 
 export const getTweetController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const { tweet } = req;
@@ -33,7 +34,14 @@ export const createTweetController = async (req: Request<ParamsDictionary, any, 
 };
 
 export const getTweetChildrenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const result = await tweetsServices.getTweetChildren({
+    tweet_id: new ObjectId(req.params.tweet_id),
+    tweet_type: Number(req.query.tweet_type) as TweetTypeEnum,
+    limit: Number(req.query.limit),
+    page: Number(req.query.page),
+  });
   res.status(HttpStatusCode.OK).json({
     message: TweetMessage.GET_COMMENTS_SUCCESSFULLY,
+    result,
   });
 };
