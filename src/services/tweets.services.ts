@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
-import { UserVerifyStatus } from "~/constants/enums";
+import { TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import Hashtag from "~/models/schemas/Hashtag.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
@@ -70,6 +70,131 @@ class TweetsServices {
       guest_views: number;
       user_views: number;
     }>;
+  }
+
+  async getTweetChildren({
+    tweet_id,
+    limit = 5,
+    page = 1,
+    tweet_type,
+  }: {
+    tweet_id: ObjectId;
+    limit?: number;
+    page?: number;
+    tweet_type?: string;
+  }) {
+    [
+      {
+        $match: {
+          parent_id: new ObjectId(tweet_id),
+          type: tweet_type,
+        },
+      },
+      {
+        $lookup: {
+          from: "hashtags",
+          localField: "hashtags",
+          foreignField: "_id",
+          as: "hashtags",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "mentions",
+          foreignField: "_id",
+          as: "mentions",
+        },
+      },
+      {
+        $addFields: {
+          mentions: {
+            $map: {
+              input: "$mentions",
+              as: "mention",
+              in: {
+                _id: "$$mention._id",
+                name: "$$mention.name",
+                username: "$$mention.username",
+              },
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "bookmarks",
+          localField: "_id",
+          foreignField: "tweet_id",
+          as: "bookmarks",
+        },
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "tweet_id",
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "tweets",
+          localField: "_id",
+          foreignField: "parent_id",
+          as: "tweets_children",
+        },
+      },
+      {
+        $addFields: {
+          bookmarks_count: {
+            $size: "$bookmarks",
+          },
+          likes_count: {
+            $size: "$likes",
+          },
+          retweets_count: {
+            $size: {
+              $filter: {
+                input: "$tweets_children",
+                as: "item",
+                cond: {
+                  $eq: ["$$item.type", TweetTypeEnum.RETWEET],
+                },
+              },
+            },
+          },
+          comments_count: {
+            $size: {
+              $filter: {
+                input: "$tweets_children",
+                as: "item",
+                cond: {
+                  $eq: ["$$item.type", TweetTypeEnum.COMMENT],
+                },
+              },
+            },
+          },
+          quote_tweets_count: {
+            $size: {
+              $filter: {
+                input: "$tweets_children",
+                as: "item",
+                cond: {
+                  $eq: ["$$item.type", TweetTypeEnum.QUOTETWEET],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $skip: 5,
+      },
+      {
+        $limit: limit,
+      },
+    ];
   }
 }
 

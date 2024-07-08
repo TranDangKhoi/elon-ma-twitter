@@ -19,7 +19,7 @@ import {
 } from "~/controllers/users.controllers";
 import { filterMiddleware } from "~/middlewares/common.middlewares";
 import {
-  loginValidator as signInValidator,
+  signInValidator,
   registerValidator,
   accessTokenValidator,
   refreshTokenValidator,

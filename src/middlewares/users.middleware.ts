@@ -3,7 +3,7 @@ import { ParamSchema, checkSchema } from "express-validator";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { FollowMessage, UserMessage } from "~/constants/messages.constants";
+import { UserMessage } from "~/constants/messages.constants";
 import { REGEX_USERNAME } from "~/constants/regex";
 import { ErrorWithStatus } from "~/models/Errors";
 import { TokenPayload } from "~/models/requests/User.requests";
@@ -127,7 +127,7 @@ const userIdSchema: ParamSchema = {
   },
 };
 
-export const loginValidator = validate(
+export const signInValidator = validate(
   checkSchema(
     {
       email: {
