@@ -189,7 +189,7 @@ class TweetsServices {
         },
       },
       {
-        $skip: 5,
+        $skip: limit * (page - 1), // Công thức phân trang
       },
       {
         $limit: limit,
