@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createTweetController, getTweetController } from "~/controllers/tweets.controllers";
+import {
+  createTweetController,
+  getTweetChildrenController,
+  getTweetController,
+} from "~/controllers/tweets.controllers";
 import { audienceValidator, createTweetValidator, tweetIdValidator } from "~/middlewares/tweets.middleware";
 import { accessTokenValidator, isUserLoggedInValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
@@ -13,7 +17,15 @@ tweetsRouter.get(
   audienceValidator,
   wrapRequestHandler(getTweetController),
 );
-tweetsRouter.get("/comments");
+
+// Endpoint này sẽ lấy ra toàn bộ tweet con của tweet cha, và chúng ta sẽ sử dụng phân trang để cải thiện respone time cho api
+// params: {limit: number, page: number, tweet_type: TweetTypeEnum}
+tweetsRouter.get(
+  "/:tweet_id/children",
+  tweetIdValidator,
+  audienceValidator,
+  wrapRequestHandler(getTweetChildrenController),
+);
 
 tweetsRouter.post(
   "/",

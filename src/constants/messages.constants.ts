@@ -76,6 +76,7 @@ export const TweetMessage = {
   HASHTAGS_MUST_BE_STRINGS: "Hashtags phải là một mảng chứa các chuỗi",
   MENTIONS_MUST_BE_STRINGS: "Mentions phải là một mảng chứa các user_id",
   MEDIAS_MUST_BE_OBJECTS: "Medias phải là một mảng chứa các medias object có dạng {url: string, type: string}",
+  GET_COMMENTS_SUCCESSFULLY: "Lấy danh sách comment thành công",
 } as const;
 
 export const BookmarkMessage = {

@@ -31,3 +31,9 @@ export const createTweetController = async (req: Request<ParamsDictionary, any, 
     result,
   });
 };
+
+export const getTweetChildrenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  res.status(HttpStatusCode.OK).json({
+    message: TweetMessage.GET_COMMENTS_SUCCESSFULLY,
+  });
+};
