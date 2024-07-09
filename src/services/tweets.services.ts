@@ -62,6 +62,7 @@ class TweetsServices {
         projection: {
           user_views: 1,
           guest_views: 1,
+          updated_at: 1,
         },
       },
     );
@@ -69,6 +70,7 @@ class TweetsServices {
     return result.value as WithId<{
       guest_views: number;
       user_views: number;
+      updated_at: Date;
     }>;
   }
 

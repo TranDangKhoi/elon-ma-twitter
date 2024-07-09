@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ErrorWithStatus } from "~/models/Errors";
 

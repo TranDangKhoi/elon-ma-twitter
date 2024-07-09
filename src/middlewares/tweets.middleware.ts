@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { ObjectId } from "mongodb";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
