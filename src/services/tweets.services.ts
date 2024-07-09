@@ -74,16 +74,16 @@ class TweetsServices {
 
   async getTweetChildren({
     tweet_id,
-    limit = 5,
-    page = 1,
+    limit,
+    page,
     tweet_type = TweetTypeEnum.COMMENT,
   }: {
     tweet_id: ObjectId;
-    limit?: number;
-    page?: number;
-    tweet_type?: TweetTypeEnum;
+    limit: number;
+    page: number;
+    tweet_type: TweetTypeEnum;
   }) {
-    const [tweets] = await databaseService.tweets
+    const tweets = await databaseService.tweets
       .aggregate([
         {
           $match: {
@@ -197,7 +197,16 @@ class TweetsServices {
         },
       ])
       .toArray();
-    return tweets;
+    const total_documents = await databaseService.tweets.countDocuments({
+      parent_id: new ObjectId(tweet_id),
+      type: tweet_type,
+    });
+    const total_pages = Math.ceil(total_documents / limit);
+    return {
+      tweets,
+      total_documents,
+      total_pages,
+    };
   }
 }
 

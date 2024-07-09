@@ -34,14 +34,25 @@ export const createTweetController = async (req: Request<ParamsDictionary, any, 
 };
 
 export const getTweetChildrenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
-  const result = await tweetsServices.getTweetChildren({
+  const limit = Number(req.query.limit) || 5;
+  const page = Number(req.query.page) || 1;
+  const tweet_type = Number(req.query.tweet_type) || TweetTypeEnum.COMMENT;
+
+  const { tweets, total_documents, total_pages } = await tweetsServices.getTweetChildren({
     tweet_id: new ObjectId(req.params.tweet_id),
-    tweet_type: Number(req.query.tweet_type) as TweetTypeEnum,
-    limit: Number(req.query.limit),
-    page: Number(req.query.page),
+    tweet_type,
+    limit,
+    page,
   });
   res.status(HttpStatusCode.OK).json({
     message: TweetMessage.GET_COMMENTS_SUCCESSFULLY,
-    result,
+    result: {
+      tweets,
+      limit,
+      page,
+      total_documents,
+      total_pages,
+      tweet_type,
+    },
   });
 };
