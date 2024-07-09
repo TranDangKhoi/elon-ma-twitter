@@ -147,6 +147,9 @@ export const signInValidator = validate(
             if (user === null) {
               throw new Error(UserMessage.EMAIL_OR_PASSWORD_IS_INCORRECT);
             }
+            if (user.verify === UserVerifyStatus.BANNED) {
+              throw new Error(UserMessage.USER_ACCOUNT_IS_DEACTIVATED);
+            }
             req.user = user;
             return true;
           },

@@ -4,6 +4,8 @@ import { enumValuesToArray } from "~/utils/enumsToArray";
 export const UserMessage = {
   VALIDATION_ERROR: "VALIDATION_ERROR",
   USER_NOT_FOUND: "Không tìm thấy người dùng",
+  USER_ACCOUNT_IS_DEACTIVATED:
+    "Tài khoản của bạn đã bị vô hiệu hóa, vui lòng liên hệ với quản trị viên để biết thêm thông tin",
   USER_FOUND: "Lấy thông tin người dùng thành công",
   USER_ALREADY_FOLLOWED: "Người dùng đã được theo dõi trước đó",
   OBJECT_ID_INVALID: "ID người dùng không hợp lệ",
