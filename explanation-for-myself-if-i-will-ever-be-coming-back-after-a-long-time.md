@@ -13,6 +13,7 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 - $set: Set the value of a field in a document.
 - $unset: Remove the specified field from a document.
 - $inc: Increment the value of the field by the specified amount.
+- $in: This one is used for filtering documents, if you passed in this filter, it will only update the documents that match the filter
 - $push: Add an item to an array.
 - $pushAll: Add several items to an array.
 - $addToSet: Add an item to an array only if it is not in the array already.
