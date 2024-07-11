@@ -216,8 +216,8 @@ class TweetsServices {
         },
         {
           $inc: viewsType,
-          $set: {
-            updated_at: new Date(),
+          $currentDate: {
+            updated_at: true,
           },
         },
       ),
