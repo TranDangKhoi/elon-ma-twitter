@@ -23,6 +23,7 @@ tweetsRouter.get(
 tweetsRouter.get(
   "/:tweet_id/children",
   tweetIdValidator,
+  isUserLoggedInValidator(accessTokenValidator),
   audienceValidator,
   wrapRequestHandler(getTweetChildrenController),
 );

@@ -76,15 +76,19 @@ class TweetsServices {
 
   async getTweetChildren({
     tweet_id,
+    user_id,
     limit,
     page,
     tweet_type = TweetTypeEnum.COMMENT,
   }: {
     tweet_id: ObjectId;
+    user_id?: ObjectId;
     limit: number;
     page: number;
     tweet_type: TweetTypeEnum;
   }) {
+    const viewsType = user_id ? { user_views: 1 } : { guest_views: 1 };
+
     const tweets = await databaseService.tweets
       .aggregate([
         {
@@ -199,11 +203,40 @@ class TweetsServices {
         },
       ])
       .toArray();
-    const total_documents = await databaseService.tweets.countDocuments({
-      parent_id: new ObjectId(tweet_id),
-      type: tweet_type,
+
+    // Increase views for tweet children
+    const ids = tweets.map((tweet) => tweet._id);
+
+    const [_, total_documents] = await Promise.all([
+      databaseService.tweets.updateMany(
+        {
+          _id: {
+            $in: ids,
+          },
+        },
+        {
+          $inc: viewsType,
+          $set: {
+            updated_at: new Date(),
+          },
+        },
+      ),
+      databaseService.tweets.countDocuments({
+        parent_id: new ObjectId(tweet_id),
+        type: tweet_type,
+      }),
+    ]);
+
+    tweets.forEach((tweet) => {
+      if (user_id) {
+        tweet.user_views += 1;
+      } else {
+        tweet.guest_views += 1;
+      }
     });
+
     const total_pages = Math.ceil(total_documents / limit);
+
     return {
       tweets,
       total_documents,

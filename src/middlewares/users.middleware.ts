@@ -203,7 +203,7 @@ export const isUserLoggedInValidator =
 export const accessTokenValidator = validate(
   checkSchema(
     {
-      authorization: {
+      Authorization: {
         custom: {
           options: async (value, { req }) => {
             if (!value) {
