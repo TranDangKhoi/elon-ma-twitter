@@ -15,8 +15,8 @@ type TTweet = {
   hashtags: ObjectId[]; // Vì twitter không phân biệt hashtags viết chữ thường với hoa nên hashtags ta sẽ lưu ở dạng ObjectId[] chứ không phải string[]
   mentions: string[];
   medias: TMediaResponse[];
-  guest_views: number;
-  user_views: number;
+  guest_views?: number;
+  user_views?: number;
   created_at?: Date;
   updated_at?: Date;
 };
