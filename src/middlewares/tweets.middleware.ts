@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { checkSchema } from "express-validator";
 import isEmpty from "lodash/isEmpty";
 import { ObjectId } from "mongodb";
+import { MAXIMUM_TWEET_CHILDREN_lIMIT, MINIMUM_TWEET_CHILDREN_LIMIT } from "~/constants/constants";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { TweetMessage, UserMessage } from "~/constants/messages.constants";
@@ -295,3 +296,48 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   }
   next();
 });
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: {
+        isIn: {
+          options: [enumValuesToArray(TweetTypeEnum)],
+          errorMessage: `Kiểu tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetTypeEnum).join(", ")}`,
+        },
+      },
+      limit: {
+        isNumeric: true,
+        custom: {
+          options: (value) => {
+            const valueAsNumber = Number(value);
+            if (valueAsNumber < MINIMUM_TWEET_CHILDREN_LIMIT) {
+              throw new Error(
+                `${TweetMessage.LIMIT_MUST_BE_GREATER_THAN_SPECIFIED_CONSTANT}${MINIMUM_TWEET_CHILDREN_LIMIT}`,
+              );
+            }
+            if (valueAsNumber > MAXIMUM_TWEET_CHILDREN_lIMIT) {
+              throw new Error(
+                `${TweetMessage.LIMIT_MUST_BE_LESS_THAN_SPECIFIED_CONSTANT}${MAXIMUM_TWEET_CHILDREN_lIMIT}`,
+              );
+            }
+            return true;
+          },
+        },
+      },
+      page: {
+        isNumeric: true,
+        custom: {
+          options: (value) => {
+            const valueAsNumber = Number(value);
+            if (valueAsNumber < 1) {
+              throw new Error(TweetMessage.PAGE_MUST_BE_GREATER_THAN_ZERO);
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["query"],
+  ),
+);

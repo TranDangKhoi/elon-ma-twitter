@@ -1,5 +1,6 @@
 import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
+import { ParamsDictionary, Query } from "express-serve-static-core";
 
 export type TTweetReqBody = {
   type: TweetTypeEnum;
@@ -10,3 +11,13 @@ export type TTweetReqBody = {
   mentions: string[];
   medias: TMediaResponse[];
 };
+
+export type TTweetParams = {
+  tweet_id: string;
+} & ParamsDictionary;
+
+export type TTweetQuery = {
+  limit: string;
+  page: string;
+  tweet_type: string;
+} & Query;

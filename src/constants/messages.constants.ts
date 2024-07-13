@@ -69,6 +69,9 @@ export const TweetMessage = {
   TWEET_AUDIENCE_INVALID: `Kiểu tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetAudienceEnum).join(
     ", ",
   )}`,
+  LIMIT_MUST_BE_GREATER_THAN_SPECIFIED_CONSTANT: "Limit phải lớn hơn ",
+  LIMIT_MUST_BE_LESS_THAN_SPECIFIED_CONSTANT: "Limit phải nhỏ hơn ",
+  PAGE_MUST_BE_GREATER_THAN_ZERO: "Page phải lớn hơn 0",
   TWEET_INSUFFICIENT_PERMISSION: "Bạn không có quyền xem nội dung này!",
   PARENT_ID_MUST_BE_NULL: "Khi tạo tweet thì parent_id phải là null",
   PARENT_ID_IS_REQUIRED: "Khi retweet, quotetweet và comment thì parent_id là bắt buộc",

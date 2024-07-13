@@ -3,7 +3,7 @@ import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { TweetMessage } from "~/constants/messages.constants";
 import { ParamsDictionary } from "express-serve-static-core";
 import tweetsServices from "~/services/tweets.services";
-import { TTweetReqBody } from "~/models/requests/Tweet.requests";
+import { TTweetParams, TTweetQuery, TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
 import { ObjectId } from "mongodb";
 import { TweetTypeEnum } from "~/constants/enums";
@@ -33,7 +33,7 @@ export const createTweetController = async (req: Request<ParamsDictionary, any, 
   });
 };
 
-export const getTweetChildrenController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+export const getTweetChildrenController = async (req: Request<TTweetParams, any, any, TTweetQuery>, res: Response) => {
   const limit = Number(req.query.limit) || 5;
   const page = Number(req.query.page) || 1;
   const tweet_type = Number(req.query.tweet_type) || TweetTypeEnum.COMMENT;
