@@ -10,6 +10,8 @@ import usersRouter from "~/routes/users.routes";
 import bookmarkRouter from "~/routes/bookmarks.routes";
 import likesRouter from "~/routes/likes.routes";
 
+// ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA
+// import "~/utils/faker";
 databaseService
   .connect()
   .then(() => {

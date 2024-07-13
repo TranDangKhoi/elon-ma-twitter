@@ -129,12 +129,10 @@ const insertTweet = async (user_id: ObjectId, body: TTweetReqBody) => {
 const insertMultipleTweets = async (ids: ObjectId[]) => {
   console.log("Creating tweets...");
   let count = 0;
-  setTimeout(() => {
-    console.log(`Counting...`);
-  }, 1500);
+  console.log(`Counting...`);
   const result = await Promise.all(
     ids.map(async (id, index) => {
-      await Promise.all([insertTweet(id, createRandomTweet()), insertTweet(id, createRandomTweet())]);
+      await Promise.all([await insertTweet(id, createRandomTweet()), await insertTweet(id, createRandomTweet())]);
       count += 2;
       console.log(`Created ${count} tweets`);
     }),
@@ -142,12 +140,12 @@ const insertMultipleTweets = async (ids: ObjectId[]) => {
   return result;
 };
 
-insertMultipleUsers(users).then((ids) => {
-  followMultipleUsers(new ObjectId(MYID), ids).catch((err) => {
+insertMultipleUsers(users).then(async (ids) => {
+  await followMultipleUsers(new ObjectId(MYID), ids).catch((err) => {
     console.error("Error when following users");
     console.log(err);
   });
-  insertMultipleTweets(ids).catch((err) => {
+  await insertMultipleTweets(ids).catch((err) => {
     console.error("Error when creating tweets");
     console.log(err);
   });
