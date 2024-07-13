@@ -4,13 +4,13 @@ import express from "express";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import { initFolder } from "./utils/file";
 import { VIDEO_UPLOAD_DIR } from "./constants/constants";
+import bookmarkRouter from "~/routes/bookmarks.routes";
+import likesRouter from "~/routes/likes.routes";
 import mediasRouter from "~/routes/medias.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
-import bookmarkRouter from "~/routes/bookmarks.routes";
-import likesRouter from "~/routes/likes.routes";
 
-// ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA
+// ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA INTO TWEETS AND USERS COLLECTION
 // import "~/utils/faker";
 databaseService
   .connect()

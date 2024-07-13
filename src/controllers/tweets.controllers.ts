@@ -1,11 +1,11 @@
+import { ObjectId } from "mongodb";
+import { ParamsDictionary } from "express-serve-static-core";
 import { Request, Response } from "express";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { TweetMessage } from "~/constants/messages.constants";
-import { ParamsDictionary } from "express-serve-static-core";
 import tweetsServices from "~/services/tweets.services";
 import { TTweetParams, TTweetQuery, TTweetReqBody } from "~/models/requests/Tweet.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
-import { ObjectId } from "mongodb";
 import { TweetTypeEnum } from "~/constants/enums";
 
 export const getTweetController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {

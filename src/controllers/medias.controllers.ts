@@ -1,7 +1,7 @@
+import mime from "mime";
 import { NextFunction, Request, Response } from "express";
 import fs from "node:fs";
 import path from "node:path";
-import mime from "mime";
 import { IMAGE_UPLOAD_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { MediaMessage } from "~/constants/messages.constants";

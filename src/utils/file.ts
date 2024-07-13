@@ -1,9 +1,9 @@
-import { Request } from "express";
 import formidable, { File } from "formidable";
+import { nanoid } from "nanoid";
+import { Request } from "express";
 import { IMAGE_UPLOAD_TEMP_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import fs from "node:fs";
 import path from "node:path";
-import { nanoid } from "nanoid";
 
 export const initFolder = () => {
   if (!fs.existsSync(IMAGE_UPLOAD_TEMP_DIR)) {

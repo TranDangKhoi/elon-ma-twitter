@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
+import { Request, Response } from "express";
 import { TLikeReqBody } from "~/models/requests/Like.requests";
 import { TokenPayload } from "~/models/requests/User.requests";
 import likeServices from "~/services/like.services";

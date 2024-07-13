@@ -1,7 +1,7 @@
 import { config } from "dotenv";
-import { Request, Response } from "express";
-import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
+import { ParamsDictionary } from "express-serve-static-core";
+import { Request, Response } from "express";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { FollowMessage, UserMessage } from "~/constants/messages.constants";

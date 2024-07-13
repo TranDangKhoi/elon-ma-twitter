@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
 import pick from "lodash/pick";
+import { NextFunction, Request, Response } from "express";
 
 type FilterKeys<T> = Array<keyof T>;
 
