@@ -78,6 +78,8 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
             _id: "$$mention._id",
             name: "$$mention.name",
             username: "$$mention.username",
+            avatar: "$$mention.avatar",
+            cover_photo: "$$mention.cover_photo",
           },
         },
       },
