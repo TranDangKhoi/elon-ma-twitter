@@ -85,6 +85,8 @@ export const TweetMessage = {
 } as const;
 
 export const BookmarkMessage = {
+  GET_BOOKMARKS_SUCCESSFULLY: "Lấy danh sách tweet đã lưu thành công",
   BOOKMARK_SUCCESSFULLY: "Lưu tweet thành công",
   UNBOOKMARK_SUCCESSFULLY: "Bỏ lưu tweet thành công",
+  CHECK_BOOKMARK_SUCCESSFULLY: "Kiểm tra tweet đã được lưu thành công",
 } as const;

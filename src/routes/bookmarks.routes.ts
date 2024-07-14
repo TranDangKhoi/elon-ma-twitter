@@ -1,10 +1,22 @@
 import { Router } from "express";
-import { createBookmarkController, removeBookmarkController } from "~/controllers/bookmarks.controllers";
+import {
+  checkBookmarkController,
+  createBookmarkController,
+  getBookmarksController,
+  removeBookmarkController,
+} from "~/controllers/bookmarks.controllers";
 import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const bookmarkRouter = Router();
 
+bookmarkRouter.get("/", accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getBookmarksController));
+bookmarkRouter.get(
+  "/tweets/:tweet_id",
+  accessTokenValidator,
+  verifiedUserValidator,
+  wrapRequestHandler(checkBookmarkController),
+);
 bookmarkRouter.post("/", accessTokenValidator, verifiedUserValidator, wrapRequestHandler(createBookmarkController));
 bookmarkRouter.delete(
   "/tweets/:tweet_id",
