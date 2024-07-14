@@ -8,7 +8,9 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 
 ### 3\. If any accounts are banned, it will be determined by the UserVerifyStatus in enums. If verify status = 2, then that means the account is banned from the platform
 
-### 4\. MongoDB's updates operator explanation
+### 4\. The route GET /tweets/:tweet_id is to check if that tweet is bookmarked by the user or not.
+
+### 5\. MongoDB's updates operator explanation
 
 - $set: Set the value of a field in a document.
 - $unset: Remove the specified field from a document.
