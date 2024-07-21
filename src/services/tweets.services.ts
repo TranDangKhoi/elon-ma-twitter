@@ -252,7 +252,7 @@ class TweetsServices {
       })
       .toArray();
     const ids = user_ids_this_account_follow.map((user) => user.being_followed_user_id);
-    const result = await databaseService.tweets
+    const tweets = await databaseService.tweets
       .aggregate([
         {
           $match: {
@@ -424,15 +424,40 @@ class TweetsServices {
       ])
       .toArray();
 
-    const total_documents = await databaseService.tweets.countDocuments({
-      user_id: {
-        $in: ids,
-      },
-    });
+    const tweet_ids = tweets.map((tweet) => tweet._id);
+
+    const [_, total_documents] = await Promise.all([
+      await databaseService.tweets.updateMany(
+        {
+          _id: {
+            $in: tweet_ids,
+          },
+        },
+        {
+          $inc: {
+            user_views: 1,
+          },
+          $currentDate: {
+            updated_at: true,
+          },
+        },
+      ),
+      await databaseService.tweets.countDocuments({
+        user_id: {
+          $in: ids,
+        },
+      }),
+    ]);
+    const currentDate = new Date();
     const total_pages = Math.ceil(total_documents / limit);
 
+    tweets.forEach((tweet) => {
+      tweet.updated_at = currentDate;
+      tweet.user_views += 1;
+    });
+
     return {
-      result,
+      tweets,
       total_pages,
       limit,
       page,

@@ -10,7 +10,7 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 
 ### 4\. The route GET /tweets/:tweet_id is to check if that tweet is bookmarked by the current user or not.
 
-### 5\. MongoDB's updates operator explanation
+### 5\. MongoDB's update operators explanation
 
 - $set: Set the value of a field in a document.
 - $unset: Remove the specified field from a document.
