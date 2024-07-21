@@ -61,6 +61,7 @@ export const TweetMessage = {
   TWEET_NOT_FOUND: "Không tìm thấy tweet",
   TWEET_TYPE_MUST_BE_PUBLIC: "Bạn không được phép retweet và quotetweet nếu tweet bật Twitter Circle",
   GET_TWEET_SUCCESSFULLY: "Lấy tweet thành công",
+  GET_NEW_FEED_SUCCESSFULLY: "Lấy new feed thành công",
   TWEET_SUCCESSFULLY: "Tạo tweet thành công",
   DELETE_TWEET_SUCCESSFULLY: "Xóa tweet thành công",
   TWEET_TYPE_INVALID: `Đối tượng xem tweet phải là một trong các giá trị sau: ${enumValuesToArray(TweetTypeEnum).join(
