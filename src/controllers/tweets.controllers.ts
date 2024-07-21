@@ -22,7 +22,7 @@ export const getTweetController = async (req: Request<ParamsDictionary, any, any
   });
 };
 
-export const getNewFeedController = async (req: Request, res: Response) => {
+export const getNewFeedController = async (req: Request<ParamsDictionary, any, any, TTweetQuery>, res: Response) => {
   const { user_id } = (req.decoded_access_token as TokenPayload) || {};
   const limit = Number(req.query.limit) || 5;
   const page = Number(req.query.page) || 1;

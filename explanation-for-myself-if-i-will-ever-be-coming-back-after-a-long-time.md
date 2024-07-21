@@ -26,3 +26,5 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 - $bit: Perform bitwise AND, OR, or XOR updates on an integer field.
 - $isolated: Modifies behavior of write operations to return the document before modifications.
 - $min: Only update the field if the specified value is less than the existing field value.
+
+### 6\. Currently, each time you GET /new
