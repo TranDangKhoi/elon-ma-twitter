@@ -31,4 +31,4 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 
 Currently, each time you call GET on this api, it will automatically increase views for the tweets returned in the response ¯\\\_(ツ)\_/¯.
 
-However, Twitter handled this differently, they only increase a tweet's views when the user actually scrolls the tweet into view.. So, if future Khoi wanna change this, just remove the view increasing function and apply a new route to increase views
+However, Twitter handled this differently, they only increase a tweet's views when the user actually scrolls the tweet into view. So, if future Khoi wanna change this, just remove the view increasing function and apply a new route to increase views
