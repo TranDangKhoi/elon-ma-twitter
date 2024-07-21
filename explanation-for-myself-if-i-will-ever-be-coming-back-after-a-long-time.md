@@ -27,7 +27,7 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 - $isolated: Modifies behavior of write operations to return the document before modifications.
 - $min: Only update the field if the specified value is less than the existing field value.
 
-### 6\. GET /new-feed
+### 6\. Some gotchas in GET /new-feed
 
 Currently, each time you call GET on this api, it will automatically increase views for the tweets returned in the response ¯\\\_(ツ)\_/¯.
 
