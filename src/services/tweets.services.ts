@@ -87,7 +87,7 @@ class TweetsServices {
     page: number;
     tweet_type: TweetTypeEnum;
   }) {
-    const viewsType = user_id ? { user_views: 1 } : { guest_views: 1 };
+    const viewsTypeToBeIncreased = user_id ? { user_views: 1 } : { guest_views: 1 };
 
     const tweets = await databaseService.tweets
       .aggregate([
@@ -215,7 +215,7 @@ class TweetsServices {
           },
         },
         {
-          $inc: viewsType,
+          $inc: viewsTypeToBeIncreased,
           $currentDate: {
             updated_at: true,
           },

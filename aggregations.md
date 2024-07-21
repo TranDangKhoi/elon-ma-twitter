@@ -94,7 +94,8 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "bookmarks",
     },
   },
-  // Stage 6: Lấy ra thông tin về likes, để tính số lượng likes ở bên dưới
+  // Stage 6: Lấy ra thông tin về likes (chỉ cho mục đích đếm số lượt likes, còn nếu muốn
+  // hiển thị thông tin chi tiết về người dùng đã like thì dùng API khác và API đó cũng cần phân trang)
   {
     $lookup: {
       from: "likes",
