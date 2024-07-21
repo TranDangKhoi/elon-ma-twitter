@@ -85,7 +85,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       },
     },
   },
-  // Stage 5: Lấy ra thông tin về bookmarks (có thể loại bỏ bớt)
+  // Stage 5: Lấy ra thông tin về bookmarks (có thể loại bỏ bớt tùy vào nghiệp vụ)
   {
     $lookup: {
       from: "bookmarks",
@@ -94,6 +94,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "bookmarks",
     },
   },
+  // Stage 6: Lấy ra thông tin về likes, để tính số lượng likes ở bên dưới
   {
     $lookup: {
       from: "likes",
@@ -102,6 +103,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "likes",
     },
   },
+  // Stage 7: Lấy ra thông tin về các thằng tweet con
   {
     $lookup: {
       from: "tweets",
@@ -110,6 +112,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "tweets_children",
     },
   },
+  // Stage 8: Tính toán số lượng của các thông tin bookmarks, likes, comments, quote_tweets, retweets
   {
     $addFields: {
       bookmarks_count: {
@@ -156,10 +159,196 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       },
     },
   },
+  // Stage 9: Loại bỏ tweet_children ra khỏi document (Chúng ta sẽ có một API riêng để get ra tụi này)
   {
     $project: {
       tweets_children: 0,
     },
+  },
+];
+```
+
+### Aggregations cho GET /:tweet_id/tweet_children
+
+- Đã có ở trong code, hiện tại hơi lười nêu ra ở đây :D
+
+### Aggregations cho GET /new-feed
+
+```ts
+[
+  // Stage 1: Tìm ra ids của toàn bộ những người mà tài khoản hiện tại đang follow
+  {
+    $match: {
+      user_id: {
+        $in: [user_ids_of_the_people_that_you_are_following],
+      },
+    },
+  },
+  // Lookup thằng user đã tweet bài này để chuẩn bị lấy ra thông tin của nó (lấy ra avatar, tên, các thứ các thứ ...)
+  {
+    $lookup: {
+      from: "users",
+      localField: "user_id",
+      foreignField: "_id",
+      as: "tweet_owner",
+    },
+  },
+  // Stage 3: Check xem mình có nằm trong Twitter Circle của thằng
+  // đã post bài đó không (chỉ khi thằng đó để tweet của nó ở chế độ Twitter Circle), có thì mới cho hiển thị
+  {
+    $match: {
+      $or: [
+        // Logic check tweet public
+        {
+          audience: 0,
+        },
+        // Logic check tweet đang bật twitter circle
+        {
+          $and: [
+            {
+              audience: 1,
+            },
+            {
+              "tweet_owner.twitter_circle": {
+                $in: [current_account_user_id],
+              },
+            },
+          ],
+        },
+        // Lấy ra cả tweet của chính mình nữa
+        {
+          "tweet_owner._id": {
+            $eq: new ObjectId(current_account_user_id),
+          },
+        },
+      ],
+    },
+  },
+  {
+    $lookup: {
+      from: "hashtags",
+      localField: "hashtags",
+      foreignField: "_id",
+      as: "hashtags",
+    },
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "mentions",
+      foreignField: "_id",
+      as: "mentions",
+    },
+  },
+  {
+    $addFields: {
+      mentions: {
+        $map: {
+          input: "$mentions",
+          as: "mention",
+          in: {
+            _id: "$$mention._id",
+            name: "$$mention.name",
+            username: "$$mention.username",
+          },
+        },
+      },
+    },
+  },
+  {
+    $lookup: {
+      from: "bookmarks",
+      localField: "_id",
+      foreignField: "tweet_id",
+      as: "bookmarks",
+    },
+  },
+  {
+    $lookup: {
+      from: "likes",
+      localField: "_id",
+      foreignField: "tweet_id",
+      as: "likes",
+    },
+  },
+  {
+    $lookup: {
+      from: "tweets",
+      localField: "_id",
+      foreignField: "parent_id",
+      as: "tweets_children",
+    },
+  },
+  {
+    $unwind: {
+      path: "$tweet_owner",
+    },
+  },
+  {
+    $addFields: {
+      bookmarks_count: {
+        $size: "$bookmarks",
+      },
+      likes_count: {
+        $size: "$likes",
+      },
+      retweets_count: {
+        $size: {
+          $filter: {
+            input: "$tweets_children",
+            as: "item",
+            cond: {
+              $eq: ["$$item.type", 1],
+            },
+          },
+        },
+      },
+      comments_count: {
+        $size: {
+          $filter: {
+            input: "$tweets_children",
+            as: "item",
+            cond: {
+              $eq: ["$$item.type", 2],
+            },
+          },
+        },
+      },
+      quote_tweets_count: {
+        $size: {
+          $filter: {
+            input: "$tweets_children",
+            as: "item",
+            cond: {
+              $eq: ["$$item.type", 3],
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      tweets_children: 0,
+      tweet_owner: {
+        created_at: 0,
+        updated_at: 0,
+        website: 0,
+        location: 0,
+        date_of_birth: 0,
+        forgot_password_token: 0,
+        twitter_circle: 0,
+        password: 0,
+        email_verify_token: 0,
+        verify: 0,
+      },
+    },
+  },
+  {
+    $skip: 0,
+  },
+  {
+    $limit: 2,
   },
 ];
 ```
