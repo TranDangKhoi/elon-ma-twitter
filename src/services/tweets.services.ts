@@ -1,6 +1,7 @@
 import { ObjectId, WithId } from "mongodb";
 import { TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
+import Follower from "~/models/schemas/Follower.schema";
 import Hashtag from "~/models/schemas/Hashtag.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
 import databaseService from "~/services/database.services";
@@ -241,6 +242,200 @@ class TweetsServices {
       tweets,
       total_documents,
       total_pages,
+    };
+  }
+
+  async getNewFeed({ user_id, limit, page }: { user_id: string; limit: number; page: number }) {
+    const user_ids_this_account_follow = await databaseService.followers
+      .find({
+        user_id: new ObjectId(user_id),
+      })
+      .toArray();
+    const ids = user_ids_this_account_follow.map((user) => user.being_followed_user_id);
+    const result = await databaseService.tweets
+      .aggregate([
+        {
+          $match: {
+            user_id: {
+              $in: ids,
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "tweet_owner",
+          },
+        },
+        {
+          $match: {
+            $or: [
+              {
+                audience: 0,
+              },
+              {
+                $and: [
+                  {
+                    audience: 1,
+                  },
+                  {
+                    "tweet_owner.twitter_circle": {
+                      $in: [new ObjectId("6686506a9a0035498bb9108e")],
+                    },
+                  },
+                ],
+              },
+              {
+                "tweet_owner._id": {
+                  $eq: new ObjectId("6686506a9a0035498bb9108e"),
+                },
+              },
+            ],
+          },
+        },
+        {
+          $skip: limit * (page - 1),
+        },
+        {
+          $limit: limit,
+        },
+        {
+          $lookup: {
+            from: "hashtags",
+            localField: "hashtags",
+            foreignField: "_id",
+            as: "hashtags",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "mentions",
+            foreignField: "_id",
+            as: "mentions",
+          },
+        },
+        {
+          $addFields: {
+            mentions: {
+              $map: {
+                input: "$mentions",
+                as: "mention",
+                in: {
+                  _id: "$$mention._id",
+                  name: "$$mention.name",
+                  username: "$$mention.username",
+                },
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "bookmarks",
+            localField: "_id",
+            foreignField: "tweet_id",
+            as: "bookmarks",
+          },
+        },
+        {
+          $lookup: {
+            from: "likes",
+            localField: "_id",
+            foreignField: "tweet_id",
+            as: "likes",
+          },
+        },
+        {
+          $lookup: {
+            from: "tweets",
+            localField: "_id",
+            foreignField: "parent_id",
+            as: "tweets_children",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tweet_owner",
+          },
+        },
+        {
+          $addFields: {
+            bookmarks_count: {
+              $size: "$bookmarks",
+            },
+            likes_count: {
+              $size: "$likes",
+            },
+            retweets_count: {
+              $size: {
+                $filter: {
+                  input: "$tweets_children",
+                  as: "item",
+                  cond: {
+                    $eq: ["$$item.type", TweetTypeEnum.RETWEET],
+                  },
+                },
+              },
+            },
+            comments_count: {
+              $size: {
+                $filter: {
+                  input: "$tweets_children",
+                  as: "item",
+                  cond: {
+                    $eq: ["$$item.type", TweetTypeEnum.COMMENT],
+                  },
+                },
+              },
+            },
+            quote_tweets_count: {
+              $size: {
+                $filter: {
+                  input: "$tweets_children",
+                  as: "item",
+                  cond: {
+                    $eq: ["$$item.type", TweetTypeEnum.QUOTETWEET],
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            tweets_children: 0,
+            tweet_owner: {
+              created_at: 0,
+              updated_at: 0,
+              website: 0,
+              location: 0,
+              date_of_birth: 0,
+              forgot_password_token: 0,
+              twitter_circle: 0,
+              password: 0,
+              email_verify_token: 0,
+              verify: 0,
+            },
+          },
+        },
+      ])
+      .toArray();
+
+    const total_documents = await databaseService.tweets.countDocuments({
+      user_id: {
+        $in: ids,
+      },
+    });
+    const total_pages = Math.ceil(total_documents / limit);
+
+    return {
+      result,
+      total_pages,
+      limit,
+      page,
     };
   }
 }

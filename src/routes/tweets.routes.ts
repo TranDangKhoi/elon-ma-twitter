@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createTweetController,
+  getNewFeedController,
   getTweetChildrenController,
   getTweetController,
 } from "~/controllers/tweets.controllers";
@@ -14,6 +15,8 @@ import { accessTokenValidator, isUserLoggedInValidator, verifiedUserValidator } 
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const tweetsRouter = Router();
+
+tweetsRouter.get("/new_feed", accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getNewFeedController));
 
 tweetsRouter.get(
   "/:tweet_id",

@@ -297,6 +297,45 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   next();
 });
 
+export const paginationValidator = validate(
+  checkSchema(
+    {
+      limit: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const currentLimit = Number(value);
+            if (currentLimit > MAXIMUM_TWEET_CHILDREN_lIMIT) {
+              throw new Error(
+                `${TweetMessage.LIMIT_MUST_BE_LESS_THAN_SPECIFIED_CONSTANT}${MAXIMUM_TWEET_CHILDREN_lIMIT}`,
+              );
+            }
+            if (currentLimit < MINIMUM_TWEET_CHILDREN_LIMIT) {
+              throw new Error(
+                `${TweetMessage.LIMIT_MUST_BE_GREATER_THAN_SPECIFIED_CONSTANT}${MINIMUM_TWEET_CHILDREN_LIMIT}`,
+              );
+            }
+            return true;
+          },
+        },
+      },
+      page: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const currentPage = Number(value);
+            if (currentPage < 1) {
+              throw new Error(TweetMessage.PAGE_MUST_BE_GREATER_THAN_ZERO);
+            }
+            return true;
+          },
+        },
+      },
+    },
+    ["query"],
+  ),
+);
+
 export const getTweetChildrenValidator = validate(
   checkSchema(
     {
@@ -310,13 +349,13 @@ export const getTweetChildrenValidator = validate(
         isNumeric: true,
         custom: {
           options: (value) => {
-            const valueAsNumber = Number(value);
-            if (valueAsNumber < MINIMUM_TWEET_CHILDREN_LIMIT) {
+            const currentLimit = Number(value);
+            if (currentLimit < MINIMUM_TWEET_CHILDREN_LIMIT) {
               throw new Error(
                 `${TweetMessage.LIMIT_MUST_BE_GREATER_THAN_SPECIFIED_CONSTANT}${MINIMUM_TWEET_CHILDREN_LIMIT}`,
               );
             }
-            if (valueAsNumber > MAXIMUM_TWEET_CHILDREN_lIMIT) {
+            if (currentLimit > MAXIMUM_TWEET_CHILDREN_lIMIT) {
               throw new Error(
                 `${TweetMessage.LIMIT_MUST_BE_LESS_THAN_SPECIFIED_CONSTANT}${MAXIMUM_TWEET_CHILDREN_lIMIT}`,
               );
@@ -329,8 +368,8 @@ export const getTweetChildrenValidator = validate(
         isNumeric: true,
         custom: {
           options: (value) => {
-            const valueAsNumber = Number(value);
-            if (valueAsNumber < 1) {
+            const currentPage = Number(value);
+            if (currentPage < 1) {
               throw new Error(TweetMessage.PAGE_MUST_BE_GREATER_THAN_ZERO);
             }
             return true;
