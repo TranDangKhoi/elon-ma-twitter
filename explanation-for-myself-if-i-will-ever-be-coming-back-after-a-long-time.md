@@ -27,4 +27,8 @@ Although you see that I'm naming the first segment /:tweet_id, but this api also
 - $isolated: Modifies behavior of write operations to return the document before modifications.
 - $min: Only update the field if the specified value is less than the existing field value.
 
-### 6\. Currently, each time you GET /new
+### 6\. GET /new-feed
+
+Currently, each time you call GET on this api, it will automatically increase views for the tweets returned in the response ¯\\\_(ツ)\_/¯.
+
+However, Twitter handled this differently, they only increase a tweet's views when the user actually scrolls the tweet into view.. So, if future Khoi wanna change this, just remove the view increasing function and apply a new route to increase views
