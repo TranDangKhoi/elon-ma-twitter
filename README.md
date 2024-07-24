@@ -33,6 +33,12 @@
   - Hashtags
   - ...e.t.c
 
+- Others
+  - Real-time chatting
+  - Elastic Search
+  - Deployment on a VPS
+  - Config Nginx, https, domain
+
 ## Things i was and gonna be using
 
 - Programming Language: Typescript
