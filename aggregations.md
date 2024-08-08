@@ -225,6 +225,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       ],
     },
   },
+  // Lấy ra danh sách các hashtags
   {
     $lookup: {
       from: "hashtags",
@@ -233,6 +234,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "hashtags",
     },
   },
+  // Lấy ra danh sách các người dùng được mentions
   {
     $lookup: {
       from: "users",
@@ -241,6 +243,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       as: "mentions",
     },
   },
+  // Sau khi lấy ra danh sách các người dùng đã được mentions rồi, thì lấy ra thông tin cơ bản của họ
   {
     $addFields: {
       mentions: {
@@ -256,6 +259,7 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
       },
     },
   },
+  // Lấy ra thông tin bookmarks
   {
     $lookup: {
       from: "bookmarks",
@@ -346,10 +350,10 @@ Trong project hiện tại khi user GET một tweet theo `tweet_id` thì chúng 
     },
   },
   {
-    $skip: 0,
+    $skip: limit * (page - 1),
   },
   {
-    $limit: 2,
+    $limit: limit,
   },
 ];
 ```
