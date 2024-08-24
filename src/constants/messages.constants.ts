@@ -91,3 +91,12 @@ export const BookmarkMessage = {
   UNBOOKMARK_SUCCESSFULLY: "Bỏ lưu tweet thành công",
   CHECK_BOOKMARK_SUCCESSFULLY: "Kiểm tra tweet đã được lưu thành công",
 } as const;
+
+export const SearchMessage = {
+  SEARCH_SUCCESSFULLY: "Tìm kiếm thành công",
+  SEARCH_QUERY_IS_REQUIRED: "Query không được để trống",
+  SEARCH_LIMIT_IS_REQUIRED: "Limit không được để trống",
+  SEARCH_PAGE_IS_REQUIRED: "Page không được để trống",
+  SEARCH_LIMIT_MUST_BE_A_NUMBER: "Limit phải là một số",
+  SEARCH_PAGE_MUST_BE_A_NUMBER: "Page phải là một số",
+} as const;
