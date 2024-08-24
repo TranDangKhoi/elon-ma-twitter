@@ -282,14 +282,14 @@ class TweetsServices {
                   },
                   {
                     "tweet_owner.twitter_circle": {
-                      $in: [new ObjectId("6686506a9a0035498bb9108e")],
+                      $in: [new ObjectId(user_id)],
                     },
                   },
                 ],
               },
               {
                 "tweet_owner._id": {
-                  $eq: new ObjectId("6686506a9a0035498bb9108e"),
+                  $eq: new ObjectId(user_id),
                 },
               },
             ],
