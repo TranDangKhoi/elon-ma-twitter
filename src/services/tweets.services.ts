@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
-import { TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
+import { TweetAudienceEnum, TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
 import Follower from "~/models/schemas/Follower.schema";
 import Hashtag from "~/models/schemas/Hashtag.schema";
@@ -273,12 +273,12 @@ class TweetsServices {
           $match: {
             $or: [
               {
-                audience: 0,
+                audience: TweetAudienceEnum.EVERYONE,
               },
               {
                 $and: [
                   {
-                    audience: 1,
+                    audience: TweetAudienceEnum.TWITTERCIRCLE,
                   },
                   {
                     "tweet_owner.twitter_circle": {
