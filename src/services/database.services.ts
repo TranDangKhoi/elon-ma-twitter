@@ -64,6 +64,14 @@ class DatabaseServices {
     }
   }
 
+  async indexTweets() {
+    const indexesExist = await this.tweets.indexExists(["content_text"]);
+    if (!indexesExist) {
+      this.tweets.createIndex({ content: "text" }, { default_language: "none" });
+      console.log("Indexed tweets collection");
+    }
+  }
+
   get users(): Collection<User> {
     return this.db.collection("users");
   }

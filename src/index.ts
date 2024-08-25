@@ -19,6 +19,7 @@ databaseService
     databaseService.indexUsers();
     databaseService.indexRefreshTokens();
     databaseService.indexFollowers();
+    databaseService.indexTweets();
   })
   .catch(console.dir);
 initFolder();
