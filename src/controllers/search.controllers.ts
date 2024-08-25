@@ -18,18 +18,18 @@ export const advancedSearchController = async (
   req: Request<ParamsDictionary, any, any, TSearchQuery>,
   res: Response,
 ) => {
-  const { limit, page, query } = req.query;
   const { user_id } = req.decoded_access_token as TokenPayload;
-  const limitNumber = Number(limit);
-  const currentPage = Number(page);
-  const result = await searchService.advancedSearch({ query, limit: limitNumber, page: currentPage, user_id });
+  const query = req.query.query;
+  const limit = Number(req.query.limit);
+  const page = Number(req.query.page);
+  const result = await searchService.advancedSearch({ query, limit, page, user_id });
   res.status(HttpStatusCode.OK).json({
     message: SearchMessage.SEARCH_SUCCESSFULLY,
     result: {
       tweets: result.tweets,
       limit,
       page,
-      total_page: Math.ceil(result.total / limitNumber),
+      total_page: Math.ceil(result.total / limit),
     },
   });
 };
