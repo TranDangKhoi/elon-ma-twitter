@@ -22,13 +22,15 @@ export const advancedSearchController = async (
   const query = req.query.query;
   const limit = Number(req.query.limit);
   const page = Number(req.query.page);
-  const result = await searchService.advancedSearch({ query, limit, page, user_id });
+  const media_type = req.query.media_type;
+  const result = await searchService.advancedSearch({ query, limit, page, user_id, media_type });
   res.status(HttpStatusCode.OK).json({
     message: SearchMessage.SEARCH_SUCCESSFULLY,
     result: {
       tweets: result.tweets,
       limit,
       page,
+      media_type,
       total_page: Math.ceil(result.total / limit),
     },
   });

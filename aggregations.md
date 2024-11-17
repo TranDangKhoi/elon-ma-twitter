@@ -20,9 +20,9 @@ Giống như trong SQL, ở trong MongoDB chúng ta cũng có cách để có th
    }
    ```
 
-   Như các bạn thấy, nếu như chúng ta chỉ cần get mỗi profile người dùng thì sẽ có rất nhiều các trường vô dụng và không cần thiết như là: `password`, `forgot_password_token` và `email_verify_token`, với lại khi get profile chúng ta cũng có thể thêm tính năng đồng thời trả ra cả các bài viết mà người dùng đã likes giống như Twitter vậy! (đương nhiên là trước khi sự kiện Elon Musk like post NSFW diễn ra).
+   Như các bạn thấy, nếu như chúng ta chỉ cần get mỗi profile người dùng thì sẽ có rất nhiều các trường cần giấu đi hoặc không cần thiết như là: `password`, `forgot_password_token` và `email_verify_token`, với lại khi get profile chúng ta cũng có thể thêm tính năng đồng thời trả ra cả các bài viết mà người dùng đã likes giống như Twitter vậy! (đương nhiên là trước khi sự kiện Elon Musk like post NSFW diễn ra).
 
-   Ok vậy thì sau một hồi xào nấu và đi qua rất nhiều giai đoạn trong Aggregation Pipeline thì API của chúng ta sẽ có thể biến thành như sau:
+   Vì vậy, chúng ta sẽ cần phải sử dụng Aggregations Pipeline để lọc ra những trường cần thiết và thêm vào những thông tin khác mà chúng ta cần, và kết quả cuối cùng sẽ trả ra như sau:
 
    ```json
    {
@@ -34,8 +34,6 @@ Giống như trong SQL, ở trong MongoDB chúng ta cũng có cách để có th
      "liked_tweets": "Array(5)"
    }
    ```
-
-   Đó chỉ là những chức năng nhỏ mình nhắc tới thui, có gì mọi người có thể tìm hiểu thêm ha
 
 ### Aggregations cho GET /:tweet_id
 

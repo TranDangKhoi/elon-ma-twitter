@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
+import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import databaseService from "~/services/database.services";
 
 class SearchService {
@@ -267,11 +267,13 @@ class SearchService {
     page,
     query,
     user_id,
+    media_type,
   }: {
     limit: number;
     page: number;
     query: string;
     user_id: string;
+    media_type: MediaEnum;
   }) {
     const [tweets, total] = await Promise.all([
       this.advancedSearchAggregation({ limit, page, query, user_id }),
