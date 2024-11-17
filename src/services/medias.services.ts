@@ -48,6 +48,7 @@ class MediasServices {
     });
     return result;
   }
+
   async handleUploadHlsVideos(req: Request) {
     const videoFiles = await formiddableVideoUploadHandler(req);
     const result = await Promise.all(
