@@ -9,11 +9,15 @@ class SearchService {
     limit,
     page,
     user_id,
+    media_type,
+    only_followed_people,
   }: {
     query: string;
     limit: number;
     page: number;
     user_id: string;
+    media_type: MediaEnum;
+    only_followed_people: string;
   }) {
     return await databaseService.tweets
       .aggregate([
@@ -22,6 +26,15 @@ class SearchService {
             $text: {
               $search: query,
             },
+            $or: [
+              {
+                medias: {
+                  $elemMatch: {
+                    type: media_type ? media_type : { $exists: true },
+                  },
+                },
+              },
+            ],
           },
         },
         {
@@ -267,16 +280,18 @@ class SearchService {
     page,
     query,
     user_id,
+    only_followed_people,
     media_type,
   }: {
     limit: number;
     page: number;
     query: string;
     user_id: string;
+    only_followed_people: string;
     media_type: MediaEnum;
   }) {
     const [tweets, total] = await Promise.all([
-      this.advancedSearchAggregation({ limit, page, query, user_id }),
+      this.advancedSearchAggregation({ limit, page, query, user_id, media_type, only_followed_people }),
       this.calculateTotalAggregation({ query, user_id }),
     ]);
     const tweet_ids = tweets.map((tweet) => tweet._id as ObjectId);
