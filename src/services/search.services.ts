@@ -17,8 +17,20 @@ class SearchService {
     page: number;
     user_id: string;
     media_type: MediaEnum;
-    only_followed_people: string;
+    only_followed_people: "true" | "false";
   }) {
+    const user_ids_this_account_follow = await databaseService.followers
+      .find({
+        user_id: new ObjectId(user_id),
+      })
+      .toArray();
+    console.log(user_id);
+    // Also include the user_id of the current user, but I don't think we need to do this
+    // user_ids_this_account_follow.push({
+    //   user_id: new ObjectId(user_id),
+    //   being_followed_user_id: new ObjectId(user_id),
+    //   _id: new ObjectId(),
+    // });
     return await databaseService.tweets
       .aggregate([
         {
@@ -35,6 +47,11 @@ class SearchService {
                 },
               },
             ],
+            user_id: {
+              $in: only_followed_people
+                ? user_ids_this_account_follow.map((item) => item.being_followed_user_id)
+                : [new ObjectId(user_id)],
+            },
           },
         },
         {
@@ -287,7 +304,7 @@ class SearchService {
     page: number;
     query: string;
     user_id: string;
-    only_followed_people: string;
+    only_followed_people: "true" | "false";
     media_type: MediaEnum;
   }) {
     const [tweets, total] = await Promise.all([
