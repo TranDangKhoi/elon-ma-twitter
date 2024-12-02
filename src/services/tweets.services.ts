@@ -1,7 +1,6 @@
 import { ObjectId, WithId } from "mongodb";
-import { TweetAudienceEnum, TweetTypeEnum, UserVerifyStatus } from "~/constants/enums";
+import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TTweetReqBody } from "~/models/requests/Tweet.requests";
-import Follower from "~/models/schemas/Follower.schema";
 import Hashtag from "~/models/schemas/Hashtag.schema";
 import Tweet from "~/models/schemas/Tweet.schema";
 import databaseService from "~/services/database.services";

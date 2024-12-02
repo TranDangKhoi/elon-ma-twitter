@@ -1,4 +1,4 @@
-import { TSignUpReqBody, TUpdateReqBody, TokenPayload } from "~/models/requests/User.requests";
+import { TSignUpReqBody, TUpdateReqBody } from "~/models/requests/User.requests";
 import User from "~/models/schemas/User.schema";
 import databaseService from "./database.services";
 import { hashPassword } from "~/utils/crypto";
