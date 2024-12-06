@@ -1,9 +1,9 @@
 import { ObjectId } from "mongodb";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import databaseService from "~/services/database.services";
+import { utilInspect } from "~/utils/dev";
 
 class SearchService {
-  // No lookup, no join, no populate, no aggregate, no sort, no filter, no pagination
   async advancedSearchAggregation({
     query,
     limit,
@@ -16,21 +16,46 @@ class SearchService {
     limit: number;
     page: number;
     user_id: string;
-    media_type: MediaEnum;
-    only_followed_people: "true" | "false";
+    media_type?: MediaEnum;
+    only_followed_people?: "true" | "false";
   }) {
     const user_ids_this_account_follow = await databaseService.followers
       .find({
         user_id: new ObjectId(user_id),
       })
       .toArray();
-    console.log(user_id);
-    // Also include the user_id of the current user, but I don't think we need to do this
-    // user_ids_this_account_follow.push({
-    //   user_id: new ObjectId(user_id),
-    //   being_followed_user_id: new ObjectId(user_id),
-    //   _id: new ObjectId(),
-    // });
+    const pipeline = [];
+    if (media_type) {
+      pipeline.push({
+        $or: [
+          {
+            medias: {
+              $elemMatch: {
+                type: media_type,
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (only_followed_people === "true") {
+      pipeline.push({
+        user_id: {
+          $in: user_ids_this_account_follow.map((item) => item.being_followed_user_id),
+        },
+      });
+    }
+
+    utilInspect({
+      $match: {
+        $text: {
+          $search: query,
+        },
+        ...((pipeline.length > 0 && { $or: pipeline }) || {}),
+      },
+    });
+
     return await databaseService.tweets
       .aggregate([
         {
@@ -38,20 +63,7 @@ class SearchService {
             $text: {
               $search: query,
             },
-            $or: [
-              {
-                medias: {
-                  $elemMatch: {
-                    type: media_type ? media_type : { $exists: true },
-                  },
-                },
-              },
-            ],
-            user_id: {
-              $in: only_followed_people
-                ? user_ids_this_account_follow.map((item) => item.being_followed_user_id)
-                : [new ObjectId(user_id)],
-            },
+            ...((pipeline.length > 0 && { $or: pipeline }) || {}),
           },
         },
         {
