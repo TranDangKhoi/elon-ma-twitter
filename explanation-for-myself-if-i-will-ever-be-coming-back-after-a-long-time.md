@@ -36,3 +36,32 @@ However, Twitter handled this differently, they only increase a tweet's views wh
 ### 7\. Can be improved
 
 - Show your own tweets in new feed timeline (Solution: only need to push your own id into the array of ids that you're following)
+
+## 8\. Aggreations stage
+
+- $match alternative:
+  - $eq: Matches values that are equal to a specified value.
+  - $gt: Matches values that are greater than a specified value.
+  - $gte: Matches values that are greater than or equal to a specified value.
+  - $lt: Matches values that are less than a specified value.
+  - $expr: Allows use of aggregation expressions within the query language. And both $expr and $match can be used to filter documents (will be used for more complex situations), using these:
+    - $and: Joins query clauses with a logical AND returns all documents that match the conditions of both clauses.
+    - $or: Joins query clauses with a logical OR returns all documents that match the conditions of either clause.
+    - $not: Inverts the effect of a query expression and returns documents that do not match the query expression.
+    - $in: Matches any of the values specified in an array.
+    - $nin: Matches none of the values specified in an array.
+    - $all: Matches arrays that contain all elements specified in the query.
+    - $elemMatch: Selects documents if element in the array field matches all the specified $elemMatch conditions.
+    - $size: Selects documents if the array field is a specified size.
+    - $type: Selects documents if a field is of the specified type.
+    - $regex: Selects documents where values match a specified regular expression.
+    - $text: Performs text search.
+    - $where: Matches documents that satisfy a JavaScript expression.
+- $project: Reshapes each document in the stream, such as by adding new fields or removing existing fields. For each input document, outputs one document.
+- $addFields: Adds new fields to documents. Similar to $project, $addFields reshapes each document in the stream; specifically, by adding new fields to output documents that contain the results of an expression.
+- $group: Groups input documents by a specified identifier expression and applies the accumulator expression(s), if specified, to each group. Consumes all input documents and outputs one document per each distinct group. The output documents only contain the identifier field and, if specified, accumulated fields.
+- $lookup: Performs a left outer join to an unsharded collection in the same database to filter in documents from the “joined” collection for processing. To each input document, the $lookup stage adds a new array field whose elements are the matching documents from the “joined” collection. The $lookup stage passes these reshaped documents to the next stage.
+- $unwind: Deconstructs an array field from the input documents to output a document for each element. Each output document replaces the array with an element value. For each input document, outputs n documents where n is the number of array elements and can be zero for an empty array.
+- $sort: Reorders the document stream by a specified sort key. Only the order changes; the documents remain unmodified.
+- $limit: Passes the first n documents unmodified to the pipeline where n is the specified limit. For each input document, outputs either one document (for the first n documents) or zero documents (after the first n documents).
+- $skip: Skips the first n documents where n is the specified skip number and passes the remaining documents unmodified to the pipeline. For each input document, outputs either zero documents (for the first n documents) or one document (if after the first n documents).
