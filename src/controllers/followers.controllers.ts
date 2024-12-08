@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { FollowMessage, SearchMessage, UserMessage } from "~/constants/messages.constants";
-import { TokenPayload } from "~/models/requests/User.requests";
-import usersServices from "~/services/users.services";
+import { FollowMessage, SearchMessage } from "~/constants/messages.constants";
 import { TSearchParams } from "~/models/requests/Search.requests";
-import { TFollowUserReqBody, TUnfollowedReqParams } from "~/models/requests/User.requests";
+import { TFollowUserReqBody, TokenPayload, TUnfollowedReqParams } from "~/models/requests/User.requests";
 import followersService from "~/services/followers.services";
 export const getFollowersController = async (
   req: Request<ParamsDictionary, any, any, TSearchParams>,

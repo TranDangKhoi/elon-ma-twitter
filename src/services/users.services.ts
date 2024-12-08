@@ -1,18 +1,17 @@
+import axios from "axios";
+import { config } from "dotenv";
+import { ObjectId } from "mongodb";
+import { TokenEnum, UserVerifyStatus } from "~/constants/enums";
+import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
+import { UserMessage } from "~/constants/messages.constants";
+import { ErrorWithStatus } from "~/models/Errors";
 import { TSignUpReqBody, TUpdateReqBody } from "~/models/requests/User.requests";
+import RefreshToken from "~/models/schemas/RefreshToken.schema";
 import User from "~/models/schemas/User.schema";
-import databaseService from "./database.services";
+import { TGoogleOAuthConsent, TGoogleUserInfo } from "~/types/google-oauth.types";
 import { hashPassword } from "~/utils/crypto";
 import { signToken, verifyToken } from "~/utils/jwt";
-import { TokenEnum, UserVerifyStatus } from "~/constants/enums";
-import RefreshToken from "~/models/schemas/RefreshToken.schema";
-import { ObjectId } from "mongodb";
-import { config } from "dotenv";
-import { FollowMessage, UserMessage } from "~/constants/messages.constants";
-import { ErrorWithStatus } from "~/models/Errors";
-import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import Follower from "~/models/schemas/Follower.schema";
-import axios from "axios";
-import { TGoogleOAuthConsent, TGoogleUserInfo } from "~/types/google-oauth.types";
+import databaseService from "./database.services";
 config();
 class UsersServices {
   private onReject(err: any) {
