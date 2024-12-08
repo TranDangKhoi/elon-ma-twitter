@@ -13,7 +13,7 @@ import { hashPassword } from "~/utils/crypto";
 import { verifyToken } from "~/utils/jwt";
 import { validate } from "~/utils/validation";
 
-// LƯU Ý KHI DÙNG trim: true thì nên để nó ở dưới tất cả mọi validation
+// LƯU Ý KHI DÙNG trim: true thì phải để nó ở dưới tất cả mọi validation khác
 
 const passwordSchema: ParamSchema = {
   isString: true,
@@ -565,66 +565,6 @@ export const changePasswordValidator = validate(
       confirm_new_password: confirmNewPasswordSchema,
     },
     ["body"],
-  ),
-);
-
-export const followUserValidator = validate(
-  checkSchema(
-    {
-      being_followed_user_id: {
-        custom: {
-          options: async (value, { req }) => {
-            if (!ObjectId.isValid(value)) {
-              throw new ErrorWithStatus({
-                message: UserMessage.OBJECT_ID_INVALID,
-                status: HttpStatusCode.NOT_FOUND,
-              });
-            }
-            const foundUser = await databaseService.users.findOne({
-              _id: new ObjectId(value),
-            });
-            if (!foundUser) {
-              throw new ErrorWithStatus({
-                message: UserMessage.USER_NOT_FOUND,
-                status: HttpStatusCode.NOT_FOUND,
-              });
-            }
-            return true;
-          },
-        },
-      },
-    },
-    ["body"],
-  ),
-);
-
-export const unfollowUserValidator = validate(
-  checkSchema(
-    {
-      being_followed_user_id: {
-        custom: {
-          options: async (value, { req }) => {
-            if (!ObjectId.isValid(value)) {
-              throw new ErrorWithStatus({
-                message: UserMessage.OBJECT_ID_INVALID,
-                status: HttpStatusCode.NOT_FOUND,
-              });
-            }
-            const foundUser = await databaseService.users.findOne({
-              _id: new ObjectId(value),
-            });
-            if (!foundUser) {
-              throw new ErrorWithStatus({
-                message: UserMessage.USER_NOT_FOUND,
-                status: HttpStatusCode.NOT_FOUND,
-              });
-            }
-            return true;
-          },
-        },
-      },
-    },
-    ["params"],
   ),
 );
 

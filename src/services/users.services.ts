@@ -327,6 +327,69 @@ class UsersServices {
     return user.value;
   }
 
+  async getMeFollowers({
+    query,
+    limit,
+    page,
+    user_id,
+  }: {
+    query: string;
+    limit: number;
+    page: number;
+    user_id: string;
+  }) {
+    const $matchStageConditions: {
+      being_followed_user_id: ObjectId;
+      $text?: { $search: string };
+    } = {
+      being_followed_user_id: new ObjectId(user_id),
+    };
+
+    if (query) {
+      $matchStageConditions["$text"] = {
+        $search: query,
+      };
+    }
+
+    const followers = await databaseService.followers
+      .aggregate([
+        {
+          $match: $matchStageConditions,
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "followers",
+          },
+        },
+        {
+          $match: {
+            "followers.verify": UserVerifyStatus.VERIFIED,
+          },
+        },
+        {
+          $project: {
+            followers: {
+              password: 0,
+              forgot_password_token: 0,
+              twitter_circle: 0,
+              email_verify_token: 0,
+            },
+          },
+        },
+        {
+          $skip: limit * (page - 1),
+        },
+        {
+          $limit: limit,
+        },
+      ])
+      .toArray();
+    return followers;
+  }
+
   async followUser(current_user_id: string, being_followed_user_id: string) {
     const isThisUserFollowed = await databaseService.followers.findOne({
       user_id: new ObjectId(current_user_id),

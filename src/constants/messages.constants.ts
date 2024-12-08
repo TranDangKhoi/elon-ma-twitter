@@ -3,10 +3,12 @@ import { enumValuesToArray } from "~/utils/enumsToArray";
 
 export const UserMessage = {
   VALIDATION_ERROR: "VALIDATION_ERROR",
+  SIGN_UP_SUCCESSFULLY: "Đăng ký tài khoản thành công",
   USER_NOT_FOUND: "Không tìm thấy người dùng",
   USER_ACCOUNT_IS_DEACTIVATED:
     "Tài khoản của bạn đã bị vô hiệu hóa, vui lòng liên hệ với quản trị viên để biết thêm thông tin",
   USER_FOUND: "Lấy thông tin người dùng thành công",
+  USER_PROFILE_UPDATED: "Cập nhật thông tin người dùng thành công",
   USER_ALREADY_FOLLOWED: "Người dùng đã được theo dõi trước đó",
   OBJECT_ID_INVALID: "ID người dùng không hợp lệ",
   ACCESS_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống access token)",
@@ -18,6 +20,8 @@ export const UserMessage = {
   USERNAME_VALIDATION_ERROR:
     "Username cần có độ dài từ 4 tới 15 kí tự và chỉ được có chữ, số, dấu gạch dưới. Và không được chỉ có mỗi số",
   USERNAME_ALREADY_EXISTS: "Username đã có người sử dụng, vui lòng sử dụng một cái khác",
+  EMAIL_VERIFY_SUCCESSFULLY: "Xác thực email thành công",
+  EMAIL_VERIFICATION_RESENT_SUCCESSFULLY: "Gửi lại email xác thực thành công",
   EMAIL_VERIFY_TOKEN_INVALID:
     "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi email verify token), hãy kiểm tra xem bạn đã sử dụng đúng token hoặc token đã hết hạn hay chưa",
   EMAIL_VERIFY_TOKEN_IS_REQUIRED: "Có lỗi đã xảy ra, vui lòng thử lại sau! (Lỗi để trống email verify token)",
@@ -38,6 +42,7 @@ export const UserMessage = {
   PASSWORD_MUST_BE_STRONG:
     "Mật khẩu cần có ít nhất 6 ký tự và chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt",
   CHANGE_PASSWORD_SUCCESSFULLY: "Thay đổi mật khẩu thành công!",
+  RESET_PASSWORD_SUCCESSFULLY: "Đặt lại mật khẩu thành công!",
   OLD_PASSWORD_IS_MISMATCHED: "Mật khẩu cũ không đúng, vui lòng nhập lại",
   CONFIRM_PASSWORD_IS_REQUIRED: "Không được để trống mật khẩu xác thực",
   CONFIRM_PASSWORD_LENGTH_INVALID: "Mật khẩu xác thực phải có độ dài từ 6 đến 50 ký tự",

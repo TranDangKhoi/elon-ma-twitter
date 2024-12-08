@@ -11,8 +11,6 @@ import {
   getMeController,
   updateMeController,
   getProfileController,
-  followUserController,
-  unfollowUserController,
   changePassswordController,
   oAuth2Controller,
   refreshTokenController,
@@ -29,10 +27,8 @@ import {
   resetPasswordValidator,
   verifiedUserValidator,
   updateMeValidator,
-  followUserValidator,
-  unfollowUserValidator,
   changePasswordValidator,
-} from "~/middlewares/users.middleware";
+} from "~/middlewares/users.middlewares";
 import { TUpdateReqBody } from "~/models/requests/User.requests";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
@@ -78,18 +74,4 @@ usersRouter.put(
   wrapRequestHandler(changePassswordController),
 );
 usersRouter.get("/:username", wrapRequestHandler(getProfileController));
-usersRouter.post(
-  "/follow",
-  accessTokenValidator,
-  verifiedUserValidator,
-  followUserValidator,
-  wrapRequestHandler(followUserController),
-);
-usersRouter.delete(
-  "/follow/:being_followed_user_id",
-  accessTokenValidator,
-  verifiedUserValidator,
-  unfollowUserValidator,
-  wrapRequestHandler(unfollowUserController),
-);
 export default usersRouter;

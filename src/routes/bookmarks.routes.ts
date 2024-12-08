@@ -5,7 +5,7 @@ import {
   getBookmarksController,
   removeBookmarkController,
 } from "~/controllers/bookmarks.controllers";
-import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
+import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middlewares";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const bookmarkRouter = Router();

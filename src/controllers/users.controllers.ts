@@ -1,10 +1,11 @@
 import { config } from "dotenv";
-import { ObjectId } from "mongodb";
-import { ParamsDictionary } from "express-serve-static-core";
 import { Request, Response } from "express";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { FollowMessage, UserMessage } from "~/constants/messages.constants";
+import { TSearchParams } from "~/models/requests/Search.requests";
 import {
   TChangePasswordReqBody,
   TFollowUserReqBody,
@@ -50,7 +51,7 @@ export const oAuth2Controller = async (req: Request, res: Response) => {
 export const signUpController = async (req: Request<ParamsDictionary, any, TSignUpReqBody>, res: Response) => {
   const result = await usersServices.signUp(req.body);
   res.status(HttpStatusCode.CREATED).json({
-    message: "Đăng ký thành công",
+    message: UserMessage.SIGN_UP_SUCCESSFULLY,
     result,
   });
 };
@@ -94,7 +95,7 @@ export const verifyEmailController = async (
   }
   const result = await usersServices.verifyEmail(user_id);
   return res.status(HttpStatusCode.OK).json({
-    message: "Xác thực email thành công",
+    message: UserMessage.EMAIL_VERIFY_SUCCESSFULLY,
     result,
   });
 };
@@ -114,7 +115,7 @@ export const resendVerifyEmailController = async (req: Request<ParamsDictionary,
   }
   const result = await usersServices.resendVerifyEmail(user_id);
   return res.status(HttpStatusCode.OK).json({
-    message: "Gửi lại email xác thực thành công",
+    message: UserMessage.EMAIL_VERIFICATION_RESENT_SUCCESSFULLY,
     result,
   });
 };
@@ -147,7 +148,7 @@ export const resetPasswordController = async (
   const { user_id } = req.decoded_forgot_password_token as TokenPayload;
   const result = await usersServices.resetPassword(user_id, req.body.password);
   res.status(HttpStatusCode.OK).json({
-    message: "Đặt lại mật khẩu thành công",
+    message: UserMessage.RESET_PASSWORD_SUCCESSFULLY,
     result,
   });
 };
@@ -166,7 +167,7 @@ export const updateMeController = async (req: Request<ParamsDictionary, any, TUp
   const body = req.body;
   const user = await usersServices.updateMe(user_id, body);
   return res.status(HttpStatusCode.OK).json({
-    message: "Updated profile successfully",
+    message: UserMessage.USER_PROFILE_UPDATED,
     result: user,
   });
 };
@@ -187,24 +188,4 @@ export const getProfileController = async (req: Request<TProfileReqParams, any, 
   const { username } = req.params;
   const result = await usersServices.getProfile(username);
   res.status(HttpStatusCode.OK).json(result);
-};
-
-export const followUserController = async (req: Request<ParamsDictionary, any, TFollowUserReqBody>, res: Response) => {
-  const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
-  const { being_followed_user_id } = req.body;
-  const result = await usersServices.followUser(current_user_id, being_followed_user_id);
-  res.status(HttpStatusCode.OK).json({
-    message: FollowMessage.FOLLOW_SUCCESSFULLY,
-    result,
-  });
-};
-
-export const unfollowUserController = async (req: Request<TUnfollowedReqParams>, res: Response) => {
-  const { user_id: current_user_id } = req.decoded_access_token as TokenPayload;
-  const { being_followed_user_id } = req.params;
-  const result = await usersServices.unfollowUser(current_user_id, being_followed_user_id);
-  res.status(HttpStatusCode.OK).json({
-    message: FollowMessage.UNFOLLOW_SUCCESSFULLY,
-    result,
-  });
 };

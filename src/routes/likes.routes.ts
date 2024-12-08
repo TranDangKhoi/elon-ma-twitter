@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { likePostController } from "~/controllers/likes.controller";
-import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
+import { likePostController } from "~/controllers/likes.controllers";
+import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middlewares";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const likesRouter = Router();

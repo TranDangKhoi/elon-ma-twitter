@@ -10,8 +10,8 @@ import {
   createTweetValidator,
   getTweetChildrenValidator,
   tweetIdValidator,
-} from "~/middlewares/tweets.middleware";
-import { accessTokenValidator, isUserLoggedInValidator, verifiedUserValidator } from "~/middlewares/users.middleware";
+} from "~/middlewares/tweets.middlewares";
+import { accessTokenValidator, isUserLoggedInValidator, verifiedUserValidator } from "~/middlewares/users.middlewares";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const tweetsRouter = Router();

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { advancedSearchController, simpleSearchController } from "~/controllers/search.controllers";
-import { accessTokenValidator } from "~/middlewares/users.middleware";
+import { accessTokenValidator } from "~/middlewares/users.middlewares";
 
 const searchRouter = Router();
 

@@ -10,6 +10,7 @@ import mediasRouter from "~/routes/medias.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
 import searchRouter from "~/routes/search.routes";
+import followersRouter from "~/routes/followers.routes";
 
 // ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA INTO TWEETS AND USERS COLLECTION
 // import "~/utils/faker";
@@ -34,6 +35,7 @@ app.use("/medias", mediasRouter);
 app.use("/bookmarks", bookmarkRouter);
 app.use("/likes", likesRouter);
 app.use("/search", searchRouter);
+app.use("/follows", followersRouter);
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);
