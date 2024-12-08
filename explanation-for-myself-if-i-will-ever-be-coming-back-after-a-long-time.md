@@ -65,3 +65,7 @@ However, Twitter handled this differently, they only increase a tweet's views wh
 - $sort: Reorders the document stream by a specified sort key. Only the order changes; the documents remain unmodified.
 - $limit: Passes the first n documents unmodified to the pipeline where n is the specified limit. For each input document, outputs either one document (for the first n documents) or zero documents (after the first n documents).
 - $skip: Skips the first n documents where n is the specified skip number and passes the remaining documents unmodified to the pipeline. For each input document, outputs either zero documents (for the first n documents) or one document (if after the first n documents).
+
+### Validation Chaining options
+
+- https://github.com/validatorjs/validator.js

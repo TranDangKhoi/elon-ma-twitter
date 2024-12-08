@@ -7,13 +7,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "npx nodemon --development",
-    "build": "rimraf ./dist && tsc && tsc-alias",
+    "build": "node scripts/build.js",
     "start": "node dist/index.js --production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
-    "prepare": "husky || true"
+    "prettier:fix": "prettier --write ."
   },
   "devDependencies": {
     "@types/cors": "^2.8.14",

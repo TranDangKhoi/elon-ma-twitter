@@ -5,6 +5,7 @@ import { TSearchFiltersParams, TSearchParams } from "~/models/requests/Search.re
 import searchService from "~/services/search.services";
 import { SearchMessage } from "~/constants/messages.constants";
 import { TokenPayload } from "~/models/requests/User.requests";
+import { MediaEnum } from "~/constants/enums";
 
 export const simpleSearchController = async (
   req: Request<ParamsDictionary, any, any, TSearchParams>,
