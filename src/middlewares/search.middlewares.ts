@@ -7,6 +7,7 @@ export const searchParamsValidator = validate(
   checkSchema(
     {
       query: {
+        optional: true,
         isString: {
           errorMessage: SearchMessage.SEARCH_QUERY_IS_REQUIRED,
         },

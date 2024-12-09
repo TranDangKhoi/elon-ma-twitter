@@ -21,6 +21,7 @@ class SearchService {
     only_followed_people?: "true" | "false";
     type?: "latest" | "people" | "media";
   }) {
+    console.log(query);
     const user_ids_this_account_follow = await databaseService.followers
       .find({
         user_id: new ObjectId(user_id),
@@ -50,17 +51,11 @@ class SearchService {
       if (media_type === MediaEnum.HLS) {
         $matchStageConditions["medias.type"] = MediaEnum.HLS;
       }
-      // MediaEnum.Video is deprecated because i'm gonna be using HLS
-      // if (media_type === MediaEnum.Video) {
-      //   firstStage["media_type"] = MediaEnum.Video;
-      // }
+      // MediaEnum.Video is deprecated because i'm gonna be using HLS, but we are keeping it for now
+      if (media_type === MediaEnum.Video) {
+        $matchStageConditions["medias.type"] = MediaEnum.Video;
+      }
     }
-
-    utilInspect([
-      {
-        $match: $matchStageConditions,
-      },
-    ]);
 
     if (!type) {
       return await databaseService.tweets
@@ -234,15 +229,56 @@ class SearchService {
     }
   }
 
-  async calculateTotalAggregation({ query, user_id }: { query: string; user_id: string }) {
+  async calculateTotalResultsAggregation({
+    query,
+    user_id,
+    media_type,
+    only_followed_people,
+  }: {
+    query: string;
+    user_id: string;
+    media_type: MediaEnum;
+    only_followed_people: "true" | "false";
+  }) {
+    const user_ids_this_account_follow = await databaseService.followers
+      .find({
+        user_id: new ObjectId(user_id),
+      })
+      .toArray();
+
+    const $matchStageConditions: {
+      $text: { $search: string };
+      user_id?: { $in: ObjectId[] };
+      "medias.type"?: MediaEnum;
+    } = {
+      $text: {
+        $search: query,
+      },
+    };
+
+    if (only_followed_people === "true") {
+      $matchStageConditions["user_id"] = {
+        $in: user_ids_this_account_follow.map((item) => item.being_followed_user_id),
+      };
+    }
+
+    if (media_type) {
+      if (media_type === MediaEnum.Image) {
+        $matchStageConditions["medias.type"] = MediaEnum.Image;
+      }
+      if (media_type === MediaEnum.HLS) {
+        $matchStageConditions["medias.type"] = MediaEnum.HLS;
+      }
+      // MediaEnum.Video is deprecated because i'm gonna be using HLS, but we are keeping it for now
+      if (media_type === MediaEnum.Video) {
+        $matchStageConditions["medias.type"] = MediaEnum.Video;
+      }
+    }
+
     const total = await databaseService.tweets
       .aggregate([
         {
-          $match: {
-            $text: {
-              $search: query,
-            },
-          },
+          $match: $matchStageConditions,
         },
         {
           $lookup: {
@@ -288,9 +324,11 @@ class SearchService {
         },
       ])
       .toArray();
+
     if (total.length === 0) {
       return [{ total: 0 }];
     }
+
     return total;
   }
 
@@ -388,41 +426,6 @@ class SearchService {
     return result;
   }
 
-  async advancedSearch({
-    limit,
-    page,
-    query,
-    user_id,
-    only_followed_people,
-    media_type,
-    type,
-  }: {
-    limit: number;
-    page: number;
-    query: string;
-    user_id: string;
-    only_followed_people: "true" | "false";
-    media_type: MediaEnum;
-    type?: "latest" | "people" | "media";
-  }) {
-    if (!type) {
-      return await this.regularPostsSearch({
-        limit,
-        media_type,
-        only_followed_people,
-        page,
-        query,
-        user_id,
-      });
-    }
-
-    // If we somehow didn't get the type, we will return an empty array
-    return {
-      tweets: [],
-      total: 0,
-    };
-  }
-
   async regularPostsSearch({
     query,
     limit,
@@ -440,7 +443,7 @@ class SearchService {
   }) {
     const [tweets, total] = await Promise.all([
       this.advancedSearchAggregation({ limit, page, query, user_id, media_type, only_followed_people }),
-      this.calculateTotalAggregation({ query, user_id }),
+      this.calculateTotalResultsAggregation({ query, user_id, media_type, only_followed_people }),
     ]);
     const tweet_ids = tweets?.map((tweet) => tweet._id as ObjectId);
     const currentDate = new Date();
@@ -484,6 +487,41 @@ class SearchService {
   }) {
     const result = await this.peopleSearchAggregation({ query, limit, page, user_id, only_followed_people });
     return result;
+  }
+
+  async advancedSearch({
+    limit,
+    page,
+    query,
+    user_id,
+    only_followed_people,
+    media_type,
+    type,
+  }: {
+    limit: number;
+    page: number;
+    query: string;
+    user_id: string;
+    only_followed_people: "true" | "false";
+    media_type: MediaEnum;
+    type?: "latest" | "people" | "media";
+  }) {
+    if (!type) {
+      return await this.regularPostsSearch({
+        limit,
+        media_type,
+        only_followed_people,
+        page,
+        query,
+        user_id,
+      });
+    }
+
+    // If we somehow didn't get the type, we will return an empty array
+    return {
+      tweets: [],
+      total: 0,
+    };
   }
 }
 

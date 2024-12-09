@@ -99,7 +99,7 @@ export const BookmarkMessage = {
 
 export const SearchMessage = {
   SEARCH_SUCCESSFULLY: "Tìm kiếm thành công",
-  SEARCH_QUERY_IS_REQUIRED: "query không được để trống",
+  SEARCH_QUERY_IS_REQUIRED: "query phải là một chuỗi",
   SEARCH_MEDIA_TYPE_MUST_BE_A_STRING: "media_type phải là một chuỗi",
   SEARCH_MEDIA_TYPE_MUST_BE_VALID: `media_type phải là một trong các giá trị sau: ${enumValuesToArray(MediaEnum)}`,
   SEARCH_ONLY_FOLLOWED_PEOPLE_MUST_BE_A_BOOLEAN: "only_followed_people phải là một boolean",

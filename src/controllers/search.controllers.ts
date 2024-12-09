@@ -23,7 +23,7 @@ export const advancedSearchController = async (
   res: Response,
 ) => {
   const { user_id } = req.decoded_access_token as TokenPayload;
-  const { query } = req.query;
+  const { query } = req.query || "";
   const limit = Number(req.query.limit) || 10;
   const page = Number(req.query.page) || 1;
   const media_type = req.query.media_type;

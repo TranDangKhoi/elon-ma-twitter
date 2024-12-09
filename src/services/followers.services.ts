@@ -7,7 +7,7 @@ import Follower from "~/models/schemas/Follower.schema";
 import databaseService from "./database.services";
 
 class FollowersService {
-  async getMeFollowers({
+  async meFollowersAggregate({
     query,
     limit,
     page,
@@ -31,7 +31,7 @@ class FollowersService {
       };
     }
 
-    const followers = await databaseService.followers
+    return await databaseService.followers
       .aggregate([
         {
           $match: $matchStageConditions,
@@ -67,7 +67,155 @@ class FollowersService {
         },
       ])
       .toArray();
-    return followers;
+  }
+
+  async calculateTotalFollowersAggregate({ user_id, limit, page }: { user_id: string; limit: number; page: number }) {
+    const $matchStageConditions: {
+      being_followed_user_id: ObjectId;
+    } = {
+      being_followed_user_id: new ObjectId(user_id),
+    };
+
+    const total = await databaseService.followers
+      .aggregate([
+        {
+          $match: $matchStageConditions,
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "followers",
+          },
+        },
+        {
+          $match: {
+            "followers.verify": UserVerifyStatus.VERIFIED,
+          },
+        },
+        {
+          $project: {
+            followers: {
+              password: 0,
+              forgot_password_token: 0,
+              twitter_circle: 0,
+              email_verify_token: 0,
+            },
+          },
+        },
+        {
+          $count: "total",
+        },
+      ])
+      .toArray();
+
+    if (total.length === 0) {
+      return [{ total: 0 }];
+    }
+
+    return total;
+  }
+
+  async getMeFollowers({
+    query,
+    limit,
+    page,
+    user_id,
+  }: {
+    query: string;
+    limit: number;
+    page: number;
+    user_id: string;
+  }) {
+    const [followers, total] = await Promise.all([
+      this.meFollowersAggregate({
+        limit,
+        page,
+        query,
+        user_id,
+      }),
+      this.calculateTotalFollowersAggregate({
+        user_id,
+        limit,
+        page,
+      }),
+    ]);
+    console.log(total);
+
+    return {
+      followers,
+      total: total[0].total,
+    };
+  }
+  async getTotalFollowers({ user_id }: { user_id: string }) {
+    const totalFollowers = await databaseService.followers.countDocuments({
+      being_followed_user_id: new ObjectId(user_id),
+    });
+    return totalFollowers;
+  }
+
+  async getMeFollowing({
+    query,
+    limit,
+    page,
+    user_id,
+  }: {
+    query: string;
+    limit: number;
+    page: number;
+    user_id: string;
+  }) {
+    const $matchStageConditions: {
+      user_id: ObjectId;
+      $text?: { $search: string };
+    } = {
+      user_id: new ObjectId(user_id),
+    };
+
+    if (query) {
+      $matchStageConditions["$text"] = {
+        $search: query,
+      };
+    }
+
+    const following = await databaseService.followers
+      .aggregate([
+        {
+          $match: $matchStageConditions,
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "being_followed_user_id",
+            foreignField: "_id",
+            as: "following",
+          },
+        },
+        {
+          $match: {
+            "following.verify": UserVerifyStatus.VERIFIED,
+          },
+        },
+        {
+          $project: {
+            following: {
+              password: 0,
+              forgot_password_token: 0,
+              twitter_circle: 0,
+              email_verify_token: 0,
+            },
+          },
+        },
+        {
+          $skip: limit * (page - 1),
+        },
+        {
+          $limit: limit,
+        },
+      ])
+      .toArray();
+    return following;
   }
 
   async followUser(current_user_id: string, being_followed_user_id: string) {
