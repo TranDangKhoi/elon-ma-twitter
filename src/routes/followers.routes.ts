@@ -5,7 +5,7 @@ import {
   unfollowUserController,
 } from "~/controllers/followers.controllers";
 import { followUserValidator, unfollowUserValidator } from "~/middlewares/followers.middlewares";
-import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users.middlewares";
+import { accessTokenValidator } from "~/middlewares/users.middlewares";
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const followersRouter = Router();

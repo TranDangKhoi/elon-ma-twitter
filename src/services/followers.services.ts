@@ -7,7 +7,7 @@ import Follower from "~/models/schemas/Follower.schema";
 import databaseService from "./database.services";
 
 class FollowersService {
-  async meFollowersAggregate({
+  async getMyFollowersAggregate({
     query,
     limit,
     page,
@@ -45,11 +45,6 @@ class FollowersService {
           },
         },
         {
-          $match: {
-            "followers.verify": UserVerifyStatus.VERIFIED,
-          },
-        },
-        {
           $project: {
             followers: {
               password: 0,
@@ -57,6 +52,16 @@ class FollowersService {
               twitter_circle: 0,
               email_verify_token: 0,
             },
+          },
+        },
+        {
+          $sort: {
+            "followers.name": 1,
+          },
+        },
+        {
+          $match: {
+            "followers.verify": UserVerifyStatus.VERIFIED,
           },
         },
         {
@@ -117,7 +122,7 @@ class FollowersService {
     return total;
   }
 
-  async getMeFollowers({
+  async getMyFollowers({
     query,
     limit,
     page,
@@ -129,7 +134,7 @@ class FollowersService {
     user_id: string;
   }) {
     const [followers, total] = await Promise.all([
-      this.meFollowersAggregate({
+      this.getMyFollowersAggregate({
         limit,
         page,
         query,
@@ -155,7 +160,7 @@ class FollowersService {
     return totalFollowers;
   }
 
-  async getMeFollowing({
+  async getUsersImFollowing({
     query,
     limit,
     page,
@@ -193,11 +198,6 @@ class FollowersService {
           },
         },
         {
-          $match: {
-            "following.verify": UserVerifyStatus.VERIFIED,
-          },
-        },
-        {
           $project: {
             following: {
               password: 0,
@@ -205,6 +205,16 @@ class FollowersService {
               twitter_circle: 0,
               email_verify_token: 0,
             },
+          },
+        },
+        {
+          $match: {
+            "following.verify": UserVerifyStatus.VERIFIED,
+          },
+        },
+        {
+          $sort: {
+            "following.name": 1,
           },
         },
         {

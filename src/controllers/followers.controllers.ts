@@ -14,7 +14,7 @@ export const getFollowersController = async (
   const query = req.query.query;
   const limit = Number(req.query.limit) || 10;
   const page = Number(req.query.page) || 1;
-  const result = await followersService.getMeFollowers({ user_id, limit, page, query });
+  const result = await followersService.getMyFollowers({ user_id, limit, page, query });
   res.status(HttpStatusCode.OK).json({
     message: SearchMessage.SEARCH_SUCCESSFULLY,
     result: result.followers,
@@ -32,7 +32,7 @@ export const getFollowingController = async (
   const { limit, page, query } = req.query;
   const limitNumber = Number(limit) || 10;
   const currentPage = Number(page) || 1;
-  const result = await followersService.getMeFollowing({ user_id, limit: limitNumber, page: currentPage, query });
+  const result = await followersService.getUsersImFollowing({ user_id, limit: limitNumber, page: currentPage, query });
   res.status(HttpStatusCode.OK).json({
     message: SearchMessage.SEARCH_SUCCESSFULLY,
     result,

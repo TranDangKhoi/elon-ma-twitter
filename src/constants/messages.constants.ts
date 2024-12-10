@@ -53,6 +53,8 @@ export const UserMessage = {
 
 export const FollowMessage = {
   NEED_TO_FOLLOW_FIRST: "Bạn cần theo dõi người dùng hiện tại nếu muốn hủy theo dõi họ",
+  CANNOT_FOLLOW_YOURSELF: "Bạn không thể theo dõi chính mình",
+  CANNOT_UNFOLLOW_YOURSELF: "Bạn không thể hủy theo dõi chính mình",
   FOLLOW_SUCCESSFULLY: "Theo dõi người dùng thành công",
   UNFOLLOW_SUCCESSFULLY: "Bỏ theo dõi người dùng thành công",
 } as const;
