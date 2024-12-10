@@ -57,9 +57,11 @@ class DatabaseServices {
   }
 
   async indexFollowers() {
-    const indexesExist = await this.followers.indexExists(["user_id_1_being_followed_user_id_1"]);
+    const indexesExist = await this.followers.indexExists(["user_id_1_being_followed_user_id_1", "name_text"]);
     if (!indexesExist) {
       this.followers.createIndex({ user_id: 1, being_followed_user_id: 1 });
+      this.followers.createIndex({ being_followed_user_id: 1 });
+      this.followers.createIndex({ name: "text" }, { default_language: "none" });
       console.log("Indexed followers collection");
     }
   }
