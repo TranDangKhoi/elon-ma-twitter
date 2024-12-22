@@ -1,6 +1,8 @@
 import cors from "cors";
 import databaseService from "./services/database.services";
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import { initFolder } from "./utils/file";
 import { VIDEO_UPLOAD_DIR } from "./constants/constants";
@@ -29,6 +31,21 @@ const port = 8080;
 
 app.use(cors());
 app.use(express.json());
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    // credentials: true,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(`a user connected with id: ${socket.id}`);
+  socket.on("disconnect", () => {
+    console.log(`user disconnected with id: ${socket.id}`);
+  });
+});
+
 app.use("/users", usersRouter);
 app.use("/tweets", tweetsRouter);
 app.use("/medias", mediasRouter);
@@ -40,6 +57,6 @@ app.use("/follows", followersRouter);
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
