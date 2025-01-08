@@ -4,8 +4,8 @@ import { accessTokenValidator, verifiedUserValidator } from "~/middlewares/users
 import { wrapRequestHandler } from "~/utils/requestHandlers";
 
 const likesRouter = Router();
-// TODO: Implement routes for unliking post, getting liked posts of a user, getting likes of a post (pagination)
 
+// PENDING: Implement routes for unliking post, getting liked posts of a user, getting likes of a post (pagination)
 likesRouter.post("/", accessTokenValidator, verifiedUserValidator, wrapRequestHandler(likePostController));
 
 export default likesRouter;

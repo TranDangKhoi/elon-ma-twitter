@@ -61,7 +61,6 @@ class DatabaseServices {
     if (!indexesExist) {
       this.followers.createIndex({ user_id: 1, being_followed_user_id: 1 });
       this.followers.createIndex({ being_followed_user_id: 1 });
-      this.followers.createIndex({ name: "text" }, { default_language: "none" });
       console.log("Indexed followers collection");
     }
   }
