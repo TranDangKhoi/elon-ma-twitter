@@ -13,6 +13,7 @@ import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
 import searchRouter from "~/routes/search.routes";
 import followersRouter from "~/routes/followers.routes";
+import { logWithLocation as trace } from "~/utils/dev";
 
 // ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA INTO TWEETS AND USERS COLLECTION
 // import "~/utils/faker";
@@ -38,12 +39,17 @@ const io = new Server(httpServer, {
     // credentials: true,
   },
 });
-
+const users = new Map<string, string>();
 io.on("connection", (socket) => {
   console.log(`a user connected with id: ${socket.id}`);
+  // console.log(socket.handshake.auth._id);
+  const user_id = socket.handshake.auth._id;
+  users.set(user_id, socket.id);
   socket.on("disconnect", () => {
     console.log(`user disconnected with id: ${socket.id}`);
+    users.delete(user_id);
   });
+  trace(users);
 });
 
 app.use("/users", usersRouter);
