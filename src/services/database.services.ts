@@ -7,6 +7,7 @@ import Tweet from "~/models/schemas/Tweet.schema";
 import Hashtag from "~/models/schemas/Hashtag.schema";
 import Bookmark from "~/models/schemas/Bookmark.schema";
 import Like from "~/models/schemas/Like.schema";
+import { pinoLog } from "~/utils/dev";
 dotenv.config();
 const uri = `mongodb+srv://${process.env.CLOUD_DB_USERNAME}:${process.env.CLOUD_DB_PASSWORD}@twittercluster0.wkhc8f0.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -30,7 +31,7 @@ class DatabaseServices {
       // Send a ping to confirm a successful connection
       await this.db.command({ ping: 1 });
       this.indexUsers();
-      console.log("Pinged your deployment. You successfully connected to MongoDB!");
+      pinoLog.info("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
       // Ensures that the client will close when you finish/error
       await client.close();
