@@ -4,16 +4,13 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { ObjectId } from "mongodb";
 import { UserVerifyStatus } from "~/constants/enums";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
-import { FollowMessage, UserMessage } from "~/constants/messages.constants";
-import { TSearchParams } from "~/models/requests/Search.requests";
+import { UserMessage } from "~/constants/messages.constants";
 import {
   TChangePasswordReqBody,
-  TFollowUserReqBody,
   TLoginReqBody,
   TProfileReqParams,
   TSignOutReqBody,
   TSignUpReqBody,
-  TUnfollowedReqParams,
   TUpdateReqBody,
   TokenPayload,
 } from "~/models/requests/User.requests";

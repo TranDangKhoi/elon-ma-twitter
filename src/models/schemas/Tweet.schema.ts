@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { MediaEnum as MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
+import { TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
 
 // Documentation: Filename: database-design.md, Line 143

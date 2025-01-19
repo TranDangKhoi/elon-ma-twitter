@@ -1,7 +1,6 @@
 import cors from "cors";
 import databaseService from "./services/database.services";
 import express from "express";
-import pinoHttp from "pino-http";
 import { createServer } from "http";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import { initFolder } from "./utils/file";
