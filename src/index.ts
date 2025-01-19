@@ -47,13 +47,13 @@ io.on("connection", (socket) => {
   const user_id = socket.handshake.auth._id;
   users.set(user_id, socket.id);
   socket.on("send_message", (data: TPrivateChatMessage) => {
-    const { message, receiver } = data;
+    const { message, receiver, sender_name } = data;
     const receiver_socket = users.get(receiver) as string;
     if (receiver_socket === socket.id) {
-      socket.emit("receive_message", { message, sender: user_id });
+      socket.emit("receive_message", { message, sender: user_id, sender_name });
     } else {
       // Gửi đến người nhận khác
-      socket.to(receiver_socket).emit("receive_message", { message, sender: user_id });
+      socket.to(receiver_socket).emit("receive_message", { message, sender: user_id, sender_name });
     }
   });
   socket.on("disconnect", () => {
