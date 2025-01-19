@@ -10,6 +10,11 @@ export const utilInspect = (obj: any) => {
   console.log(inspect(obj, { showHidden: false, depth: null, colors: true }));
 };
 
+/**
+ * Because the utilInspect function doesn't show the file name and line number, we can use the util.inspect() function to inspect an object and print it to the console.
+ * @param message
+ * @returns
+ */
 export const trace = (message: any) => {
   // Tạo một lỗi để lấy stack trace
   const error = new Error();
@@ -44,10 +49,14 @@ export const mapSerializer = (map: Map<any, any>) => {
   }, {});
 };
 
+/**
+ * Log everything with details using pino and pino-pretty
+ */
 export const pinoLog = pino({
   serializers: {
     map: mapSerializer,
   },
+  base: null,
   transport: {
     target: "pino-pretty",
     options: {

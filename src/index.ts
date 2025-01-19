@@ -15,6 +15,7 @@ import searchRouter from "~/routes/search.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
 import { pinoLog } from "~/utils/dev";
+import { TPrivateChatMessage } from "~/types/chat.types";
 
 // ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA INTO TWEETS AND USERS COLLECTION
 // import "~/utils/faker";
@@ -33,7 +34,6 @@ const port = 8080;
 
 app.use(cors());
 app.use(express.json());
-app.use(pinoHttp({ logger: pinoLog }));
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -41,14 +41,24 @@ const io = new Server(httpServer, {
     // credentials: true,
   },
 });
+
 const users = new Map<string, string>();
 io.on("connection", (socket) => {
   const user_id = socket.handshake.auth._id;
   users.set(user_id, socket.id);
+  socket.on("send_message", (data: TPrivateChatMessage) => {
+    const { message, receiver } = data;
+    const receiver_socket = users.get(receiver) as string;
+    if (receiver_socket === socket.id) {
+      socket.emit("receive_message", { message, sender: user_id });
+    } else {
+      // Gửi đến người nhận khác
+      socket.to(receiver_socket).emit("receive_message", { message, sender: user_id });
+    }
+  });
   socket.on("disconnect", () => {
     users.delete(user_id);
   });
-  pinoLog.info({ map: users });
 });
 
 app.use("/users", usersRouter);
