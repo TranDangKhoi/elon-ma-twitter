@@ -16,7 +16,6 @@ export const utilInspect = (obj: any) => {
  * @returns
  */
 export const trace = (message: any) => {
-  // Tạo một lỗi để lấy stack trace
   const error = new Error();
   if (error && error.stack) {
     const stackLines = error.stack.split("\n");

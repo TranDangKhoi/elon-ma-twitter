@@ -1,9 +1,9 @@
+import { Request } from "express";
 import formidable, { File } from "formidable";
 import { nanoid } from "nanoid";
-import { Request } from "express";
-import { IMAGE_UPLOAD_TEMP_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 import fs from "node:fs";
 import path from "node:path";
+import { IMAGE_UPLOAD_TEMP_DIR, VIDEO_UPLOAD_DIR, VIDEO_UPLOAD_TEMP_DIR } from "~/constants/constants";
 
 export const initFolder = () => {
   if (!fs.existsSync(IMAGE_UPLOAD_TEMP_DIR)) {
@@ -66,8 +66,13 @@ export const formiddableImageUploadHandler = (req: Request) => {
 };
 
 export const formiddableVideoUploadHandler = async (req: Request) => {
-  const uniqueId = nanoid();
-  const UNIQUE_VIDEO_UPLOAD_DIR = path.join(VIDEO_UPLOAD_DIR, uniqueId);
+  let uniqueId = nanoid();
+  let UNIQUE_VIDEO_UPLOAD_DIR = path.join(VIDEO_UPLOAD_DIR, uniqueId);
+
+  while (fs.existsSync(UNIQUE_VIDEO_UPLOAD_DIR)) {
+    uniqueId = nanoid();
+    UNIQUE_VIDEO_UPLOAD_DIR = path.join(VIDEO_UPLOAD_DIR, uniqueId);
+  }
   fs.mkdirSync(UNIQUE_VIDEO_UPLOAD_DIR);
   const form = formidable({
     uploadDir: UNIQUE_VIDEO_UPLOAD_DIR,
