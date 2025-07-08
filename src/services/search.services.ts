@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { MediaEnum, TweetAudienceEnum, TweetTypeEnum } from "~/constants/enums";
 import databaseService from "~/services/database.services";
-import { utilInspect } from "~/utils/dev";
 
 class SearchService {
   async advancedSearchAggregation({

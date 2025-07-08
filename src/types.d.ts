@@ -1,7 +1,6 @@
 import Tweet from "~/models/schemas/Tweet.schema";
 import { TokenPayload } from "./models/requests/User.requests";
 import User from "./models/schemas/User.schema";
-
 export {};
 declare global {
   namespace NodeJS {
@@ -18,10 +17,10 @@ declare global {
       GOOGLE_OAUTH_CLIENT_SECRET: string;
       GOOGLE_OAUTH_REDIRECT_URI: string;
       GOOGLE_OAUTH_CLIENT_REDIRECT_URI: string;
-      ACCESS_TOKEN_EXPIRES_IN: string;
-      REFRESH_TOKEN_EXPIRES_IN: string;
-      EMAIL_VERIFY_TOKEN_EXPIRES_IN: string;
-      FORGOT_PASSWORD_TOKEN_EXPIRES_IN: string;
+      ACCESS_TOKEN_EXPIRES_IN: StringValue;
+      REFRESH_TOKEN_EXPIRES_IN: StringValue;
+      EMAIL_VERIFY_TOKEN_EXPIRES_IN: StringValue;
+      FORGOT_PASSWORD_TOKEN_EXPIRES_IN: StringValue;
     }
   }
 }

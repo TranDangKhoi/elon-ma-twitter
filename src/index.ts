@@ -1,11 +1,8 @@
 import cors from "cors";
-import databaseService from "./services/database.services";
 import express from "express";
 import { createServer } from "http";
-import { defaultErrorHandler } from "./middlewares/errors.middlewares";
-import { initFolder } from "./utils/file";
 import { Server } from "socket.io";
-import { VIDEO_UPLOAD_DIR } from "./constants/constants";
+import { TokenPayload } from "~/models/requests/User.requests";
 import bookmarkRouter from "~/routes/bookmarks.routes";
 import followersRouter from "~/routes/followers.routes";
 import likesRouter from "~/routes/likes.routes";
@@ -13,8 +10,13 @@ import mediasRouter from "~/routes/medias.routes";
 import searchRouter from "~/routes/search.routes";
 import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
-import { pinoLog } from "~/utils/dev";
 import { TPrivateChatMessage } from "~/types/chat.types";
+import { pinoLog } from "~/utils/dev";
+import { verifyToken } from "~/utils/jwt";
+import { VIDEO_UPLOAD_DIR } from "./constants/constants";
+import { defaultErrorHandler } from "./middlewares/errors.middlewares";
+import databaseService from "./services/database.services";
+import { initFolder } from "./utils/file";
 
 // ONLY UNCOMMENT THIS LINE IF YOU WANT TO SEED DATA INTO TWEETS AND USERS COLLECTION
 // import "~/utils/faker";
@@ -42,9 +44,21 @@ const io = new Server(httpServer, {
 });
 
 const users = new Map<string, string>();
+
 io.on("connection", (socket) => {
   const user_id = socket.handshake.auth._id;
+
+  // Only proceed if user_id exists (authenticated)
+  if (!user_id) {
+    console.log("No user_id found, disconnecting socket");
+    socket.disconnect();
+    return;
+  }
+
   users.set(user_id, socket.id);
+  console.log("User connected:", user_id);
+  console.log("Connected users:", users);
+
   socket.on("send_message", (data: TPrivateChatMessage) => {
     const { message, receiver, sender_name } = data;
     const receiver_socket = users.get(receiver) as string;
@@ -55,8 +69,11 @@ io.on("connection", (socket) => {
       socket.to(receiver_socket).emit("receive_message", { message, sender: user_id, sender_name });
     }
   });
+
   socket.on("disconnect", () => {
     users.delete(user_id);
+    console.log("User disconnected:", user_id);
+    console.log("Remaining users:", users);
   });
 });
 
