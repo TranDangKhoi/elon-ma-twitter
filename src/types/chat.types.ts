@@ -1,5 +1,6 @@
 export type TPrivateChatMessage = {
   message: string;
-  receiver: string;
+  receiver_id: string;
   sender_name: string;
+  sender_id: string;
 };

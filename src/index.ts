@@ -1,8 +1,9 @@
 import cors from "cors";
 import express from "express";
 import { createServer } from "http";
+import { ObjectId } from "mongodb";
 import { Server } from "socket.io";
-import { TokenPayload } from "~/models/requests/User.requests";
+import Conversation from "~/models/schemas/Conversation.schema";
 import bookmarkRouter from "~/routes/bookmarks.routes";
 import followersRouter from "~/routes/followers.routes";
 import likesRouter from "~/routes/likes.routes";
@@ -12,7 +13,6 @@ import tweetsRouter from "~/routes/tweets.routes";
 import usersRouter from "~/routes/users.routes";
 import { TPrivateChatMessage } from "~/types/chat.types";
 import { pinoLog } from "~/utils/dev";
-import { verifyToken } from "~/utils/jwt";
 import { VIDEO_UPLOAD_DIR } from "./constants/constants";
 import { defaultErrorHandler } from "./middlewares/errors.middlewares";
 import databaseService from "./services/database.services";
@@ -57,15 +57,22 @@ io.on("connection", (socket) => {
 
   users.set(user_id, socket.id);
 
-  socket.on("send_message", (data: TPrivateChatMessage) => {
-    const { message, receiver, sender_name } = data;
-    const receiver_socket = users.get(receiver) as string;
-    if (receiver_socket === socket.id) {
-      socket.emit("receive_message", { message, sender: user_id, sender_name });
-    } else {
-      // Gửi đến người nhận khác
-      socket.to(receiver_socket).emit("receive_message", { message, sender: user_id, sender_name });
-    }
+  socket.on("send_message", async (data: TPrivateChatMessage) => {
+    console.log(data);
+    const { message, receiver_id, sender_name } = data;
+    const receiver_socket_id = users.get(receiver_id) as string;
+    await databaseService.conversations.insertOne(
+      new Conversation({
+        sender_id: new ObjectId(user_id),
+        receiver_id: new ObjectId(receiver_id),
+        content: message,
+      }),
+    );
+
+    socket.emit("receive_message", { message, sender_id: user_id, sender_name });
+    // Gửi đến người nhận khác
+    socket.to(receiver_socket_id).emit("receive_message", { message, sender_id: user_id, sender_name });
+    // }
   });
 
   socket.on("disconnect", () => {
