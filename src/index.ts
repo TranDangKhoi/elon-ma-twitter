@@ -56,8 +56,6 @@ io.on("connection", (socket) => {
   }
 
   users.set(user_id, socket.id);
-  console.log("User connected:", user_id);
-  console.log("Connected users:", users);
 
   socket.on("send_message", (data: TPrivateChatMessage) => {
     const { message, receiver, sender_name } = data;
