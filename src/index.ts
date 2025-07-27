@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import { Server } from "socket.io";
 import Conversation from "~/models/schemas/Conversation.schema";
 import bookmarkRouter from "~/routes/bookmarks.routes";
+import conversationRouter from "~/routes/conversations.routes";
 import followersRouter from "~/routes/followers.routes";
 import likesRouter from "~/routes/likes.routes";
 import mediasRouter from "~/routes/medias.routes";
@@ -89,6 +90,7 @@ app.use("/bookmarks", bookmarkRouter);
 app.use("/likes", likesRouter);
 app.use("/search", searchRouter);
 app.use("/follows", followersRouter);
+app.use("/conversations", conversationRouter);
 
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
 app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
