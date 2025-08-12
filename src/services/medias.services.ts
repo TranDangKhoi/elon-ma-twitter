@@ -1,16 +1,16 @@
 import { Request } from "express";
+import fsPromise from "fs/promises";
 import sharp from "sharp";
 import { isProduction } from "~/constants/config";
 import { IMAGE_UPLOAD_DIR } from "~/constants/constants";
 import { MediaEnum } from "~/constants/enums";
 import { TMediaResponse } from "~/types/media.types";
-import fsPromise from "fs/promises";
+import { encodeHLSWithMultipleVideoStreams } from "~/utils/ffmpeg";
 import {
   formiddableImageUploadHandler,
   formiddableVideoUploadHandler,
   getFileNameWithoutExtensions,
 } from "~/utils/file";
-import { encodeHLSWithMultipleVideoStreams } from "~/utils/ffmpeg";
 class MediasServices {
   async handleUploadImages(req: Request) {
     const imageFiles = await formiddableImageUploadHandler(req);
@@ -58,8 +58,8 @@ class MediasServices {
         fsPromise.unlink(file.filepath);
         return {
           url: isProduction
-            ? `${process.env.API_HOST}/medias/video-hls/${newFileName}`
-            : `http://localhost:8080/medias/video-hls/${newFileName}`,
+            ? `${process.env.API_HOST}/medias/video/${newFileName}`
+            : `http://localhost:8080/medias/video/${newFileName}`,
           type: MediaEnum.HLS,
         };
       }),

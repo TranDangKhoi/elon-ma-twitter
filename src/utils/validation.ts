@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { validationResult, ValidationChain } from "express-validator";
+import { NextFunction, Request, Response } from "express";
+import { ValidationChain, validationResult } from "express-validator";
 import { RunnableValidationChains } from "express-validator/lib/middlewares/schema";
 import { HttpStatusCode } from "~/constants/httpStatusCode.enum";
 import { ErrorWithStatus, UnprocessableEntityError } from "~/models/Errors";

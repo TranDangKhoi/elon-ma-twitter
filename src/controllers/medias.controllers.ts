@@ -94,6 +94,10 @@ export const uploadHlsVideoController = async (req: Request, res: Response, next
   });
 };
 
-export const hlsStreamVideoController = async (req: Request, res: Response, next: NextFunction) => {
-  res.status(HttpStatusCode.OK).send("HLS Stream Video");
+export const hlsStreamVideoController = async (req: Request, res: Response) => {
+  const result = await mediasServices.handleUploadHlsVideos(req);
+  res.status(HttpStatusCode.OK).json({
+    message: MediaMessage.UPLOAD_VIDEO_SUCCESSFULLY,
+    result,
+  });
 };
