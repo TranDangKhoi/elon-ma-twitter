@@ -93,7 +93,7 @@ app.use("/follows", followersRouter);
 app.use("/conversations", conversationRouter);
 
 // Đây là cách serve video sử dụng express.static, nhưng hiện tại mình sẽ comment nó lại vì mình đang không sử dụng cách có sẵn này
-app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
+// app.use("/medias/video", express.static(VIDEO_UPLOAD_DIR));
 app.use(defaultErrorHandler);
 
 httpServer.listen(port, () => {
